@@ -1262,8 +1262,11 @@ class VIEW3D_PT_ImportExport_Tools_panel(Panel):
 				row.prop(act, 'fbx_export_mode', expand=False)
 				row = layout.row()
 				layout.label(text="Apply:")
-				layout.prop(act, "apply_rot", text="Rotation")
-				layout.prop(act, "apply_scale", text="Scale")
+				
+				layout.label(text="--Rotation & Scale yet not work--")
+				#layout.prop(act, "apply_rot", text="Rotation")
+				#layout.prop(act, "apply_scale", text="Scale")
+				
 				if act.fbx_export_mode == '0' or act.fbx_export_mode == '2':
 					layout.prop(act, "apply_loc", text="Location")
 				row = layout.row()
@@ -1327,11 +1330,13 @@ class VIEW3D_PT_LowPolyArt_Tools_panel(Panel):
 		if context.object is not None:
 			if context.mode == 'OBJECT':
 				row = layout.row()
+				row.enabled = False
 				row.operator("object.palette_creator", text="Create Palette Texture")
 				layout.separator()
 			
 			if context.mode == 'OBJECT':
 				row = layout.row()
+				row.enabled = False
 				row.operator("object.bake_vc", text="Texture to Vertex Colors")
 				layout.separator()
 			
@@ -1363,7 +1368,8 @@ class VIEW3D_PT_Other_Tools_panel(Panel):
 		act = context.scene.act
 		
 		layout = self.layout
-		row = layout.row()	
+		row = layout.row()
+		row.enabled = False
 		row.operator("object.clear_custom_ori", text="Clear Custom Orientations")
 		row = layout.row()		
 		if context.object is not None:
@@ -1380,7 +1386,8 @@ class VIEW3D_PT_Other_Tools_panel(Panel):
 				row = layout.row()
 				row.operator("object.calc_normals", text="Flip/Calculate Normals")
 				layout.prop(act, "calc_normals_en", text="Recalc Normals")
-				layout.prop(act, "normals_inside", text="Inside")
+				if act.calc_normals_en:
+					layout.prop(act, "normals_inside", text="Inside")
 				layout.separator()
 
 		else:

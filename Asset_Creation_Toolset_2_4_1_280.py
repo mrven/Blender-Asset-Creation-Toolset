@@ -85,9 +85,34 @@ class Multi_FBX_export(Operator):
 					x.select_set(True)
 			current_selected_obj = bpy.context.selected_objects
 			
+			#Apply Scale
+			if act.apply_scale:
+				bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+				bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+
+			#Rotation Fix. Rotate X -90, Apply, Rotate X 90. Operate only with higher level parents
+			if act.apply_rot:
+				bpy.context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
+				#Operate only with higher level parents 
+				for x in current_selected_obj:
+					bpy.ops.object.select_all(action='DESELECT')
+					if x.parent == None:
+						x.select_set(True)
+						bpy.context.view_layer.objects.active = x
+						# X-rotation fix
+						bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+						bpy.ops.transform.rotate(value= (math.pi * -90 / 180), orient_axis='X', orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)						
+						bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
+						bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+						bpy.ops.object.select_all(action='DESELECT')
+						x.select_set(True)
+						bpy.ops.transform.rotate(value= (math.pi * 90 / 180), orient_axis='X', orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+						bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
+						x.select_set(False)
+						bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+
 			#Export All as one fbx
 			if act.fbx_export_mode == '1':
-		
 				if act.set_custom_fbx_name:
 					name = act.custom_fbx_name
 				
@@ -167,6 +192,10 @@ class Multi_FBX_export(Operator):
 				j.select_set(True)
 	
 			bpy.context.view_layer.objects.active = start_active_obj
+
+			#Apply Rotation
+			if act.apply_rot:
+				bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
 
 			#Restore "Pivot Point Align" option
 			bpy.context.scene.tool_settings.use_transform_pivot_point_align = current_pivot_point_align
@@ -1263,9 +1292,8 @@ class VIEW3D_PT_ImportExport_Tools_panel(Panel):
 				row = layout.row()
 				layout.label(text="Apply:")
 				
-				layout.label(text="--Rotation & Scale yet not work--")
-				#layout.prop(act, "apply_rot", text="Rotation")
-				#layout.prop(act, "apply_scale", text="Scale")
+				layout.prop(act, "apply_rot", text="Rotation")
+				layout.prop(act, "apply_scale", text="Scale")
 				
 				if act.fbx_export_mode == '0' or act.fbx_export_mode == '2':
 					layout.prop(act, "apply_loc", text="Location")

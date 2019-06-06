@@ -90,7 +90,7 @@ class Multi_FBX_export(Operator):
 				bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
 				bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
 
-			#Rotation Fix. Rotate X -90, Apply, Rotate X 90. Operate only with higher level parents
+			#Rotation Fix. Rotate X -90, Apply, Rotate X 90
 			if act.apply_rot:
 				bpy.context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
 				#Operate only with higher level parents 
@@ -110,6 +110,11 @@ class Multi_FBX_export(Operator):
 						bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
 						x.select_set(False)
 						bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+
+			bpy.ops.object.select_all(action='DESELECT')
+			for x in current_selected_obj:
+				if x.type == 'MESH' or x.type == 'EMPTY' or x.type == 'ARMATURE':
+					x.select_set(True)
 
 			#Export All as one fbx
 			if act.fbx_export_mode == '1':

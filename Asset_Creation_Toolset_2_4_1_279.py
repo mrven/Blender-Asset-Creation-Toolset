@@ -344,8 +344,6 @@ class PaletteCreate(bpy.types.Operator):
 		for n in range(number_of_subdiv):
 			bpy.ops.mesh.subdivide(smoothness=0)
 
-		#TEST check exist texture image
-
 		# create texture and unwrap
 		bpy.ops.mesh.select_all(action='SELECT')
 
@@ -426,14 +424,13 @@ class PaletteCreate(bpy.types.Operator):
 			r_mats = r.data.materials
 			r_mats_len = len(r_mats)
 			r_mat_index = 0
-			print(r_mats, r_mats_len)
+			
 			for r_mat_index in range(r_mats_len):
 				bpy.ops.mesh.select_all(action='DESELECT')
 				bpy.context.object.active_material_index = r_mat_index
 				r_mat_name = bpy.context.object.data.materials[r_mat_index].name
 				bpy.ops.object.material_slot_select()
 				bpy.ops.uv.select_all(action = 'SELECT')
-				print(r_mat_index)
 				# get XY material on UV
 				h = 0
 				r_mat_x = 0

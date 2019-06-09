@@ -1644,12 +1644,14 @@ class VIEW3D_PT_LowPolyArt_Tools_panel(Panel):
 				row.operator("object.palette_creator", text="Create Palette Texture")
 				layout.separator()
 			
+			"""
 			if context.mode == 'OBJECT':
 				row = layout.row()
 				row.enabled = False
 				row.operator("object.bake_vc", text="Texture to Vertex Colors")
 				layout.separator()
-			
+			"""
+
 			if context.mode == 'OBJECT':
 				row = layout.row()
 				row.operator("object.uv_remove", text="Clear UV Maps")
@@ -1678,9 +1680,11 @@ class VIEW3D_PT_Other_Tools_panel(Panel):
 		act = context.scene.act
 		
 		layout = self.layout
+		"""
 		row = layout.row()
 		row.enabled = False
 		row.operator("object.clear_custom_ori", text="Clear Custom Orientations")
+		"""
 		row = layout.row()		
 		if context.object is not None:
 			if context.object.mode == 'EDIT':

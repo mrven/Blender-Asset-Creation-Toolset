@@ -2,7 +2,7 @@ bl_info = {
 	"name": "Asset Creation Toolset",
 	"description": "Toolset for easy create assets for Unity 3D/3D Stocks/etc.",
 	"author": "Ivan 'mrven' Vostrikov",
-	"version": (2, 4, 1),
+	"version": (2, 4, 2),
 	"blender": (2, 80, 0),
 	"location": "3D View > Toolbox",
 	"category": "Object",
@@ -237,9 +237,10 @@ class PaletteCreate(Operator):
 
 		# get selected MESH objects and get active object name
 		start_active_obj = bpy.context.active_object
+		start_selected_obj = bpy.context.selected_objects
 		current_objects = []
 		for selected_mesh in bpy.context.selected_objects:
-			if selected_mesh.type == 'MESH':
+			if selected_mesh.type == 'MESH' and len(selected_mesh.data.materials) > 0:
 				current_objects.append(selected_mesh)
 				# remove empty material slots
 				for q in reversed(range(len(selected_mesh.data.materials))):
@@ -482,7 +483,7 @@ class PaletteCreate(Operator):
 		bpy.ops.object.delete()
 		
 		# Select again objects
-		for j in current_objects:
+		for j in start_selected_obj:
 			j.select_set(True)	
 
 		bpy.context.view_layer.objects.active = start_active_obj	
@@ -657,9 +658,10 @@ class RenameUV(Operator):
 		uv_name = act.uv_name
 		
 		for x in selected_obj:
-			if len(x.data.uv_layers) > 0:
-				if uv_index < len(x.data.uv_layers):
-					x.data.uv_layers[uv_index].name = uv_name	
+			if x.type == 'MESH':
+				if len(x.data.uv_layers) > 0:
+					if uv_index < len(x.data.uv_layers):
+						x.data.uv_layers[uv_index].name = uv_name	
 		return {'FINISHED'}
 
 #-------------------------------------------------------		
@@ -1073,34 +1075,44 @@ class OriginRotate(Operator):
 		
 		if wrong_angle == False:
 			active_obj = bpy.context.active_object
-			bpy.ops.object.select_all(action='DESELECT')
-			active_obj.select_set(True)
-			if active_obj.type == 'MESH':
-				bpy.ops.object.duplicate()
-				dupli_object = bpy.context.active_object
-				if self.TypeRot == 'X+':
-					bpy.ops.transform.rotate(value= (math.pi * RotValue / 180), orient_axis='X', orient_type=Ori_Constaraint, constraint_axis=(True, False, False), orient_matrix_type=Ori_Constaraint, mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-				if self.TypeRot == 'X-':
-					bpy.ops.transform.rotate(value= -(math.pi * RotValue / 180), orient_axis='X', orient_type=Ori_Constaraint, constraint_axis=(True, False, False), orient_matrix_type=Ori_Constaraint, mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-				if self.TypeRot == 'Y+':
-					bpy.ops.transform.rotate(value= (math.pi * RotValue / 180), orient_axis='Y', orient_type=Ori_Constaraint, constraint_axis=(False, True, False), orient_matrix_type=Ori_Constaraint, mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-				if self.TypeRot == 'Y-':
-					bpy.ops.transform.rotate(value= -(math.pi * RotValue / 180), orient_axis='Y', orient_type=Ori_Constaraint, constraint_axis=(False, True, False), orient_matrix_type=Ori_Constaraint, mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-				if self.TypeRot == 'Z+':
-					bpy.ops.transform.rotate(value= (math.pi * RotValue / 180), orient_axis='Z', orient_type=Ori_Constaraint, constraint_axis=(False, False, True), orient_matrix_type=Ori_Constaraint, mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-				if self.TypeRot == 'Z-':
-					bpy.ops.transform.rotate(value= -(math.pi * RotValue / 180), orient_axis='Z', orient_type=Ori_Constaraint, constraint_axis=(False, False, True), orient_matrix_type=Ori_Constaraint, mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)	
-				bpy.ops.object.mode_set(mode = 'EDIT')
-				bpy.ops.mesh.reveal()
-				bpy.ops.mesh.select_all(action='SELECT')
-				bpy.ops.mesh.delete()
-				bpy.ops.object.mode_set(mode = 'OBJECT')
-				active_obj.select_set(True)
-				name = active_obj.name
-				geo_name = active_obj.data.name 
-				bpy.ops.object.join()
-				bpy.context.active_object.name = name
-				bpy.context.active_object.data.name = geo_name
+			current_selected_obj = bpy.context.selected_objects
+			
+			for x in current_selected_obj:
+			# Select only current object (for setting origin)
+				bpy.ops.object.select_all(action='DESELECT')
+				x.select_set(True);
+				bpy.context.view_layer.objects.active = x
+
+				if x.type == 'MESH':
+					bpy.ops.object.duplicate()
+					dupli_object = bpy.context.active_object
+					bpy.ops.object.select_all(action='DESELECT')
+					x.select_set(True);
+					bpy.context.view_layer.objects.active = x
+					if self.TypeRot == 'X+':
+						bpy.ops.transform.rotate(value= (math.pi * RotValue / 180), orient_axis='X', orient_type=Ori_Constaraint, constraint_axis=(True, False, False), orient_matrix_type=Ori_Constaraint, mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+					if self.TypeRot == 'X-':
+						bpy.ops.transform.rotate(value= -(math.pi * RotValue / 180), orient_axis='X', orient_type=Ori_Constaraint, constraint_axis=(True, False, False), orient_matrix_type=Ori_Constaraint, mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+					if self.TypeRot == 'Y+':
+						bpy.ops.transform.rotate(value= (math.pi * RotValue / 180), orient_axis='Y', orient_type=Ori_Constaraint, constraint_axis=(False, True, False), orient_matrix_type=Ori_Constaraint, mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+					if self.TypeRot == 'Y-':
+						bpy.ops.transform.rotate(value= -(math.pi * RotValue / 180), orient_axis='Y', orient_type=Ori_Constaraint, constraint_axis=(False, True, False), orient_matrix_type=Ori_Constaraint, mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+					if self.TypeRot == 'Z+':
+						bpy.ops.transform.rotate(value= (math.pi * RotValue / 180), orient_axis='Z', orient_type=Ori_Constaraint, constraint_axis=(False, False, True), orient_matrix_type=Ori_Constaraint, mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+					if self.TypeRot == 'Z-':
+						bpy.ops.transform.rotate(value= -(math.pi * RotValue / 180), orient_axis='Z', orient_type=Ori_Constaraint, constraint_axis=(False, False, True), orient_matrix_type=Ori_Constaraint, mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)	
+					bpy.ops.object.mode_set(mode = 'EDIT')
+					bpy.ops.mesh.reveal()
+					bpy.ops.mesh.select_all(action='SELECT')
+					bpy.ops.mesh.delete()
+					bpy.ops.object.mode_set(mode = 'OBJECT')
+					dupli_object.select_set(True)
+					bpy.ops.object.join()
+
+			# Select again objects
+			for j in current_selected_obj:
+				j.select_set(True)
+
 		return {'FINISHED'}
 		
 #-------------------------------------------------------

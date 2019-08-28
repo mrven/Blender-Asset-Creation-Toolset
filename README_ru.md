@@ -11,6 +11,9 @@
 * ***[Blender 2.79](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_4_1_279.zip)***
 * ***[Blender 2.80](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_4_2_280.zip)***
 
+Если вы хотите поддержать меня, то можете купить аддон на следующих площадках:
+* ***[Gumroad (Свободная цена)](https://gumroad.com/l/hPXIh)***
+
 ### Категория "Origin Tools"
 Инструменты для работы с Origin (Pivot) Point объекта.
 

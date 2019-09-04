@@ -2,7 +2,7 @@ bl_info = {
 	"name": "Asset Creation Toolset",
 	"description": "Toolset for easy create assets for Unity 3D/3D Stocks/etc.",
 	"author": "Ivan 'mrven' Vostrikov",
-	"version": (2, 4, 2),
+	"version": (2, 4, 3),
 	"blender": (2, 80, 0),
 	"location": "3D View > Toolbox",
 	"category": "Object",
@@ -42,20 +42,28 @@ class Multi_FBX_export(Operator):
 
 	def execute(self, context):
 		act = context.scene.act
-		blend_not_saved = False
 		
 		#check saved blend file
-		if len(bpy.data.filepath) == 0:
-			self.report({'INFO'}, 'Objects don\'t export, because Blend file is not saved')
-			blend_not_saved = True
-		if blend_not_saved == False:	
-			path = bpy.path.abspath('//FBXs/')
+		if len(bpy.data.filepath) == 0 and not act.custom_export_path:
+			self.report({'INFO'}, 'Blend file is not saved. Try use Custom Export Path')
+			return {'CANCELLED'}
+
+		if len(bpy.data.filepath) > 0 or act.custom_export_path:	
+
+			if len(bpy.data.filepath) > 0:
+				path = bpy.path.abspath('//FBXs/')
+			
 			if act.custom_export_path:
+				if len(act.export_path) == 0:
+					self.report({'INFO'}, 'Export Path can\'t be empty')
+					return {'CANCELLED'}
+
 				if not os.path.exists(os.path.realpath(bpy.path.abspath(act.export_path))):
-					self.report({'INFO'}, 'Directory for export not exist. Objects will be export to \'FBXs\' folder')
+					self.report({'INFO'}, 'Directory for export not exist')
+					return {'CANCELLED'}
 				else:
 					path = os.path.realpath(bpy.path.abspath(act.export_path)) + '/'
-			
+		
 			#Create export folder
 			if not os.path.exists(path):
 				os.makedirs(path)

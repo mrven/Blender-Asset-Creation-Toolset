@@ -115,9 +115,6 @@ class Multi_FBX_export(Operator):
 						bpy.ops.object.select_all(action='DESELECT')
 						x.select_set(True)
 						bpy.ops.transform.rotate(value= (math.pi * 90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-						bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
-						x.select_set(False)
-						bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
 
 			bpy.ops.object.select_all(action='DESELECT')
 			for x in current_selected_obj:

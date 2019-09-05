@@ -43,6 +43,12 @@ class Multi_FBX_export(Operator):
 	def execute(self, context):
 		act = context.scene.act
 		
+		if act.fbx_export_mode == '1':
+			if act.set_custom_fbx_name:
+				if len(act.custom_fbx_name) == 0:
+					self.report({'INFO'}, 'Custom Name can\'t be empty')
+					return {'CANCELLED'}
+
 		#check saved blend file
 		if len(bpy.data.filepath) == 0 and not act.custom_export_path:
 			self.report({'INFO'}, 'Blend file is not saved. Try use Custom Export Path')
@@ -108,13 +114,14 @@ class Multi_FBX_export(Operator):
 						x.select_set(True)
 						bpy.context.view_layer.objects.active = x
 						# X-rotation fix
-						bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
-						bpy.ops.transform.rotate(value= (math.pi * -90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)						
-						bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
-						bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
-						bpy.ops.object.select_all(action='DESELECT')
-						x.select_set(True)
-						bpy.ops.transform.rotate(value= (math.pi * 90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+						if act.apply_rot_rotated or (not act.apply_rot_rotated and (abs(x.rotation_euler.x) + abs(x.rotation_euler.y) + abs(x.rotation_euler.z) < 1)) or not act.fbx_export_mode == '2':
+							bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+							bpy.ops.transform.rotate(value= (math.pi * -90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)						
+							bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
+							bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+							bpy.ops.object.select_all(action='DESELECT')
+							x.select_set(True)
+							bpy.ops.transform.rotate(value= (math.pi * 90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
 
 			bpy.ops.object.select_all(action='DESELECT')
 			for x in current_selected_obj:
@@ -204,8 +211,11 @@ class Multi_FBX_export(Operator):
 			bpy.context.view_layer.objects.active = start_active_obj
 
 			#Apply Rotation
+			"""
 			if act.apply_rot:
-				bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+				if act.apply_rot_rotated or (not act.apply_rot_rotated and not(x.rotation_euler.x + x.rotation_euler.y + x.rotation_euler.z == 0)):
+					bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+			"""
 
 			#Restore "Pivot Point Align" option
 			bpy.context.scene.tool_settings.use_transform_pivot_point_align = current_pivot_point_align
@@ -1593,6 +1603,20 @@ class VIEW3D_PT_ImportExport_Tools_panel(Panel):
 				layout.label(text="Apply:")
 				
 				layout.prop(act, "apply_rot", text="Rotation")
+
+				if act.apply_rot and act.fbx_export_mode == '2':
+						#Split row
+						row = layout.row()
+						c = row.column()
+						row = c.row()
+						split = row.split(factor=0.05, align=True)
+						c = split.column()
+						c.label(text="")
+						split = split.split()
+						c = split.column()
+						c.prop(act, "apply_rot_rotated")
+						#----
+
 				layout.prop(act, "apply_scale", text="Scale")
 				
 				if act.fbx_export_mode == '0' or act.fbx_export_mode == '2':
@@ -1875,6 +1899,11 @@ class ACTAddonProps(PropertyGroup):
 	apply_rot: BoolProperty(
 		name="Apply Rotation",
 		description="Apply Rotation for Exported Models",
+		default = True)
+
+	apply_rot_rotated: BoolProperty(
+		name="Apply for Rotated Objects",
+		description="Apply Rotation for Objects with not 0,0,0 rotation",
 		default = True)
 		
 	apply_scale: BoolProperty(

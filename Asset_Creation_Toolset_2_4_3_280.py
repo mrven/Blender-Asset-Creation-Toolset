@@ -42,7 +42,8 @@ class Multi_FBX_export(Operator):
 
 	def execute(self, context):
 		act = context.scene.act
-		
+		apply_rotation_object_list = []
+
 		if act.fbx_export_mode == '1':
 			if act.set_custom_fbx_name:
 				if len(act.custom_fbx_name) == 0:
@@ -113,12 +114,29 @@ class Multi_FBX_export(Operator):
 					if x.parent == None:
 						x.select_set(True)
 						bpy.context.view_layer.objects.active = x
+
+						child_rotated = False
+						bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
+						for y in bpy.context.selected_objects:
+							if abs(y.rotation_euler.x) + abs(y.rotation_euler.y) + abs(y.rotation_euler.z) > 0.017:
+								child_rotated = True
+
+						print(x.name)
+						print(child_rotated)
+
+						bpy.ops.object.select_all(action='DESELECT')
+						x.select_set(True)
+
 						# X-rotation fix
-						if act.apply_rot_rotated or (not act.apply_rot_rotated and (abs(x.rotation_euler.x) + abs(x.rotation_euler.y) + abs(x.rotation_euler.z) < 1)) or not act.fbx_export_mode == '2':
+						if act.apply_rot_rotated or (not act.apply_rot_rotated and not child_rotated) or not act.fbx_export_mode == '2':
 							bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
 							bpy.ops.transform.rotate(value= (math.pi * -90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)						
 							bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
 							bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+							
+							for n in bpy.context.selected_objects:
+								apply_rotation_object_list.append(n)
+							
 							bpy.ops.object.select_all(action='DESELECT')
 							x.select_set(True)
 							bpy.ops.transform.rotate(value= (math.pi * 90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
@@ -202,20 +220,27 @@ class Multi_FBX_export(Operator):
 						bpy.context.scene.cursor.location = object_loc
 						bpy.ops.view3d.snap_selected_to_cursor(use_offset=True)
 			
+			#Apply Rotation
+			if act.apply_rot:
+				bpy.ops.object.select_all(action='DESELECT')
+				
+				if act.apply_rot_rotated or not act.fbx_export_mode == '2':
+					for i in start_selected_obj:
+						i.select_set(True)
+				else:		
+					for i in apply_rotation_object_list:
+						i.select_set(True)
+
+				bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+				bpy.ops.object.select_all(action='DESELECT')
 			
+
 			#Select again objects and set active object
 			bpy.ops.object.select_all(action='DESELECT')
 			for j in start_selected_obj:
 				j.select_set(True)
 	
 			bpy.context.view_layer.objects.active = start_active_obj
-
-			#Apply Rotation
-			"""
-			if act.apply_rot:
-				if act.apply_rot_rotated or (not act.apply_rot_rotated and not(x.rotation_euler.x + x.rotation_euler.y + x.rotation_euler.z == 0)):
-					bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
-			"""
 
 			#Restore "Pivot Point Align" option
 			bpy.context.scene.tool_settings.use_transform_pivot_point_align = current_pivot_point_align

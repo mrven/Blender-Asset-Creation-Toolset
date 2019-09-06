@@ -220,6 +220,35 @@ class Multi_FBX_export(Operator):
 						bpy.context.scene.cursor.location = object_loc
 						bpy.ops.view3d.snap_selected_to_cursor(use_offset=True)
 			
+			#Export by Collection
+			if act.fbx_export_mode == '3':
+
+				#Collect used collections
+				used_collections = []
+
+				for x in current_selected_obj:
+  
+					collection_in_list = False
+				    
+					for c in used_collections:
+						if x.users_collection[0].name == c:
+							collection_in_list = True
+				            
+					if collection_in_list == False:
+						used_collections.append(x.users_collection[0].name) 
+
+			for c in used_collections:
+				bpy.ops.object.select_all(action='DESELECT')
+				for x in current_selected_obj:
+					if x.users_collection[0].name == c:
+						x.select_set(True)
+			            
+				#Export FBX
+				bpy.ops.export_scene.fbx(filepath=str(path + c + '.fbx'), ui_tab='MAIN', use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
+					
+				bpy.ops.object.select_all(action='DESELECT')
+
+
 			#Apply Rotation
 			if act.apply_rot:
 				bpy.ops.object.select_all(action='DESELECT')
@@ -1915,7 +1944,7 @@ class ACTAddonProps(PropertyGroup):
 	orientation_menu_items = (('0','GLOBAL',''),('1','LOCAL',''))
 	orientation_select: EnumProperty(name="", items = orientation_menu_items)
 
-	fbx_export_mode_menu_items = (('0','1 Obj->1 FBX',''),('1','All->One FBX',''),('2','By Parent',''))
+	fbx_export_mode_menu_items = (('0','1 Obj->1 FBX',''),('1','All->One FBX',''),('2','By Parent',''),('3','By Collection',''))
 	fbx_export_mode: EnumProperty(name="", items = fbx_export_mode_menu_items)
 	
 	uv_move_factor_items = (('1','2',''),('2','4',''), ('3','8',''), ('4','16',''), ('5','32',''))

@@ -2,7 +2,7 @@ bl_info = {
 	"name": "Asset Creation Toolset",
 	"description": "Toolset for easy create assets for Unity 3D/3D Stocks/etc.",
 	"author": "Ivan 'mrven' Vostrikov",
-	"version": (2, 4, 3),
+	"version": (2, 5, 0),
 	"blender": (2, 80, 0),
 	"location": "3D View > Toolbox",
 	"category": "Object",
@@ -10,6 +10,7 @@ bl_info = {
 
 import bpy
 import os
+import subprocess
 import bmesh
 import math
 from bpy_extras.io_utils import ImportHelper
@@ -43,6 +44,8 @@ class Multi_FBX_export(Operator):
 	def execute(self, context):
 		act = context.scene.act
 		apply_rotation_object_list = []
+
+		act.export_dir = ""
 
 		if act.fbx_export_mode == '1':
 			if act.set_custom_fbx_name:
@@ -226,8 +229,7 @@ class Multi_FBX_export(Operator):
 				#Collect used collections
 				used_collections = []
 
-				for x in current_selected_obj:
-  
+				for x in current_selected_obj:  
 					collection_in_list = False
 				    
 					for c in used_collections:
@@ -237,14 +239,14 @@ class Multi_FBX_export(Operator):
 					if collection_in_list == False:
 						used_collections.append(x.users_collection[0].name) 
 
-			for c in used_collections:
-				bpy.ops.object.select_all(action='DESELECT')
-				for x in current_selected_obj:
-					if x.users_collection[0].name == c:
-						x.select_set(True)
-			            
-				#Export FBX
-				bpy.ops.export_scene.fbx(filepath=str(path + c + '.fbx'), ui_tab='MAIN', use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
+				for c in used_collections:
+					bpy.ops.object.select_all(action='DESELECT')
+					for x in current_selected_obj:
+						if x.users_collection[0].name == c:
+							x.select_set(True)
+				            
+					#Export FBX
+					bpy.ops.export_scene.fbx(filepath=str(path + c + '.fbx'), ui_tab='MAIN', use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
 					
 				bpy.ops.object.select_all(action='DESELECT')
 
@@ -277,6 +279,9 @@ class Multi_FBX_export(Operator):
 			#Restore Cursor Location and Pivot Point Mode
 			bpy.context.scene.cursor.location = saved_cursor_loc
 			bpy.context.scene.tool_settings.transform_pivot_point = current_pivot_point
+
+			#save export dir
+			act.export_dir = path
 		
 		return {'FINISHED'}
 
@@ -584,7 +589,29 @@ class BakeVC(Operator):
 		return {'FINISHED'}
 
 #-------------------------------------------------------
-#Clear Custom Split Normals
+#Open Export Directory
+class OpenExportDir(Operator):
+	"""Open Export Directory in OS"""
+	bl_idname = "object.open_export_dir"
+	bl_label = "Open Export Directory in OS"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		act = context.scene.act
+
+		if len(act.export_dir) > 0:
+			try:
+				os.startfile(act.export_dir)
+			except:
+				subprocess.Popen(['xdg-open', act.export_dir])
+		else:
+			self.report({'INFO'}, 'Export FBX\'s before')
+			return {'FINISHED'}
+
+		return {'FINISHED'}
+
+#-------------------------------------------------------
+	#Clear Custom Split Normals
 class ClearNormals(Operator):
 	"""Clear Custom Split Normals"""
 	bl_idname = "object.clear_normals"
@@ -1709,6 +1736,11 @@ class VIEW3D_PT_ImportExport_Tools_panel(Panel):
 				row = layout.row()
 				row.operator("object.multi_fbx_export", text="Export FBX to Unity")
 				row = layout.row()
+
+				if len(act.export_dir) > 0:
+					row = layout.row()
+					row.operator("object.open_export_dir", text="Open Export Directory")
+					row = layout.row()
 			
 		
 		if context.mode == 'OBJECT':
@@ -1895,6 +1927,11 @@ class ACTAddonProps(PropertyGroup):
 		name="",
 		description="Text for replace",
 		default="")
+
+	export_dir: StringProperty(
+		name="",
+		description="Export Directory",
+		default="")
 		
 	prefix: StringProperty(
 		name="",
@@ -2036,6 +2073,7 @@ classes = (
 	VIEW3D_PT_Other_Tools_panel,
 	VIEW3D_PT_Uv_Mover_panel,
 	Multi_FBX_export,
+	OpenExportDir,
 	PaletteCreate,
 	BakeVC,
 	ClearNormals,

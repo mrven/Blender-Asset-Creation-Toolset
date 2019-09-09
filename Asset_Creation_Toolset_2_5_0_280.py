@@ -1365,6 +1365,62 @@ class UV_Mover(Operator):
 		bpy.context.space_data.pivot_point = Start_Pivot_Mode
 
 		return {'FINISHED'}
+
+#-------------------------------------------------------
+#Delete Unused Materials
+class DeleteUnusedMaterials(Operator):
+	"""Delete from Objects Unused Materials and Slots"""
+	bl_idname = "object.delete_unused_materials"
+	bl_label = "Delete Unused Materials"
+	bl_options = {'REGISTER', 'UNDO'}
+	Value: StringProperty()
+	
+	def execute(self, context):
+		selected_obj = bpy.context.selected_objects
+		active_obj = bpy.context.active_object
+		
+		#Delete Empty Slots
+		for x in selected_obj:
+			if x.type == 'MESH' and len(x.data.materials) > 0:
+				# remove empty material slots
+				for q in reversed(range(len(x.data.materials))):
+					if x.data.materials[q] == None:
+						bpy.context.object.active_material_index = q
+						# unlink empty slots
+						x.data.materials.pop(index = q, update_data=True)
+
+		#Delete Unused Materials
+		for x in selected_obj:
+			bpy.ops.object.select_all(action='DESELECT')
+			x.select_set(True)
+			bpy.context.view_layer.objects.active = x
+			if x.type == 'MESH' and len(x.data.materials) > 0:
+				bpy.ops.object.mode_set(mode = 'EDIT')
+				bpy.ops.mesh.reveal()
+				for q in reversed(range(len(x.data.materials))):
+					bpy.ops.mesh.select_all(action='DESELECT')
+					bpy.context.object.active_material_index = q
+					bpy.ops.object.material_slot_select()
+					bpy.ops.object.mode_set(mode = 'OBJECT')
+					material_used = False
+					for f in range(0, len(x.data.polygons)):
+						if x.data.polygons[f].select == True:
+							material_used = True
+
+					if not material_used:
+						x.data.materials.pop(index = q, update_data=True)
+					
+					bpy.ops.object.mode_set(mode = 'EDIT')
+
+				bpy.ops.object.mode_set(mode = 'OBJECT')
+			
+		# Select again objects
+		for j in selected_obj:
+			j.select_set(True)
+		
+		bpy.context.view_layer.objects.active = active_obj
+
+		return {'FINISHED'}
 		
 #-------------------------------------------------------
 #Panels
@@ -1830,6 +1886,10 @@ class VIEW3D_PT_Other_Tools_panel(Panel):
 				if act.calc_normals_en:
 					layout.prop(act, "normals_inside", text="Inside")
 				layout.separator()
+				row = layout.row()	
+				row.operator("object.delete_unused_materials", text="Delete Unused Materials")
+				layout.separator()
+
 
 		else:
 			row = layout.row()
@@ -2093,6 +2153,7 @@ classes = (
 	ObjNameToMeshName,
 	ClearVertexColors,
 	UV_Mover,
+	DeleteUnusedMaterials,
 )	  
 	
 #-------------------------------------------------------		

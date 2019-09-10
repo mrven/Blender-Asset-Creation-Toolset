@@ -767,6 +767,23 @@ class RenameUV(Operator):
 						x.data.uv_layers[uv_index].name = uv_name	
 		return {'FINISHED'}
 
+#-------------------------------------------------------
+#Rename bones
+class RenameBones(Operator):
+	"""Rename bones"""
+	bl_idname = "object.rename_bones"
+	bl_label = "Rename bones"
+	bl_options = {'REGISTER', 'UNDO'}
+	
+	Value: StringProperty()
+
+	def execute(self, context):
+		selected_bones = bpy.context.selected_bones	
+		for x in selected_bones:
+			x.name = x.name + self.Value
+
+		return {'FINISHED'}
+
 #-------------------------------------------------------		
 #Numbering
 class Numbering(Operator):
@@ -1477,6 +1494,7 @@ class AssignMultieditMaterials(Operator):
 		bpy.ops.object.mode_set(mode = 'EDIT')
 
 		return {'FINISHED'}
+
 #-------------------------------------------------------
 #Panels
 class VIEW3D_PT_Origin_Tools_panel(Panel):
@@ -1763,6 +1781,20 @@ class VIEW3D_PT_Rename_Tools_panel(Panel):
 				row.prop(act, "delete_prev_nums", text="Delete Previous Nums")
 				row = layout.row()
 				row.operator("object.numbering", text="Set Numbering")
+			
+			elif context.mode == 'EDIT_ARMATURE':
+				#Split row
+				row = layout.row()
+				c = row.column()
+				row = c.row()
+				split = row.split(factor=0.5, align=True)
+				c = split.column()
+				row.operator("object.rename_bones", text="Add .L").Value=".L"
+				split = split.split()
+				c = split.column()
+				row.operator("object.rename_bones", text="Add .R").Value=".R"
+				#----
+
 			else:
 				row = layout.row()
 				row.label(text=" ")
@@ -2210,6 +2242,7 @@ classes = (
 	ImportFBXOBJ,
 	RenameObject,
 	RenameUV,
+	RenameBones,
 	Numbering,
 	UVremove,
 	AlignMin,

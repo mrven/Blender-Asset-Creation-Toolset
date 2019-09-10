@@ -82,6 +82,13 @@ class Multi_FBX_export(Operator):
 			start_selected_obj = bpy.context.selected_objects
 			start_active_obj = bpy.context.active_object
 			current_selected_obj = bpy.context.selected_objects
+
+			if act.delete_mats_before_export:
+				for o in current_selected_obj:
+					if o.type == 'MESH' and len(o.data.materials) > 0:
+						for q in reversed(range(len(o.data.materials))):
+							bpy.context.object.active_material_index = q
+							o.data.materials.pop(index = q, update_data=True)
 			
 			#Check "Pivot Point Align" option and disable it
 			current_pivot_point_align = bpy.context.scene.tool_settings.use_transform_pivot_point_align
@@ -1758,6 +1765,10 @@ class VIEW3D_PT_ImportExport_Tools_panel(Panel):
 				
 				if act.fbx_export_mode == '0' or act.fbx_export_mode == '2':
 					layout.prop(act, "apply_loc", text="Location")
+				
+				row = layout.row()
+				layout.prop(act, "delete_mats_before_export", text="Delete All Materials")
+
 				row = layout.row()
 				if act.fbx_export_mode == '1':
 					layout.prop(act, "set_custom_fbx_name", text="Custom Name for FBX")
@@ -1797,7 +1808,6 @@ class VIEW3D_PT_ImportExport_Tools_panel(Panel):
 					row = layout.row()
 					row.operator("object.open_export_dir", text="Open Export Directory")
 					row = layout.row()
-			
 		
 		if context.mode == 'OBJECT':
 			row = layout.row()
@@ -2080,6 +2090,11 @@ class ACTAddonProps(PropertyGroup):
 	custom_export_path: BoolProperty(
 		name="Custom Export Path",
 		description="Custom Export Path",
+		default = False)
+
+	delete_mats_before_export: BoolProperty(
+		name="Delete Materials",
+		description="Delete Materials before Export",
 		default = False)
 	
 	normals_inside: BoolProperty(

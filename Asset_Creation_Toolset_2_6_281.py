@@ -606,7 +606,7 @@ class OpenExportDir(Operator):
 		return {'FINISHED'}
 
 #-------------------------------------------------------
-	#Clear Custom Split Normals
+#Clear Custom Split Normals
 class ClearNormals(Operator):
 	"""Clear Custom Split Normals"""
 	bl_idname = "object.clear_normals"
@@ -623,7 +623,8 @@ class ClearNormals(Operator):
 			if x.type == 'MESH':
 				bpy.context.view_layer.objects.active = x
 				bpy.ops.mesh.customdata_custom_splitnormals_clear()
-				bpy.context.object.data.auto_smooth_angle = 3.14159
+				bpy.context.object.data.auto_smooth_angle = math.pi
+				bpy.context.object.data.use_auto_smooth = True
 				
 		# Select again objects
 		for j in selected_obj:
@@ -1347,7 +1348,7 @@ class VIEW3D_PT_Origin_Tools_panel(Panel):
 
 	@classmethod
 	def poll(self, context):
-		return (True)
+		return (context.object is not None)
 
 	def draw(self, context):
 		act = context.scene.act
@@ -1537,7 +1538,7 @@ class VIEW3D_PT_ImportExport_Tools_panel(Panel):
 
 	@classmethod
 	def poll(self, context):
-		return (context.object is not None and context.object.mode == 'OBJECT')
+		return (context.object is None or (context.object is not None and context.object.mode == 'OBJECT'))
 
 	def draw(self, context):
 		act = context.scene.act
@@ -1692,10 +1693,6 @@ class VIEW3D_PT_Other_Tools_panel(Panel):
 				row = layout.row()	
 				row.operator("object.delete_unused_materials", text="Delete Unused Materials")
 				layout.separator()
-'''		else:
-			row = layout.row()
-			row.label(text=" ")
-'''
 
 class VIEW3D_PT_Uv_Mover_panel(Panel):
 	bl_label = "UV Mover"

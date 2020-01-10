@@ -162,7 +162,12 @@ class Multi_FBX_export(Operator):
 					name = act.custom_fbx_name
 				
 				#Export FBX
-				bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
+				if act.export_custom_options:
+					bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL', 
+							use_mesh_modifiers=act.export_apply_modifiers, mesh_smooth_type=act.export_smoothing, 
+								use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space)
+				else:
+					bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
 
 			#Individual Export
 			if act.fbx_export_mode == '0':
@@ -185,7 +190,12 @@ class Multi_FBX_export(Operator):
 					name = x.name
 
 					#Export FBX
-					bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
+					if act.export_custom_options:
+						bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL', 
+							use_mesh_modifiers=act.export_apply_modifiers, mesh_smooth_type=act.export_smoothing, 
+								use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space)
+					else:
+						bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
 					
 					#Restore Object Location
 					if act.apply_loc:
@@ -220,7 +230,12 @@ class Multi_FBX_export(Operator):
 					bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
 					
 					#Export FBX
-					bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
+					if act.export_custom_options:
+						bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL', 
+							use_mesh_modifiers=act.export_apply_modifiers, mesh_smooth_type=act.export_smoothing, 
+								use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space)
+					else:
+						bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
 					
 					bpy.ops.object.select_all(action='DESELECT')
 					x.select_set(True)
@@ -253,7 +268,12 @@ class Multi_FBX_export(Operator):
 							x.select_set(True)
 				            
 					#Export FBX
-					bpy.ops.export_scene.fbx(filepath=str(path + c + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
+					if act.export_custom_options:
+						bpy.ops.export_scene.fbx(filepath=str(path + c + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL', 
+							use_mesh_modifiers=act.export_apply_modifiers, mesh_smooth_type=act.export_smoothing, 
+								use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space)
+					else:
+						bpy.ops.export_scene.fbx(filepath=str(path + c + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
 					
 				bpy.ops.object.select_all(action='DESELECT')
 
@@ -1385,6 +1405,19 @@ class MaterialToViewport(Operator):
 		return {'FINISHED'}
 
 #-------------------------------------------------------
+#Merge Bones
+class MergeBones(Operator):
+	"""Merge Selected Bones to Active"""
+	bl_idname = "object.merge_bones"
+	bl_label = "Merge Selected Bones to Active"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		
+
+		return {'FINISHED'}
+
+#-------------------------------------------------------
 #Panels
 class VIEW3D_PT_Origin_Tools_panel(Panel):
 	bl_label = "Origin Tools"
@@ -1394,7 +1427,7 @@ class VIEW3D_PT_Origin_Tools_panel(Panel):
 
 	@classmethod
 	def poll(self, context):
-		return (context.object is not None)
+		return (context.object is not None and (context.mode == 'OBJECT' or context.mode == 'EDIT_MESH'))
 
 	def draw(self, context):
 		act = context.scene.act
@@ -1639,6 +1672,54 @@ class VIEW3D_PT_ImportExport_Tools_panel(Panel):
 						#----
 
 				row = layout.row()
+				layout.prop(act, "export_custom_options", text="Custom Export Options")
+				if act.export_custom_options:
+					#Split row
+					row = layout.row()
+					c = row.column()
+					row = c.row()
+					split = row.split(factor=0.45, align=True)
+					c = split.column()
+					c.label(text=" Smoothing:")
+					split = split.split()
+					c = split.column()
+					c.prop(act, "export_smoothing", expand=False)
+					#----
+					#Split row
+					row = layout.row()
+					c = row.column()
+					row = c.row()
+					split = row.split(factor=0.8, align=True)
+					c = split.column()
+					c.label(text=" Apply Modifiers")
+					split = split.split()
+					c = split.column()
+					c.prop(act, "export_apply_modifiers", text="")
+					#----
+					#Split row
+					row = layout.row()
+					c = row.column()
+					row = c.row()
+					split = row.split(factor=0.8, align=True)
+					c = split.column()
+					c.label(text=" Loose Edges")
+					split = split.split()
+					c = split.column()
+					c.prop(act, "export_loose_edges",text="")
+					#----
+					#Split row
+					row = layout.row()
+					c = row.column()
+					row = c.row()
+					split = row.split(factor=0.8, align=True)
+					c = split.column()
+					c.label(text=" Tangent Space")
+					split = split.split()
+					c = split.column()
+					c.prop(act, "export_tangent_space", text="")
+					#----
+
+				row = layout.row()
 				layout.prop(act, "custom_export_path", text="Custom Export Path")
 				if act.custom_export_path:
 					#Split row
@@ -1699,8 +1780,7 @@ class VIEW3D_PT_LowPolyArt_Tools_panel(Panel):
 				row = layout.row()
 				row.operator("object.clear_vc", text="Clear Vertex Colors")
 				layout.separator()
-
-		
+				
 class VIEW3D_PT_Other_Tools_panel(Panel):
 	bl_label = "Other Tools"
 	bl_space_type = "VIEW_3D"
@@ -1709,7 +1789,7 @@ class VIEW3D_PT_Other_Tools_panel(Panel):
 
 	@classmethod
 	def poll(self, context):
-		return (context.object is not None and context.object.mode == 'OBJECT')
+		return (context.object is not None and (context.object.mode == 'OBJECT' or context.mode == 'EDIT_ARMATURE'))
 
 	def draw(self, context):
 		act = context.scene.act
@@ -1736,6 +1816,10 @@ class VIEW3D_PT_Other_Tools_panel(Panel):
 				row = layout.row()	
 				row.operator("object.delete_unused_materials", text="Delete Unused Materials")
 				layout.separator()
+
+			if context.mode == 'EDIT_ARMATURE':
+				row = layout.row()
+				row.operator("object.merge_bones", text="Merge Bones")
 
 class VIEW3D_PT_Uv_Mover_panel(Panel):
 	bl_label = "UV Mover"
@@ -1977,6 +2061,30 @@ class ACTAddonProps(PropertyGroup):
       subtype = 'DIR_PATH'
       )
 
+	#Custom FBX Export Opyions
+	export_custom_options: BoolProperty(
+		name="Custom Export Options",
+		description="Custom FBX Export Options",
+		default = False)
+
+	export_apply_modifiers: BoolProperty(
+		name="Apply Modifiers",
+		description="Apply Modifiers",
+		default = True)
+
+	export_loose_edges: BoolProperty(
+		name="Loose Edges",
+		description="Loose Edges",
+		default = False)
+
+	export_tangent_space: BoolProperty(
+		name="Tangent Space",
+		description="Tangent Space",
+		default = False)
+
+	export_smoothing_items = (('OFF','Normals Only',''),('FACE','Face',''),('EDGE','Edge',''))
+	export_smoothing: EnumProperty(name="", items = export_smoothing_items)
+
 classes = (
     ACTAddonProps,
 	VIEW3D_PT_Origin_Tools_panel,
@@ -2006,6 +2114,7 @@ classes = (
 	AssignMultieditMaterials,
 	DeleteUnusedMaterials,
 	MaterialToViewport,
+	MergeBones,
 )	  
 	
 #-------------------------------------------------------		

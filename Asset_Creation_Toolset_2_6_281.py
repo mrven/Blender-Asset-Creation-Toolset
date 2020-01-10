@@ -1413,7 +1413,80 @@ class MergeBones(Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
-		
+		act = context.scene.act
+
+		#BUG!! Active Bone not updating if switch MODE frome POSE to EDIT
+		bpy.ops.object.mode_set(mode='OBJECT')
+		bpy.ops.object.mode_set(mode='EDIT')
+
+		armature = bpy.context.active_object
+		active_bone_name = armature.data.bones.active.name
+		selected_bones_name = []
+
+		bpy.ops.object.mode_set(mode='OBJECT')
+
+		#Collect Selected Bones, but Not Active
+		for bone in armature.data.bones:
+			if bone.select == True:
+				if bone.name != active_bone_name:
+					selected_bones_name.append(bone.name)
+
+		#Find Mesh Deformed with this Armature
+		for m in bpy.context.scene.objects:
+			if m.type == 'MESH':
+				if (len(m.modifiers) > 0):
+					for n in m.modifiers:
+						if n.type == 'ARMATURE' and n.object.name_full == armature.name_full:
+							parent_mesh = m
+
+		bpy.ops.object.select_all(action='DESELECT')
+		parent_mesh.select_set(True)
+		bpy.context.view_layer.objects.active = parent_mesh
+
+		print(active_bone_name)
+		print(parent_mesh.name)
+		for b in selected_bones_name:
+			print(b)
+
+		if len(selected_bones_name) > 0:
+			for b_name in selected_bones_name:
+				try:
+					parent_mesh.vertex_groups.active_index = parent_mesh.vertex_groups[b_name].index
+				except:
+					continue
+
+				bpy.ops.object.modifier_add(type='VERTEX_WEIGHT_MIX')
+						
+				parent_mesh.modifiers['VertexWeightMix'].vertex_group_a = active_bone_name
+				parent_mesh.modifiers['VertexWeightMix'].vertex_group_b = b_name
+				parent_mesh.modifiers['VertexWeightMix'].mix_mode = 'ADD'
+				parent_mesh.modifiers['VertexWeightMix'].mix_set = 'ALL'
+				
+				bpy.ops.object.modifier_apply(apply_as='DATA', modifier="VertexWeightMix")
+
+				bpy.ops.object.vertex_group_remove()
+
+		bpy.ops.object.select_all(action='DESELECT')
+		armature.select_set(True)
+		bpy.context.view_layer.objects.active = armature
+		bpy.ops.object.mode_set(mode='EDIT')
+		bpy.ops.armature.select_all(action='DESELECT')
+		bpy.ops.object.mode_set(mode='OBJECT')
+
+		for need_delete in selected_bones_name:
+			try:
+				armature.data.bones[need_delete].select = True
+			except:
+				continue
+			bpy.ops.object.mode_set(mode='EDIT')
+			if act.merge_bones_method == 'DELETE':
+				bpy.ops.armature.delete()
+			elif act.merge_bones_method == 'DISSOLVE':
+				bpy.ops.armature.dissolve()
+			bpy.ops.object.mode_set(mode='OBJECT')
+
+		armature.data.bones[active_bone_name].select = True
+		bpy.ops.object.mode_set(mode='EDIT')
 
 		return {'FINISHED'}
 
@@ -1780,7 +1853,7 @@ class VIEW3D_PT_LowPolyArt_Tools_panel(Panel):
 				row = layout.row()
 				row.operator("object.clear_vc", text="Clear Vertex Colors")
 				layout.separator()
-				
+
 class VIEW3D_PT_Other_Tools_panel(Panel):
 	bl_label = "Other Tools"
 	bl_space_type = "VIEW_3D"
@@ -1818,6 +1891,17 @@ class VIEW3D_PT_Other_Tools_panel(Panel):
 				layout.separator()
 
 			if context.mode == 'EDIT_ARMATURE':
+				#Split row
+				row = layout.row()
+				c = row.column()
+				row = c.row()
+				split = row.split(factor=0.4, align=True)
+				c = split.column()
+				c.label(text="Method")
+				split = split.split()
+				c = split.column()
+				c.prop(act, "merge_bones_method", text="", expand=False)
+				#----
 				row = layout.row()
 				row.operator("object.merge_bones", text="Merge Bones")
 
@@ -2084,6 +2168,10 @@ class ACTAddonProps(PropertyGroup):
 
 	export_smoothing_items = (('OFF','Normals Only',''),('FACE','Face',''),('EDGE','Edge',''))
 	export_smoothing: EnumProperty(name="", items = export_smoothing_items)
+
+	#Merge Bones - Delete or Dissolve
+	merge_bones_method_items = (('DELETE','Delete',''),('DISSOLVE','Dissolve',''))
+	merge_bones_method: EnumProperty(name="", items = merge_bones_method_items)
 
 classes = (
     ACTAddonProps,

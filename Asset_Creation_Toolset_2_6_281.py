@@ -742,34 +742,11 @@ class Numbering(Operator):
 		selected_obj = bpy.context.selected_objects	
 		objects_list = []
 		
-		for x in selected_obj:
-			#List of Objects
-			if act.nums_method == '0' or act.nums_method == '3' or act.nums_method == '4':
-				object_class = [x.name, x.location.x]
-			if act.nums_method == '1':
-				object_class = [x.name, x.location.y]
-			if act.nums_method == '2':
-				object_class = [x.name, x.location.z]
-			
-			objects_list.append(object_class)
-			
-		#Sort List
-		if act.nums_method != '3':
-			objects_list.sort(key=lambda object: object[1])
-		
-		#Preprocess Delete Blender Numbers and add new numbers
-		for y in range(len(objects_list)):
-			current_obj = bpy.data.objects[objects_list[y][0]]
-			
-			#Delete Blender Numbers
-			ob_name = current_obj.name
-			if StrIsInt(ob_name[-3:]):
-				dot_pos = len(ob_name) - 4
-				if ob_name[dot_pos] == '.':
-					ob_name = ob_name[:-4]
-						
-			#Delete Previous Numbers
-			if act.delete_prev_nums:
+		#Delete Previous Numbers
+		if act.delete_prev_nums:
+			for obj in selected_obj:
+				ob_name = obj.name
+
 				if StrIsInt(ob_name[-1:]):
 					unds_pos = len(ob_name) - 2
 					if ob_name[unds_pos] == '_':
@@ -784,7 +761,38 @@ class Numbering(Operator):
 					unds_pos = len(ob_name) - 4
 					if ob_name[unds_pos] == '_':
 						ob_name = ob_name[:-4]
-						
+
+				obj.name = ob_name;
+
+			selected_obj = bpy.context.selected_objects
+
+		for x in selected_obj:
+			#List of Objects
+			if act.nums_method == '0' or act.nums_method == '3' or act.nums_method == '4':
+				object_class = [x.name, x.location.x]
+			if act.nums_method == '1':
+				object_class = [x.name, x.location.y]
+			if act.nums_method == '2':
+				object_class = [x.name, x.location.z]
+			
+			objects_list.append(object_class)
+			
+		#Sort List
+		if act.nums_method != '3':
+			objects_list.sort(key=lambda object: object[1])
+
+
+		#Preprocess Delete Blender Numbers and add new numbers
+		for y in range(len(objects_list)):
+			current_obj = bpy.data.objects[objects_list[y][0]]
+			
+			#Delete Blender Numbers
+			ob_name = current_obj.name
+			if StrIsInt(ob_name[-3:]):
+				dot_pos = len(ob_name) - 4
+				if ob_name[dot_pos] == '.':
+					ob_name = ob_name[:-4]
+									
 			#Format for Numbers
 			num_str = ''
 			
@@ -1289,7 +1297,13 @@ class AssignMultieditMaterials(Operator):
 					if not x.data.materials[m] == None:
 						if x.data.materials[m].name_full == active_mat:
 							append_mat = False
-				if append_mat:
+
+				selected_poly = False
+				for p in x.data.polygons:
+					if p.select == True:
+						selected_poly = True
+
+				if append_mat and selected_poly:
 					x.data.materials.append(bpy.data.materials[active_mat])
 				for n in range(0, len(x.data.materials)):
 					if not x.data.materials[n] == None:
@@ -1329,6 +1343,38 @@ class DeleteUnusedMaterials(Operator):
 			bpy.context.view_layer.objects.active = x
 			if x.type == 'MESH':
 				bpy.ops.object.material_slot_remove_unused()
+			
+		# Select again objects
+		for j in selected_obj:
+			j.select_set(True)
+		
+		bpy.context.view_layer.objects.active = active_obj
+
+		return {'FINISHED'}
+
+#-------------------------------------------------------
+#Material Color to Viewport Color
+class MaterialToViewport(Operator):
+	"""Material Color to Viewport Color"""
+	bl_idname = "object.material_to_viewport"
+	bl_label = "Material Color to Viewport Color"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		selected_obj = bpy.context.selected_objects
+		active_obj = bpy.context.active_object
+
+		#Delete Unused Materials
+		for x in selected_obj:
+			bpy.ops.object.select_all(action='DESELECT')
+			x.select_set(True)
+			bpy.context.view_layer.objects.active = x
+			if x.type == 'MESH':
+				for mat in x.data.materials:
+					try:
+						mat.diffuse_color = mat.node_tree.nodes['Principled BSDF'].inputs[0].default_value
+					except:
+						print("Can\'t change viewport material color")
 			
 		# Select again objects
 		for j in selected_obj:
@@ -1643,6 +1689,9 @@ class VIEW3D_PT_LowPolyArt_Tools_panel(Panel):
 				row = layout.row()
 				row.operator("object.palette_creator", text="Create Palette Texture")
 				layout.separator()
+				row = layout.row()
+				row.operator("object.material_to_viewport", text="Material -> Viewport Color")
+				layout.separator()
 
 			if context.mode == 'OBJECT':
 				row = layout.row()
@@ -1650,13 +1699,7 @@ class VIEW3D_PT_LowPolyArt_Tools_panel(Panel):
 				row = layout.row()
 				row.operator("object.clear_vc", text="Clear Vertex Colors")
 				layout.separator()
-			
-			else:
-				row = layout.row()
-				row.label(text=" ")
-		else:
-			row = layout.row()
-			row.label(text=" ")
+
 		
 class VIEW3D_PT_Other_Tools_panel(Panel):
 	bl_label = "Other Tools"
@@ -1962,6 +2005,7 @@ classes = (
 	UV_Mover,
 	AssignMultieditMaterials,
 	DeleteUnusedMaterials,
+	MaterialToViewport,
 )	  
 	
 #-------------------------------------------------------		

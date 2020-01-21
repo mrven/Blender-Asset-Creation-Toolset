@@ -113,3 +113,8 @@
 Инструмент для упрощения скелета: Удаление выделенных костей (кроме активной) и перенос весов на активную кость.
 
 ![Merge Bones](/images/gifs/17_MergeBones.gif)
+
+#### Active Material -> Selected
+Назначить активный материал на выделенные полигоны в режиме MultiEdit.
+
+![Active Material To Selected](/images/gifs/14_ActiveMatToSelected.gif)

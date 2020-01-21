@@ -16,6 +16,10 @@ If you want to support me you can buy this addon:
 * ***[Gumroad (Pay what you want)](https://gumroad.com/l/hPXIh)***
 
 
+***[Watch Features Overview (Youtube Playlist)](https://www.youtube.com/playlist?list=PLmXnsUZu0CRr_UOQp3TapOVyEqbzZ0MkL)***
+
+
+
 #### Origin Align Tool
 Aligment Origin Point to:
 * Max/Min point of object for X, Y or Z axis

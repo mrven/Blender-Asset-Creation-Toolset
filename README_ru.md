@@ -15,6 +15,8 @@
 Если вы хотите поддержать меня, то можете купить аддон на следующих площадках:
 * ***[Gumroad (Свободная цена)](https://gumroad.com/l/hPXIh)***
 
+***[Смотреть обзор всех функций (плейлист Youtube)](https://www.youtube.com/playlist?list=PLmXnsUZu0CRr_UOQp3TapOVyEqbzZ0MkL)***
+
 #### Origin Align Tool
 Выравнивание Origin Point объекта. Позволяет выровнять Origin по заданной оси по максимальной/минимальной точки объекта, 3D-курсору или заданной координате.
 

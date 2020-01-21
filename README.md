@@ -121,3 +121,9 @@ Quick add suffix .L or .R to Selected Bones.
 Tool For Easy Simplifying Armature: Delete (or Dissolve) Selected Bones (Exclude Active) and Transfer Vertex Weights to Active Bone.
 
 ![Merge Bones](/images/gifs/17_MergeBones.gif)
+
+
+#### Active Material -> Selected
+Assign active material to selected faces in MultiEdit Mode.
+
+![Active Material To Selected](/images/gifs/14_ActiveMatToSelected.gif)

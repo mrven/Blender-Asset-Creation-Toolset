@@ -2,7 +2,7 @@ bl_info = {
 	"name": "Asset Creation Toolset",
 	"description": "Toolset for easy create assets for Unity 3D/3D Stocks/etc.",
 	"author": "Ivan 'mrven' Vostrikov",
-	"version": (2, 6),
+	"version": (2, 6, 1),
 	"blender": (2, 81, 0),
 	"location": "3D View > Toolbox",
 	"category": "Object",

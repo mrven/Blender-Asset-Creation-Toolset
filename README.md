@@ -10,7 +10,7 @@
 
 * ***[Blender 2.79](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_4_1_279.zip)***
 * ***[Blender 2.80](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_5_0_280.zip)***
-* ***[Blender 2.81](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_6_281.zip)***
+* ***[Blender 2.81](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_6_1_281.zip)***
 
 If you want to support me you can buy this addon:
 * ***[Gumroad (Pay what you want)](https://gumroad.com/l/hPXIh)***
@@ -62,8 +62,8 @@ Flip or Recalculate Normals for Selected Objects in Object Mode.
 ![Flip Calculate Normals](/images/gifs/11_CalcNormals.gif)
 
 
-#### Export FBX to Unity
-Batch Export Selected Objects for Unity (Fix Scale and Rotation). Available some modes:
+#### Export FBX to Unity/UE4
+Batch Export Selected Objects for Unity or UE4 (Fix Scale and Rotation). Available some modes:
 * Export All Selected Object into One FBX
 * Export Each Object into Individual FBX
 * Batch Objects by Parent

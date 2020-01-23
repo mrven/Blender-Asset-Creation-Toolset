@@ -10,7 +10,7 @@
 
 * ***[Blender 2.79](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_4_1_279.zip)***
 * ***[Blender 2.80](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_5_0_280.zip)***
-* ***[Blender 2.81](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_6_281.zip)***
+* ***[Blender 2.81](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_6_1_281.zip)***
 
 Если вы хотите поддержать меня, то можете купить аддон на следующих площадках:
 * ***[Gumroad (Свободная цена)](https://gumroad.com/l/hPXIh)***
@@ -56,7 +56,7 @@
 ![Flip Calculate Normals](/images/gifs/11_CalcNormals.gif)
 
 
-#### Export FBX to Unity
+#### Export FBX to Unity/UE4
 Пакетный экспорт выделенных объектов в FBX с корректным масштабом и поворотом. Рядом с файлом .Blend будет создана папка “FBXs”, в которую будут экспортированы объекты. Каждый объект будет экспортирован в отдельный FBX. Работает только со статичными мешами. Также обратите внимание, что у объектов в сцене перед экспортом применяются масштабы и поворот.
 
 ![Export FBXs](/images/gifs/04_ExportFBX.gif)

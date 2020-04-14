@@ -3,7 +3,7 @@ import bpy
 
 #-------------------------------------------------------
 #Merge Bones
-class MergeBones(Operator):
+class MergeBones(bpy.types.Operator):
 	"""Merge Selected Bones to Active"""
 	bl_idname = "object.merge_bones"
 	bl_label = "Merge Selected Bones to Active"
@@ -90,13 +90,13 @@ class MergeBones(Operator):
 
 #-------------------------------------------------------
 #Rename bones
-class RenameBones(Operator):
+class RenameBones(bpy.types.Operator):
 	"""Rename bones"""
 	bl_idname = "object.rename_bones"
 	bl_label = "Rename bones"
 	bl_options = {'REGISTER', 'UNDO'}
 	
-	Value: StringProperty()
+	Value: bpy.props.StringProperty()
 
 	def execute(self, context):
 		selected_bones = bpy.context.selected_bones	

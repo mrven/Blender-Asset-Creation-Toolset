@@ -3,7 +3,7 @@ import bpy
 
 #-------------------------------------------------------
 #Rename UV(s)
-class RenameUV(Operator):
+class RenameUV(bpy.types.Operator):
 	"""Rename UV(s)"""
 	bl_idname = "object.uv_rename"
 	bl_label = "Rename UV(s)"
@@ -26,7 +26,7 @@ class RenameUV(Operator):
 
 #-------------------------------------------------------		
 #Numbering
-class Numbering(Operator):
+class Numbering(bpy.types.Operator):
 	"""Numbering of Objects"""
 	bl_idname = "object.numbering"
 	bl_label = "Numbering of Objects"

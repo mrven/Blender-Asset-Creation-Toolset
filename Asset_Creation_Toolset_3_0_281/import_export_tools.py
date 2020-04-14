@@ -1,28 +1,27 @@
 import bpy
 import os
 import subprocess
+import math
 from bpy_extras.io_utils import ImportHelper
 
 #-------------------------------------------------------
 #FBX-Export
-class Multi_FBX_export(Operator):
+class Multi_FBX_Export(bpy.types.Operator):
 	"""Export FBXs to Unity"""
 	bl_idname = "object.multi_fbx_export"
-	bl_label = "Export FBXs to Unity"
+	bl_label = "Export FBXs"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
 		act = context.scene.act
-		apply_rotation_object_list = []
-
 		act.export_dir = ""
 
-		#FBX Scale Mode depends selected Target Engine
+		#FBX Export Scale Mode depends selected Target Engine
 		fbx_scale_mode = 'FBX_SCALE_ALL'
 		if act.export_target_engine == 'UNREAL':
 			fbx_scale_mode = 'FBX_SCALE_NONE'
 
-		if act.fbx_export_mode == '1':
+		if act.fbx_export_mode == 'ALL':
 			if act.set_custom_fbx_name:
 				if len(act.custom_fbx_name) == 0:
 					self.report({'INFO'}, 'Custom Name can\'t be empty')
@@ -58,43 +57,55 @@ class Multi_FBX_export(Operator):
 			start_active_obj = bpy.context.active_object
 			current_selected_obj = bpy.context.selected_objects
 
-			if act.delete_mats_before_export:
-				for o in current_selected_obj:
-					if o.type == 'MESH' and len(o.data.materials) > 0:
-						for q in reversed(range(len(o.data.materials))):
-							bpy.context.object.active_material_index = q
-							o.data.materials.pop(index = q)
-			
 			#Check "Pivot Point Align" option and disable it
 			current_pivot_point_align = bpy.context.scene.tool_settings.use_transform_pivot_point_align
-
 			if current_pivot_point_align:
 				bpy.context.scene.tool_settings.use_transform_pivot_point_align = False
 			
 			#Save Cursor Location and Pivot Point Mode
 			saved_cursor_loc = bpy.context.scene.cursor.location.copy()
 			current_pivot_point = bpy.context.scene.tool_settings.transform_pivot_point
-			
+
 			#Name for FBX
 			name = bpy.context.active_object.name
-			
+
 			#Filtering Selected Objects. Exclude All not meshes, empties and armatures
 			bpy.ops.object.select_all(action='DESELECT')
 			for x in current_selected_obj:
 				if x.type == 'MESH' or x.type == 'EMPTY' or x.type == 'ARMATURE':
 					x.select_set(True)
 			current_selected_obj = bpy.context.selected_objects
+
+			for obj in current_selected_obj:
+				obj.name += "_ex"
+				obj.data.name += "_ex"
+
+			bpy.ops.object.duplicate()
+			exp_objects = bpy.context.selected_objects
+
+			bpy.ops.object.convert(target='MESH')
+			bpy.ops.object.make_single_user(type='SELECTED_OBJECTS', object=True, obdata=True)
+
+			for obj in exp_objects:
+				obj.name = obj.name[:-7]
+				obj.data.name = obj.name
 			
+			if act.delete_mats_before_export:
+				for o in exp_objects:
+					if o.type == 'MESH' and len(o.data.materials) > 0:
+						for q in reversed(range(len(o.data.materials))):
+							bpy.context.object.active_material_index = q
+							o.data.materials.pop(index = q)	
+
 			#Apply Scale
 			if act.apply_scale:
 				bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
-				bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
-
+			
 			#Rotation Fix. Rotate X -90, Apply, Rotate X 90
 			if act.apply_rot:
 				bpy.context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
 				#Operate only with higher level parents 
-				for x in current_selected_obj:
+				for x in exp_objects:
 					bpy.ops.object.select_all(action='DESELECT')
 					if x.parent == None:
 						x.select_set(True)
@@ -106,33 +117,28 @@ class Multi_FBX_export(Operator):
 							if abs(y.rotation_euler.x) + abs(y.rotation_euler.y) + abs(y.rotation_euler.z) > 0.017:
 								child_rotated = True
 
-						print(x.name)
-						print(child_rotated)
-
 						bpy.ops.object.select_all(action='DESELECT')
 						x.select_set(True)
 
 						# X-rotation fix
-						if act.apply_rot_rotated or (not act.apply_rot_rotated and not child_rotated) or not act.fbx_export_mode == '2':
+						if act.apply_rot_rotated or (not act.apply_rot_rotated and not child_rotated) or not act.fbx_export_mode == 'PARENT':
 							bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
 							bpy.ops.transform.rotate(value= (math.pi * -90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)						
 							bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
 							bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
-							
-							for n in bpy.context.selected_objects:
-								apply_rotation_object_list.append(n)
 							
 							bpy.ops.object.select_all(action='DESELECT')
 							x.select_set(True)
 							bpy.ops.transform.rotate(value= (math.pi * 90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
 
 			bpy.ops.object.select_all(action='DESELECT')
-			for x in current_selected_obj:
+
+			for x in exp_objects:
 				if x.type == 'MESH' or x.type == 'EMPTY' or x.type == 'ARMATURE':
 					x.select_set(True)
 
 			#Export All as one fbx
-			if act.fbx_export_mode == '1':
+			if act.fbx_export_mode == 'ALL':
 				if act.set_custom_fbx_name:
 					name = act.custom_fbx_name
 				
@@ -148,8 +154,8 @@ class Multi_FBX_export(Operator):
 						bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_NONE', mesh_smooth_type='FACE', use_tspace=True)
 
 			#Individual Export
-			if act.fbx_export_mode == '0':
-				for x in current_selected_obj:
+			if act.fbx_export_mode == 'INDIVIDUAL':
+				for x in exp_objects:
 					bpy.context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
 					# Select only current object
 					bpy.ops.object.select_all(action='DESELECT')
@@ -184,9 +190,9 @@ class Multi_FBX_export(Operator):
 						bpy.ops.view3d.snap_selected_to_cursor(use_offset=True)
 			
 			#Export By Parents
-			if act.fbx_export_mode == '2':
+			if act.fbx_export_mode == 'PARENT':
 				bpy.ops.object.select_all(action='DESELECT')
-				for x in current_selected_obj:
+				for x in exp_objects:
 					if x.parent == None:
 						x.select_set(True)
 				parent_obj = bpy.context.selected_objects
@@ -230,7 +236,7 @@ class Multi_FBX_export(Operator):
 						bpy.ops.view3d.snap_selected_to_cursor(use_offset=True)
 			
 			#Export by Collection
-			if act.fbx_export_mode == '3':
+			if act.fbx_export_mode == 'COLLECTION':
 
 				#Collect used collections
 				used_collections = []
@@ -265,24 +271,18 @@ class Multi_FBX_export(Operator):
 				bpy.ops.object.select_all(action='DESELECT')
 
 
-			#Apply Rotation
-			if act.apply_rot:
-				bpy.ops.object.select_all(action='DESELECT')
-				
-				if act.apply_rot_rotated or not act.fbx_export_mode == '2':
-					for i in start_selected_obj:
-						i.select_set(True)
-				else:		
-					for i in apply_rotation_object_list:
-						i.select_set(True)
+			bpy.ops.object.select_all(action='DESELECT')
+			for obj in exp_objects:
+				obj.select_set(True)
 
-				bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
-				bpy.ops.object.select_all(action='DESELECT')
-			
+			bpy.ops.object.delete()			
 
 			#Select again objects and set active object
 			bpy.ops.object.select_all(action='DESELECT')
+			
 			for j in start_selected_obj:
+				j.name = j.name[:-3]
+				j.data.name = j.data.name[:-3]
 				j.select_set(True)
 	
 			bpy.context.view_layer.objects.active = start_active_obj
@@ -302,7 +302,7 @@ class Multi_FBX_export(Operator):
 
 #-------------------------------------------------------
 #Open Export Directory
-class OpenExportDir(Operator):
+class OpenExportDir(bpy.types.Operator):
 	"""Open Export Directory in OS"""
 	bl_idname = "object.open_export_dir"
 	bl_label = "Open Export Directory in OS"
@@ -325,13 +325,13 @@ class OpenExportDir(Operator):
 
 #-------------------------------------------------------
 #Batch Import FBX and OBJ
-class ImportFBXOBJ(Operator, ImportHelper):
+class ImportFBXOBJ(bpy.types.Operator, ImportHelper):
 	"""Batch Import FBX and OBJ"""
 	bl_idname = "object.import_fbxobj"
 	bl_label = "Import FBXs/OBJs"
 	bl_options = {'REGISTER', 'UNDO'}
-	files: CollectionProperty(name="File Path", type=OperatorFileListElement)
-	directory: StringProperty(subtype="DIR_PATH")
+	files: bpy.props.CollectionProperty(name="File Path", type=bpy.types.OperatorFileListElement)
+	directory: bpy.props.StringProperty(subtype="DIR_PATH")
 	
 	def execute(self, context):
 		directory = self.directory
@@ -346,7 +346,7 @@ class ImportFBXOBJ(Operator, ImportHelper):
 
 
 classes = (
-	Multi_FBX_export,
+	Multi_FBX_Export,
 	OpenExportDir,
 	ImportFBXOBJ,
 )	

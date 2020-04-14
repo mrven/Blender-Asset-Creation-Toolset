@@ -2,7 +2,7 @@ import bpy
 
 #-------------------------------------------------------
 #Palette Texture Creator
-class PaletteCreate(Operator):
+class PaletteCreate(bpy.types.Operator):
 	"""Palette Texture Creator"""
 	bl_idname = "object.palette_creator"
 	bl_label = "Palette Texture Creator"
@@ -294,7 +294,7 @@ class PaletteCreate(Operator):
 
 #-------------------------------------------------------
 #UV-Remover
-class UVremove(Operator):
+class UVremove(bpy.types.Operator):
 	"""Remove UV layer"""
 	bl_idname = "object.uv_remove"
 	bl_label = "Remove UV layer"
@@ -322,7 +322,7 @@ class UVremove(Operator):
 
 #-------------------------------------------------------
 #Clear Vertex Colors
-class ClearVertexColors(Operator):
+class ClearVertexColors(bpy.types.Operator):
 	"""# Clear Vertex Colors"""
 	bl_idname = "object.clear_vc"
 	bl_label = "# Clear Vertex Colors"
@@ -350,7 +350,7 @@ class ClearVertexColors(Operator):
 
 #-------------------------------------------------------
 #Material Color to Viewport Color
-class MaterialToViewport(Operator):
+class MaterialToViewport(bpy.types.Operator):
 	"""Material Color to Viewport Color"""
 	bl_idname = "object.material_to_viewport"
 	bl_label = "Material Color to Viewport Color"

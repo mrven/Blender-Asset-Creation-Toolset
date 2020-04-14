@@ -3,7 +3,7 @@ import bpy
 
 #-------------------------------------------------------
 #Panels
-class VIEW3D_PT_Origin_Tools_panel(Panel):
+class VIEW3D_PT_Origin_Tools_panel(bpy.types.Panel):
 	bl_label = "Origin Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -106,7 +106,7 @@ class VIEW3D_PT_Origin_Tools_panel(Panel):
 			row = layout.row()
 			row.label(text=" ")
 
-class VIEW3D_PT_Rename_Tools_panel(Panel):
+class VIEW3D_PT_Rename_Tools_panel(bpy.types.Panel):
 	bl_label = "Rename Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -193,7 +193,7 @@ class VIEW3D_PT_Rename_Tools_panel(Panel):
 			row = layout.row()
 			row.label(text=" ")
 				
-class VIEW3D_PT_ImportExport_Tools_panel(Panel):
+class VIEW3D_PT_ImportExport_Tools_panel(bpy.types.Panel):
 	bl_label = "Import/Export Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -237,7 +237,7 @@ class VIEW3D_PT_ImportExport_Tools_panel(Panel):
 				
 				layout.prop(act, "apply_rot", text="Rotation")
 
-				if act.apply_rot and act.fbx_export_mode == '2':
+				if act.apply_rot and act.fbx_export_mode == 'PARENT':
 						#Split row
 						row = layout.row()
 						c = row.column()
@@ -252,14 +252,14 @@ class VIEW3D_PT_ImportExport_Tools_panel(Panel):
 
 				layout.prop(act, "apply_scale", text="Scale")
 				
-				if act.fbx_export_mode == '0' or act.fbx_export_mode == '2':
+				if act.fbx_export_mode == 'INDIVIDUAL' or act.fbx_export_mode == 'PARENT':
 					layout.prop(act, "apply_loc", text="Location")
 				
 				row = layout.row()
 				layout.prop(act, "delete_mats_before_export", text="Delete All Materials")
 
 				row = layout.row()
-				if act.fbx_export_mode == '1':
+				if act.fbx_export_mode == 'ALL':
 					layout.prop(act, "set_custom_fbx_name", text="Custom Name for FBX")
 					if act.set_custom_fbx_name:
 						#Split row
@@ -358,7 +358,7 @@ class VIEW3D_PT_ImportExport_Tools_panel(Panel):
 			row = layout.row()
 			row.label(text=" ")
 				
-class VIEW3D_PT_LowPolyArt_Tools_panel(Panel):
+class VIEW3D_PT_LowPolyArt_Tools_panel(bpy.types.Panel):
 	bl_label = "Low Poly Art Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -388,7 +388,7 @@ class VIEW3D_PT_LowPolyArt_Tools_panel(Panel):
 				row.operator("object.clear_vc", text="Clear Vertex Colors")
 				layout.separator()
 
-class VIEW3D_PT_Other_Tools_panel(Panel):
+class VIEW3D_PT_Other_Tools_panel(bpy.types.Panel):
 	bl_label = "Other Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -439,7 +439,7 @@ class VIEW3D_PT_Other_Tools_panel(Panel):
 				row = layout.row()
 				row.operator("object.merge_bones", text="Merge Bones")
 
-class VIEW3D_PT_Uv_Mover_panel(Panel):
+class VIEW3D_PT_Uv_Mover_panel(bpy.types.Panel):
 	bl_label = "UV Mover"
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = "UI"

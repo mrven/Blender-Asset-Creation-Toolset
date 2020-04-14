@@ -3,12 +3,12 @@ import bpy
 
 #-------------------------------------------------------
 #UV Mover
-class UV_Mover(Operator):
+class UV_Mover(bpy.types.Operator):
 	"""UV Mover"""
 	bl_idname = "uv.uv_mover"
 	bl_label = "Move and Scale UV islands"
 	bl_options = {'REGISTER', 'UNDO'}
-	Value: StringProperty()
+	Value: bpy.props.StringProperty()
 	
 	def execute(self, context):
 		act = context.scene.act

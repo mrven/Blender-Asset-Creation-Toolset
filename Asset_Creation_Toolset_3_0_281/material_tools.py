@@ -2,7 +2,7 @@ import bpy
 
 #-------------------------------------------------------
 #Assign Materials in MultiEdit
-class AssignMultieditMaterials(Operator):
+class AssignMultieditMaterials(bpy.types.Operator):
 	"""Assign Materials for some objects in MultiEdit Mode"""
 	bl_idname = "object.assign_multiedit_materials"
 	bl_label = "Assign Materials for some objects"

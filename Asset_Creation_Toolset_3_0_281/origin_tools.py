@@ -5,12 +5,12 @@ from . import utils
 
 
 #------------------Align Origin To Min-------------------------------
-class AlignMin(Operator):
+class AlignMin(bpy.types.Operator):
 	"""Origin To Min """
 	bl_idname = "object.align_min"
 	bl_label = "Origin To Min"
 	bl_options = {'REGISTER', 'UNDO'}
-	TypeAlign: StringProperty()
+	TypeAlign: bpy.props.StringProperty()
 	
 	def execute(self, context):
 		act = context.scene.act
@@ -87,12 +87,12 @@ class AlignMin(Operator):
 	
 
 #------------------Align Origin To Max-------------------------------
-class AlignMax(Operator):
+class AlignMax(bpy.types.Operator):
 	"""Origin To Max """
 	bl_idname = "object.align_max"
 	bl_label = "Origin To Max"
 	bl_options = {'REGISTER', 'UNDO'}
-	TypeAlign: StringProperty()
+	TypeAlign: bpy.props.StringProperty()
 	
 	def execute(self, context):
 		act = context.scene.act
@@ -169,12 +169,12 @@ class AlignMax(Operator):
 
 	
 #------------------Align Cursor------------------
-class AlignCur(Operator):
+class AlignCur(bpy.types.Operator):
 	"""Origin Align To Cursor"""
 	bl_idname = "object.align_cur"
 	bl_label = "Origin To Cursor"
 	bl_options = {'REGISTER', 'UNDO'}
-	TypeAlign: StringProperty()
+	TypeAlign: bpy.props.StringProperty()
 	
 	def execute(self, context):
 		act = context.scene.act
@@ -222,12 +222,12 @@ class AlignCur(Operator):
 
 
 #------------------Align Coordinate------------------ 
-class AlignCo(Operator):
+class AlignCo(bpy.types.Operator):
 	"""Origin Align To Spec Coordinate"""
 	bl_idname = "object.align_co"
 	bl_label = "Origin Align To Spec Coordinate"
 	bl_options = {'REGISTER', 'UNDO'}
-	TypeAlign: StringProperty()
+	TypeAlign: bpy.props.StringProperty()
 
 	def execute(self, context):
 		act = context.scene.act
@@ -285,7 +285,7 @@ class AlignCo(Operator):
 
 #-------------------------------------------------------
 #Set Origin To Selection
-class SetOriginToSelect(Operator):
+class SetOriginToSelect(bpy.types.Operator):
 	"""Set Origin To Selection"""
 	bl_idname = "object.set_origin_to_select"
 	bl_label = "Set Origin To Selection"

@@ -5,10 +5,12 @@ from bpy.props import (
 		EnumProperty,
         BoolProperty,
         PointerProperty,
+        FloatProperty,
+        IntProperty,
         )
 
 
-class ACTAddonProps(PropertyGroup):
+class ACTAddonProps(bpy.types.PropertyGroup):
 	old_text: StringProperty(
 		name="",
 		description="Text for search",
@@ -72,7 +74,7 @@ class ACTAddonProps(PropertyGroup):
 	orientation_menu_items = (('0','GLOBAL',''),('1','LOCAL',''))
 	orientation_select: EnumProperty(name="", items = orientation_menu_items)
 
-	fbx_export_mode_menu_items = (('0','1 Obj->1 FBX',''),('1','All->One FBX',''),('2','By Parent',''),('3','By Collection',''))
+	fbx_export_mode_menu_items = (('INDIVIDUAL','1 Obj->1 FBX',''),('ALL','All->One FBX',''),('PARENT','By Parent',''),('COLLECTION','By Collection',''))
 	fbx_export_mode: EnumProperty(name="", items = fbx_export_mode_menu_items)
 	
 	uv_move_factor_items = (('1','2',''),('2','4',''), ('3','8',''), ('4','16',''), ('5','32',''))

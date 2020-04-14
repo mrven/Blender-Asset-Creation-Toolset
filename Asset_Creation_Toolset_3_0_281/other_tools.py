@@ -3,7 +3,7 @@ import bpy
 
 #-------------------------------------------------------
 #Clear Custom Split Normals
-class ClearNormals(Operator):
+class ClearNormals(bpy.types.Operator):
 	"""Clear Custom Split Normals"""
 	bl_idname = "object.clear_normals"
 	bl_label = "Clear Custom Split Normals"
@@ -31,7 +31,7 @@ class ClearNormals(Operator):
 		
 #-------------------------------------------------------
 #Recalculate Normals
-class CalcNormals(Operator):
+class CalcNormals(bpy.types.Operator):
 	"""Recalculate Normals"""
 	bl_idname = "object.calc_normals"
 	bl_label = "Flip/Calculate Normals"
@@ -68,7 +68,7 @@ class CalcNormals(Operator):
 
 #-------------------------------------------------------
 #Obj Name to Mesh Name
-class ObjNameToMeshName(Operator):
+class ObjNameToMeshName(bpy.types.Operator):
 	"""Obj Name to Mesh Name"""
 	bl_idname = "object.objname_to_meshname"
 	bl_label = "Obj Name to Mesh Name"
@@ -85,7 +85,7 @@ class ObjNameToMeshName(Operator):
 
 #-------------------------------------------------------
 #Delete Unused Materials
-class DeleteUnusedMaterials(Operator):
+class DeleteUnusedMaterials(bpy.types.Operator):
 	"""Delete from Objects Unused Materials and Slots"""
 	bl_idname = "object.delete_unused_materials"
 	bl_label = "Delete Unused Materials"

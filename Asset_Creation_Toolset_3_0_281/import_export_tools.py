@@ -145,7 +145,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 				#Export FBX
 				if act.export_custom_options:
 					bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = fbx_scale_mode, 
-							use_mesh_modifiers=act.export_apply_modifiers, mesh_smooth_type=act.export_smoothing, 
+							use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing, 
 								use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space)
 				else:
 					if act.export_target_engine == 'UNITY':
@@ -176,7 +176,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 					#Export FBX
 					if act.export_custom_options:
 						bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = fbx_scale_mode, 
-							use_mesh_modifiers=act.export_apply_modifiers, mesh_smooth_type=act.export_smoothing, 
+							use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing, 
 								use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space)
 					else:
 						if act.export_target_engine == 'UNITY':
@@ -219,7 +219,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 					#Export FBX
 					if act.export_custom_options:
 						bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = fbx_scale_mode, 
-							use_mesh_modifiers=act.export_apply_modifiers, mesh_smooth_type=act.export_smoothing, 
+							use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing, 
 								use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space)
 					else:
 						if act.export_target_engine == 'UNITY':
@@ -260,7 +260,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 					#Export FBX
 					if act.export_custom_options:
 						bpy.ops.export_scene.fbx(filepath=str(path + c + '.fbx'), use_selection=True, apply_scale_options = fbx_scale_mode, 
-							use_mesh_modifiers=act.export_apply_modifiers, mesh_smooth_type=act.export_smoothing, 
+							use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing, 
 								use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space)
 					else:
 						if act.export_target_engine == 'UNITY':
@@ -302,7 +302,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 #-------------------------------------------------------
 #Open Export Directory
-class OpenExportDir(bpy.types.Operator):
+class Open_Export_Dir(bpy.types.Operator):
 	"""Open Export Directory in OS"""
 	bl_idname = "object.open_export_dir"
 	bl_label = "Open Export Directory in OS"
@@ -310,6 +310,12 @@ class OpenExportDir(bpy.types.Operator):
 
 	def execute(self, context):
 		act = context.scene.act
+
+		if not os.path.exists(os.path.realpath(bpy.path.abspath(act.export_path))):
+			act.export_dir = "";
+			self.report({'INFO'}, 'Directory not exist')
+
+			return {'CANCELLED'}
 
 		if len(act.export_dir) > 0:
 			try:
@@ -325,7 +331,7 @@ class OpenExportDir(bpy.types.Operator):
 
 #-------------------------------------------------------
 #Batch Import FBX and OBJ
-class ImportFBXOBJ(bpy.types.Operator, ImportHelper):
+class Import_FBX_OBJ(bpy.types.Operator, ImportHelper):
 	"""Batch Import FBX and OBJ"""
 	bl_idname = "object.import_fbxobj"
 	bl_label = "Import FBXs/OBJs"
@@ -347,8 +353,8 @@ class ImportFBXOBJ(bpy.types.Operator, ImportHelper):
 
 classes = (
 	Multi_FBX_Export,
-	OpenExportDir,
-	ImportFBXOBJ,
+	Open_Export_Dir,
+	Import_FBX_OBJ,
 )	
 
 

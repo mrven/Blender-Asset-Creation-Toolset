@@ -18,6 +18,12 @@ class VIEW3D_PT_Origin_Tools_panel(bpy.types.Panel):
 		
 		layout = self.layout
 		if context.object is not None:
+			
+			'''
+			row = layout.row()
+			row.operator("uv.test_call_menu", text="Show Texture List")
+			'''
+
 			if context.mode == 'OBJECT':
 				row = layout.row()
 				row.label(text="Origin Align")
@@ -402,7 +408,8 @@ class VIEW3D_PT_Other_Tools_panel(bpy.types.Panel):
 		act = context.scene.act
 		
 		layout = self.layout
-		row = layout.row()		
+		row = layout.row()	
+
 		if context.object is not None:
 			if context.object.mode == 'EDIT':
 				row = layout.row()
@@ -527,14 +534,33 @@ def Material_Menu_Panel(self, context):
 				row = layout.row()		
 				row.operator("object.assign_multiedit_materials", text="Active Material -> Selected")
 
+class Select_Texture_Menu(bpy.types.Menu):
+	bl_idname = "UV_MT_select_texture"
+	bl_label = "Select Texture"
+
+	def draw(self, context):
+		layout = self.layout
+		if bpy.context.active_object.type == 'MESH':
+			if len(bpy.context.active_object.data.materials) > 0:
+				for node in bpy.context.active_object.active_material.node_tree.nodes:
+					if node.type == 'TEX_IMAGE':
+						texture_name = node.image.name_full
+						row = layout.row()
+						row.operator("uv.texture_from_material", text=texture_name).texture_name=texture_name
+			else:
+				row.label("Mesh has not materials")
+		else:
+			row.label("Object is not mesh")
+
 
 classes = (
-    VIEW3D_PT_Origin_Tools_panel,
+	VIEW3D_PT_Origin_Tools_panel,
 	VIEW3D_PT_Rename_Tools_panel,
 	VIEW3D_PT_ImportExport_Tools_panel,
 	VIEW3D_PT_LowPolyArt_Tools_panel,
 	VIEW3D_PT_Other_Tools_panel,
 	VIEW3D_PT_Uv_Mover_panel,
+	Select_Texture_Menu
 )	
 
 

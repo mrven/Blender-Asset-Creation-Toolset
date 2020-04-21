@@ -168,11 +168,6 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 		description="Custom FBX Export Options",
 		default = False)
 
-	export_apply_modifiers: BoolProperty(
-		name="Apply Modifiers",
-		description="Apply Modifiers",
-		default = True)
-
 	export_loose_edges: BoolProperty(
 		name="Loose Edges",
 		description="Loose Edges",

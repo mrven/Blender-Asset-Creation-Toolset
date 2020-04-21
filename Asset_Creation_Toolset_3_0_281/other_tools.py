@@ -1,5 +1,7 @@
 import bpy
 
+from bpy.props import StringProperty
+
 
 #-------------------------------------------------------
 #Clear Custom Split Normals
@@ -112,11 +114,43 @@ class DeleteUnusedMaterials(bpy.types.Operator):
 		return {'FINISHED'}
 
 
+
+#-------------------------------------------------------
+#Select Texture In UV Editor From Active Material
+class Texture_From_Active_Material(bpy.types.Operator):
+	"""Select Texture In UV Editor From Active Material"""
+	bl_idname = "uv.texture_from_material"
+	bl_label = "Select Texture In UV Editor From Active Material"
+	bl_options = {'REGISTER', 'UNDO'}
+	texture_name: StringProperty()
+
+	def execute(self, context):
+		for area in bpy.context.screen.areas:
+			if area.type == "IMAGE_EDITOR":
+				area.spaces[0].image = bpy.data.images[self.texture_name]
+		
+		return {'FINISHED'}		
+
+#-------------------------------------------------------
+#Select Texture In UV Editor From Active Material
+class Test_Call_Menu(bpy.types.Operator):
+	"""Select Texture In UV Editor From Active Material"""
+	bl_idname = "uv.test_call_menu"
+	bl_label = "Select Texture In UV Editor From Active Material"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		bpy.ops.wm.call_menu(name="UV_MT_select_texture")
+		
+		return {'FINISHED'}	
+
 classes = (
 	ClearNormals,
 	CalcNormals,
 	ObjNameToMeshName,
 	DeleteUnusedMaterials,
+	Texture_From_Active_Material,
+	Test_Call_Menu,
 )	
 
 

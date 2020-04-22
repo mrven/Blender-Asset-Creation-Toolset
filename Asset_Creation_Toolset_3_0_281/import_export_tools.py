@@ -351,10 +351,179 @@ class Import_FBX_OBJ(bpy.types.Operator, ImportHelper):
 		return {'FINISHED'}
 
 
+#-------------------------------------------------------
+#Import Export UI Panel
+class VIEW3D_Import_Export_Tools_Panel(bpy.types.Panel):
+	bl_label = "Import/Export Tools"
+	bl_space_type = "VIEW_3D"
+	bl_region_type = "UI"
+	bl_category = "ACT"
+
+	@classmethod
+	def poll(self, context):
+		return (context.object is None or (context.object is not None and context.object.mode == 'OBJECT'))
+
+	def draw(self, context):
+		act = context.scene.act
+		
+		layout = self.layout	
+		if context.object is not None:
+			if context.mode == 'OBJECT':
+				#Split row
+				row = layout.row()
+				c = row.column()
+				row = c.row()
+				split = row.split(factor=0.5, align=True)
+				c = split.column()
+				c.label(text="Export Mode:")
+				split = split.split()
+				c = split.column()
+				c.prop(act, 'fbx_export_mode', expand=False)
+				#----
+				#Split row
+				row = layout.row()
+				c = row.column()
+				row = c.row()
+				split = row.split(factor=0.5, align=True)
+				c = split.column()
+				c.label(text="Target Engine:")
+				split = split.split()
+				c = split.column()
+				c.prop(act, "export_target_engine", expand=False)
+				#----
+
+				row = layout.row()
+				layout.label(text="Apply:")
+				
+				layout.prop(act, "apply_rot", text="Rotation")
+
+				if act.apply_rot and act.fbx_export_mode == 'PARENT':
+						#Split row
+						row = layout.row()
+						c = row.column()
+						row = c.row()
+						split = row.split(factor=0.05, align=True)
+						c = split.column()
+						c.label(text="")
+						split = split.split()
+						c = split.column()
+						c.prop(act, "apply_rot_rotated")
+						#----
+
+				layout.prop(act, "apply_scale", text="Scale")
+				
+				if act.fbx_export_mode == 'INDIVIDUAL' or act.fbx_export_mode == 'PARENT':
+					layout.prop(act, "apply_loc", text="Location")
+				
+				row = layout.row()
+				layout.prop(act, "delete_mats_before_export", text="Delete All Materials")
+
+				row = layout.row()
+				if act.fbx_export_mode == 'ALL':
+					layout.prop(act, "set_custom_fbx_name", text="Custom Name for FBX")
+					if act.set_custom_fbx_name:
+						#Split row
+						row = layout.row()
+						c = row.column()
+						row = c.row()
+						split = row.split(factor=0.5, align=True)
+						c = split.column()
+						c.label(text="FBX Name:")
+						split = split.split()
+						c = split.column()
+						c.prop(act, "custom_fbx_name")
+						#----
+
+				row = layout.row()
+				layout.prop(act, "export_custom_options", text="Custom Export Options")
+				if act.export_custom_options:
+					#Split row
+					row = layout.row()
+					c = row.column()
+					row = c.row()
+					split = row.split(factor=0.45, align=True)
+					c = split.column()
+					c.label(text=" Smoothing:")
+					split = split.split()
+					c = split.column()
+					c.prop(act, "export_smoothing", expand=False)
+					#----
+					#Split row
+					row = layout.row()
+					c = row.column()
+					row = c.row()
+					split = row.split(factor=0.8, align=True)
+					c = split.column()
+					c.label(text=" Apply Modifiers")
+					split = split.split()
+					c = split.column()
+					c.prop(act, "export_apply_modifiers", text="")
+					#----
+					#Split row
+					row = layout.row()
+					c = row.column()
+					row = c.row()
+					split = row.split(factor=0.8, align=True)
+					c = split.column()
+					c.label(text=" Loose Edges")
+					split = split.split()
+					c = split.column()
+					c.prop(act, "export_loose_edges",text="")
+					#----
+					#Split row
+					row = layout.row()
+					c = row.column()
+					row = c.row()
+					split = row.split(factor=0.8, align=True)
+					c = split.column()
+					c.label(text=" Tangent Space")
+					split = split.split()
+					c = split.column()
+					c.prop(act, "export_tangent_space", text="")
+					#----
+
+				row = layout.row()
+				layout.prop(act, "custom_export_path", text="Custom Export Path")
+				if act.custom_export_path:
+					#Split row
+					row = layout.row()
+					c = row.column()
+					row = c.row()
+					split = row.split(factor=0.5, align=True)
+					c = split.column()
+					c.label(text="Export Path:")
+					split = split.split()
+					c = split.column()
+					c.prop(act, "export_path")
+					#----
+
+				
+				row = layout.row()
+				if act.export_target_engine == 'UNITY':
+					row.operator("object.multi_fbx_export", text="Export FBX to Unity")
+				else:
+					row.operator("object.multi_fbx_export", text="Export FBX to Unreal")
+				row = layout.row()
+
+				if len(act.export_dir) > 0:
+					row = layout.row()
+					row.operator("object.open_export_dir", text="Open Export Directory")
+					row = layout.row()
+		
+		if context.mode == 'OBJECT':
+			row = layout.row()
+			row.operator("object.import_fbxobj", text="Import FBXs/OBJs")
+
+		else:
+			row = layout.row()
+			row.label(text=" ")
+
+
 classes = (
 	Multi_FBX_Export,
 	Open_Export_Dir,
 	Import_FBX_OBJ,
+	VIEW3D_Import_Export_Tools_Panel,
 )	
 
 

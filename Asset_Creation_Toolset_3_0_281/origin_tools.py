@@ -1,11 +1,10 @@
 import bpy
 
-
 from . import utils
 
 
 #------------------Align Origin To Min-------------------------------
-class AlignMin(bpy.types.Operator):
+class Align_Min(bpy.types.Operator):
 	"""Origin To Min """
 	bl_idname = "object.align_min"
 	bl_label = "Origin To Min"
@@ -87,7 +86,7 @@ class AlignMin(bpy.types.Operator):
 	
 
 #------------------Align Origin To Max-------------------------------
-class AlignMax(bpy.types.Operator):
+class Align_Max(bpy.types.Operator):
 	"""Origin To Max """
 	bl_idname = "object.align_max"
 	bl_label = "Origin To Max"
@@ -169,7 +168,7 @@ class AlignMax(bpy.types.Operator):
 
 	
 #------------------Align Cursor------------------
-class AlignCur(bpy.types.Operator):
+class Align_Cur(bpy.types.Operator):
 	"""Origin Align To Cursor"""
 	bl_idname = "object.align_cur"
 	bl_label = "Origin To Cursor"
@@ -222,7 +221,7 @@ class AlignCur(bpy.types.Operator):
 
 
 #------------------Align Coordinate------------------ 
-class AlignCo(bpy.types.Operator):
+class Align_Co(bpy.types.Operator):
 	"""Origin Align To Spec Coordinate"""
 	bl_idname = "object.align_co"
 	bl_label = "Origin Align To Spec Coordinate"
@@ -285,7 +284,7 @@ class AlignCo(bpy.types.Operator):
 
 #-------------------------------------------------------
 #Set Origin To Selection
-class SetOriginToSelect(bpy.types.Operator):
+class Set_Origin_To_Select(bpy.types.Operator):
 	"""Set Origin To Selection"""
 	bl_idname = "object.set_origin_to_select"
 	bl_label = "Set Origin To Selection"
@@ -305,12 +304,125 @@ class SetOriginToSelect(bpy.types.Operator):
 		return {'FINISHED'} 	
 
 
+#-------------------------------------------------------
+#Origin Tools UI Panel
+class VIEW3D_Origin_Tools_Panel(bpy.types.Panel):
+	bl_label = "Origin Tools"
+	bl_space_type = "VIEW_3D"
+	bl_region_type = "UI"
+	bl_category = "ACT"
+
+	@classmethod
+	def poll(self, context):
+		return (context.object is not None and (context.mode == 'OBJECT' or context.mode == 'EDIT_MESH'))
+
+	def draw(self, context):
+		act = context.scene.act
+		
+		layout = self.layout
+		if context.object is not None:
+			
+			'''
+			row = layout.row()
+			row.operator("uv.test_call_menu", text="Show Texture List")
+			'''
+
+			if context.mode == 'OBJECT':
+				row = layout.row()
+				row.label(text="Origin Align")
+				row = layout.row()
+				row.prop(act, "align_co", text="Coordinate")
+				row = layout.row()
+				row.prop(act, "align_geom_to_orig", text="Geometry To Origin")
+				
+				#--Aligner Labels----
+				row = layout.row()
+				c = row.column()
+				row = c.row()
+				split = row.split(factor=0.33, align=True)
+				c = split.column()
+				c.label(text="X")
+				split = split.split(factor=0.5, align=True)
+				c = split.column()
+				c.label(text="Y")
+				split = split.split()
+				c = split.column()
+				c.label(text="Z")
+				
+				#--Aligner Min Buttons----
+				row = layout.row()
+				c = row.column()
+				row = c.row()
+				split = row.split(factor=0.33, align=True)
+				c = split.column()
+				c.operator("object.align_min", text="Min").TypeAlign='X'
+				split = split.split(factor=0.5, align=True)
+				c = split.column()
+				c.operator("object.align_min", text="Min").TypeAlign='Y'
+				split = split.split()
+				c = split.column()
+				c.operator("object.align_min", text="Min").TypeAlign='Z'
+				
+				#--Aligner Max Buttons----
+				row = layout.row()
+				c = row.column()
+				row = c.row()
+				split = row.split(factor=0.33, align=True)
+				c = split.column()
+				c.operator("object.align_max", text="Max").TypeAlign='X'
+				split = split.split(factor=0.5, align=True)
+				c = split.column()
+				c.operator("object.align_max", text="Max").TypeAlign='Y'
+				split = split.split()
+				c = split.column()
+				c.operator("object.align_max", text="Max").TypeAlign='Z'
+				
+				#--Aligner Cursor Buttons----
+				row = layout.row()
+				c = row.column()
+				row = c.row()
+				split = row.split(factor=0.33, align=True)
+				c = split.column()
+				c.operator("object.align_cur", text="Cursor").TypeAlign='X'
+				split = split.split(factor=0.5, align=True)
+				c = split.column()
+				c.operator("object.align_cur", text="Cursor").TypeAlign='Y'
+				split = split.split()
+				c = split.column()
+				c.operator("object.align_cur", text="Cursor").TypeAlign='Z'
+				
+				#--Aligner Coordinates Buttons----
+				row = layout.row()
+				c = row.column()
+				row = c.row()
+				split = row.split(factor=0.33, align=True)
+				c = split.column()
+				c.operator("object.align_co", text="Coordinates").TypeAlign='X'
+				split = split.split(factor=0.5, align=True)
+				c = split.column()
+				c.operator("object.align_co", text="Coordinates").TypeAlign='Y'
+				split = split.split()
+				c = split.column()
+				c.operator("object.align_co", text="Coordinates").TypeAlign='Z'
+				
+		if context.object is not None:
+			if context.object.mode == 'EDIT':
+				row = layout.row()
+				row.operator("object.set_origin_to_select", text="Set Origin To Selected")
+				layout.separator()
+
+		else:
+			row = layout.row()
+			row.label(text=" ")
+
+
 classes = (
-	AlignMin,
-	AlignMax,
-	AlignCur,
-	AlignCo,
-	SetOriginToSelect,
+	Align_Min,
+	Align_Max,
+	Align_Cur,
+	Align_Co,
+	Set_Origin_To_Select,
+	VIEW3D_Origin_Tools_Panel,
 )	
 
 

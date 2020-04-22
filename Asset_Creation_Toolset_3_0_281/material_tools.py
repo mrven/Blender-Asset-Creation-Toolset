@@ -2,7 +2,7 @@ import bpy
 
 #-------------------------------------------------------
 #Assign Materials in MultiEdit
-class AssignMultieditMaterials(bpy.types.Operator):
+class Assign_Multiedit_Materials(bpy.types.Operator):
 	"""Assign Materials for some objects in MultiEdit Mode"""
 	bl_idname = "object.assign_multiedit_materials"
 	bl_label = "Assign Materials for some objects"
@@ -57,8 +57,19 @@ class AssignMultieditMaterials(bpy.types.Operator):
 		return {'FINISHED'}
 
 
+
+#-------------------------------------------------------
+#Material Assign UI Panel
+def Material_Menu_Panel(self, context):
+	if context.object is not None:
+			if context.object.mode == 'EDIT' and len(context.selected_objects) > 1:
+				layout = self.layout
+				row = layout.row()		
+				row.operator("object.assign_multiedit_materials", text="Active Material -> Selected")
+
+
 classes = (
-	AssignMultieditMaterials,
+	Assign_Multiedit_Materials,
 )	
 
 
@@ -66,7 +77,13 @@ def register():
 	for cls in classes:
 		bpy.utils.register_class(cls)
 
+	bpy.types.CYCLES_PT_context_material.prepend(Material_Menu_Panel)
+	bpy.types.EEVEE_MATERIAL_PT_context_material.prepend(Material_Menu_Panel)
+
 
 def unregister():
+	bpy.types.CYCLES_PT_context_material.remove(Material_Menu_Panel)
+	bpy.types.EEVEE_MATERIAL_PT_context_material.remove(Material_Menu_Panel)
+	
 	for cls in reversed(classes):
 		bpy.utils.unregister_class(cls)

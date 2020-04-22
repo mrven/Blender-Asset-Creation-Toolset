@@ -2,25 +2,23 @@ import bpy
 
 #-------------------------------------------------------
 #Palette Texture Creator
-class PaletteCreate(bpy.types.Operator):
+class Palette_Create(bpy.types.Operator):
 	"""Palette Texture Creator"""
 	bl_idname = "object.palette_creator"
 	bl_label = "Palette Texture Creator"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
-		#Yet NOT AVAILABLE
 		#Check Render Engine
-		if bpy.context.scene.render.engine != 'CYCLES':
-			self.report({'INFO'}, 'Select Cycles Render Engine')
-			return {'FINISHED'};
+		current_engine = bpy.context.scene.render.engine
+		bpy.context.scene.render.engine = 'CYCLES'
 
 		#check opened image editor window
-		IE_area = 0
+		ie_area = 0
 		flag_exist_area = False
 		for area in range(len(bpy.context.screen.areas)):
 			if bpy.context.screen.areas[area].type == 'IMAGE_EDITOR':
-				IE_area = area
+				ie_area = area
 				flag_exist_area = True
 				bpy.context.screen.areas[area].type = 'CONSOLE'
 
@@ -151,23 +149,19 @@ class PaletteCreate(bpy.types.Operator):
 		bpy.ops.object.mode_set(mode = 'OBJECT')
 
 		# check exist material for Baking
-		flag_exist_bake_mat = False
-		for a in range(len(bpy.data.materials)):
-			if bpy.data.materials[a].name == 'Palette_Bake':
-				bpy.data.materials.remove(bpy.data.materials[a])
+		for material in bpy.data.materials:
+			if material.name == 'Palette_Bake':
+				bpy.data.materials.remove(material)
 				
-
-		# create or not palette bake material
-		if flag_exist_bake_mat == False:
-			palette_bake_mat = bpy.data.materials.new('Palette_Bake')
+		palette_bake_mat = bpy.data.materials.new('Palette_Bake')
 
 		#Setup material for baking
 		bake_plane.data.materials.append(palette_bake_mat)
 		palette_bake_mat.use_nodes = True
-		Nodes = palette_bake_mat.node_tree.nodes
-		TexNode = Nodes.new('ShaderNodeTexImage')
-		TexNode.location = (-500,0)
-		TexNode.image = bpy.data.images['Palette_' + add_name_palette]
+		nodes = palette_bake_mat.node_tree.nodes
+		tex_node = nodes.new('ShaderNodeTexImage')
+		tex_node.location = (-500,0)
+		tex_node.image = bpy.data.images['Palette_' + add_name_palette]
 
 		#Bake Action
 		ob.select_set(True)
@@ -280,21 +274,33 @@ class PaletteCreate(bpy.types.Operator):
 		bpy.context.area.type = current_area
 
 		if flag_exist_area == True:
-			bpy.context.screen.areas[IE_area].type = 'IMAGE_EDITOR'
+			bpy.context.screen.areas[ie_area].type = 'IMAGE_EDITOR'
 
-		#Connect Texture to Shader Base Color and rename
-		palette_bake_mat.node_tree.links.new(TexNode.outputs['Color'], palette_bake_mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'])
-		palette_bake_mat.name = 'Palette_' + add_name_palette
+		atlas_material_exist = False
+		for material in bpy.data.materials:
+			if material.name_full == 'Palette_' + add_name_palette:
+				atlas_material_exist = True
+		
+		if not atlas_material_exist:
+			#Connect Texture to Shader Base Color and rename
+			palette_bake_mat.node_tree.links.new(tex_node.outputs['Color'], palette_bake_mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'])
+			palette_bake_mat.name = 'Palette_' + add_name_palette
 
-		#Delete Temp Material
+		#Delete Temp Materials
 		bpy.data.materials.remove(bpy.data.materials['Palette_background'])
+
+		for material in bpy.data.materials:
+			if material.name == 'Palette_Bake':
+				bpy.data.materials.remove(material)
+
+		bpy.context.scene.render.engine = current_engine
 
 		return {'FINISHED'}
 
 
 #-------------------------------------------------------
 #UV-Remover
-class UVremove(bpy.types.Operator):
+class UV_Remove(bpy.types.Operator):
 	"""Remove UV layer"""
 	bl_idname = "object.uv_remove"
 	bl_label = "Remove UV layer"
@@ -322,7 +328,7 @@ class UVremove(bpy.types.Operator):
 
 #-------------------------------------------------------
 #Clear Vertex Colors
-class ClearVertexColors(bpy.types.Operator):
+class Clear_Vertex_Colors(bpy.types.Operator):
 	"""# Clear Vertex Colors"""
 	bl_idname = "object.clear_vc"
 	bl_label = "# Clear Vertex Colors"
@@ -350,7 +356,7 @@ class ClearVertexColors(bpy.types.Operator):
 
 #-------------------------------------------------------
 #Material Color to Viewport Color
-class MaterialToViewport(bpy.types.Operator):
+class Material_To_Viewport(bpy.types.Operator):
 	"""Material Color to Viewport Color"""
 	bl_idname = "object.material_to_viewport"
 	bl_label = "Material Color to Viewport Color"
@@ -381,11 +387,45 @@ class MaterialToViewport(bpy.types.Operator):
 		return {'FINISHED'}
 
 
+#-------------------------------------------------------
+#Low-Poly Art Tools UI Panel
+class VIEW3D_Low_Poly_Art_Tools_Panel(bpy.types.Panel):
+	bl_label = "Low Poly Art Tools"
+	bl_space_type = "VIEW_3D"
+	bl_region_type = "UI"
+	bl_category = "ACT"
+
+	@classmethod
+	def poll(self, context):
+		return (context.object is not None and context.object.mode == 'OBJECT')
+
+	def draw(self, context):
+		act = context.scene.act
+		
+		layout = self.layout
+		if context.object is not None:
+			if context.mode == 'OBJECT':
+				row = layout.row()
+				row.operator("object.palette_creator", text="Create Palette Texture")
+				layout.separator()
+				row = layout.row()
+				row.operator("object.material_to_viewport", text="Material -> Viewport Color")
+				layout.separator()
+
+			if context.mode == 'OBJECT':
+				row = layout.row()
+				row.operator("object.uv_remove", text="Clear UV Maps")
+				row = layout.row()
+				row.operator("object.clear_vc", text="Clear Vertex Colors")
+				layout.separator()
+
+
 classes = (
-	PaletteCreate,
-	UVremove,
-	ClearVertexColors,
-	MaterialToViewport,
+	Palette_Create,
+	UV_Remove,
+	Clear_Vertex_Colors,
+	Material_To_Viewport,
+	VIEW3D_Low_Poly_Art_Tools_Panel,
 )	
 
 

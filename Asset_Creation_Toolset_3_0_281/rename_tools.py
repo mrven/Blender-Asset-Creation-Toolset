@@ -1,5 +1,7 @@
 import bpy
 
+from . import utils
+
 
 #-------------------------------------------------------		
 #Numbering
@@ -20,17 +22,17 @@ class Numbering(bpy.types.Operator):
 			for obj in selected_obj:
 				ob_name = obj.name
 
-				if StrIsInt(ob_name[-1:]):
+				if utils.Str_Is_Int(ob_name[-1:]):
 					unds_pos = len(ob_name) - 2
 					if ob_name[unds_pos] == '_':
 						ob_name = ob_name[:-2]
 						
-				if StrIsInt(ob_name[-2:]):
+				if utils.Str_Is_Int(ob_name[-2:]):
 					unds_pos = len(ob_name) - 3
 					if ob_name[unds_pos] == '_':
 						ob_name = ob_name[:-3]
 						
-				if StrIsInt(ob_name[-3:]):
+				if utils.Str_Is_Int(ob_name[-3:]):
 					unds_pos = len(ob_name) - 4
 					if ob_name[unds_pos] == '_':
 						ob_name = ob_name[:-4]
@@ -61,7 +63,7 @@ class Numbering(bpy.types.Operator):
 			
 			#Delete Blender Numbers
 			ob_name = current_obj.name
-			if StrIsInt(ob_name[-3:]):
+			if utils.Str_Is_Int(ob_name[-3:]):
 				dot_pos = len(ob_name) - 4
 				if ob_name[dot_pos] == '.':
 					ob_name = ob_name[:-4]
@@ -133,26 +135,6 @@ class VIEW3D_Rename_Tools_Panel(bpy.types.Panel):
 		layout = self.layout	
 		if context.object is not None:
 			if context.mode == 'OBJECT':
-				layout.label(text="Rename UV")
-				row = layout.row()
-				row.prop(act, "uv_layer_index", text="UV Index")
-				
-				#Split row
-				row = layout.row()
-				c = row.column()
-				row = c.row()
-				split = row.split(factor=0.4, align=True)
-				c = split.column()
-				c.label(text="UV Name:")
-				split = split.split()
-				c = split.column()
-				c.prop(act, "uv_name")
-				#----
-
-				row = layout.row()
-				row.operator("object.uv_rename", text="Rename UV(s)")
-				layout.separator()
-				
 				layout.separator()
 				layout.label(text="Numbering Objects")
 				#Split row

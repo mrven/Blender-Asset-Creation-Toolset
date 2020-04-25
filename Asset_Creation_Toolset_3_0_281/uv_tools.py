@@ -27,6 +27,7 @@ class UV_Remove(bpy.types.Operator):
 
 		return {'FINISHED'}
 
+
 #-------------------------------------------------------
 #Rename UV(s)
 class Rename_UV(bpy.types.Operator):
@@ -57,7 +58,7 @@ class UV_Mover(bpy.types.Operator):
 	bl_idname = "uv.uv_mover"
 	bl_label = "Move and Scale UV islands"
 	bl_options = {'REGISTER', 'UNDO'}
-	Value: bpy.props.StringProperty()
+	move_command: bpy.props.StringProperty()
 	
 	def execute(self, context):
 		act = context.scene.act
@@ -65,26 +66,26 @@ class UV_Mover(bpy.types.Operator):
 		Start_Pivot_Mode = bpy.context.space_data.pivot_point
 		bpy.context.space_data.pivot_point = 'CURSOR'
 		move_step = 1/2**int(act.uv_move_factor)
-		if self.Value == "TL":
+		if self.move_command == "TL":
 			bpy.ops.uv.cursor_set(location=(0, 1))
-		if self.Value == "TR":
+		if self.move_command == "TR":
 			bpy.ops.uv.cursor_set(location=(1, 1))
-		if self.Value == "BL":
+		if self.move_command == "BL":
 			bpy.ops.uv.cursor_set(location=(0, 0))
-		if self.Value == "BR":
+		if self.move_command == "BR":
 			bpy.ops.uv.cursor_set(location=(1, 0))
 			
-		if self.Value == "MINUS":
+		if self.move_command == "MINUS":
 			bpy.ops.transform.resize(value=(0.5, 0.5, 0.5), constraint_axis=(False, False, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-		if self.Value == "PLUS":
+		if self.move_command == "PLUS":
 			bpy.ops.transform.resize(value=(2, 2, 2), constraint_axis=(False, False, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-		if self.Value == "RIGHT":
+		if self.move_command == "RIGHT":
 			bpy.ops.transform.translate(value=(move_step, 0, 0), constraint_axis=(True, False, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-		if self.Value == "LEFT":
+		if self.move_command == "LEFT":
 			bpy.ops.transform.translate(value=(-1 * move_step, 0, 0), constraint_axis=(True, False, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-		if self.Value == "UP":
+		if self.move_command == "UP":
 			bpy.ops.transform.translate(value=(0, move_step, 0), constraint_axis=(False, True, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-		if self.Value == "DOWN":
+		if self.move_command == "DOWN":
 			bpy.ops.transform.translate(value=(0, -1 * move_step, 0), constraint_axis=(False, True, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)	
 		
 		bpy.context.space_data.pivot_point = Start_Pivot_Mode
@@ -112,20 +113,20 @@ class UV_UV_Mover_Panel(bpy.types.Panel):
 			row = c.row()
 			split = row.split(factor=0.5, align=True)
 			c = split.column()
-			c.operator("uv.uv_mover", text="Top Left").Value="TL"
+			c.operator("uv.uv_mover", text="Top Left").move_command="TL"
 			split = split.split()
 			c = split.column()
-			c.operator("uv.uv_mover", text="Top Right").Value="TR"
+			c.operator("uv.uv_mover", text="Top Right").move_command="TR"
 			#--Aligner Buttons----
 			row = layout.row()
 			c = row.column()
 			row = c.row()
 			split = row.split(factor=0.5, align=True)
 			c = split.column()
-			c.operator("uv.uv_mover", text="Bottom Left").Value="BL"
+			c.operator("uv.uv_mover", text="Bottom Left").move_command="BL"
 			split = split.split()
 			c = split.column()
-			c.operator("uv.uv_mover", text="Bottom Right").Value="BR"
+			c.operator("uv.uv_mover", text="Bottom Right").move_command="BR"
 			
 			layout.separator()
 			row = layout.row()
@@ -137,13 +138,13 @@ class UV_UV_Mover_Panel(bpy.types.Panel):
 			row = c.row()
 			split = row.split(factor=0.33, align=True)
 			c = split.column()
-			c.operator("uv.uv_mover", text="Scale-").Value="MINUS"
+			c.operator("uv.uv_mover", text="Scale-").move_command="MINUS"
 			split = split.split(factor=0.5, align=True)
 			c = split.column()
-			c.operator("uv.uv_mover", text="UP").Value="UP"
+			c.operator("uv.uv_mover", text="UP").move_command="UP"
 			split = split.split()
 			c = split.column()
-			c.operator("uv.uv_mover", text="Scale+").Value="PLUS"
+			c.operator("uv.uv_mover", text="Scale+").move_command="PLUS"
 				
 			#--Aligner Buttons----
 			row = layout.row()
@@ -151,13 +152,13 @@ class UV_UV_Mover_Panel(bpy.types.Panel):
 			row = c.row()
 			split = row.split(factor=0.33, align=True)
 			c = split.column()
-			c.operator("uv.uv_mover", text="LEFT").Value="LEFT"
+			c.operator("uv.uv_mover", text="LEFT").move_command="LEFT"
 			split = split.split(factor=0.5, align=True)
 			c = split.column()
-			c.operator("uv.uv_mover", text="DOWN").Value="DOWN"
+			c.operator("uv.uv_mover", text="DOWN").move_command="DOWN"
 			split = split.split()
 			c = split.column()
-			c.operator("uv.uv_mover", text="RIGHT").Value="RIGHT"
+			c.operator("uv.uv_mover", text="RIGHT").move_command="RIGHT"
 			
 			layout.separator()
 			
@@ -179,7 +180,7 @@ class UV_UV_Mover_Panel(bpy.types.Panel):
 #-------------------------------------------------------
 #UV Tools UI Panels
 class VIEW3D_UV_Tools_Panel(bpy.types.Panel):
-	bl_label = "Other Tools"
+	bl_label = "UV Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
 	bl_category = "ACT"
@@ -200,8 +201,29 @@ class VIEW3D_UV_Tools_Panel(bpy.types.Panel):
 		
 		if context.object is not None:
 			if context.mode == 'OBJECT':
-				row = layout.row()	
+				layout.label(text="Rename UV")
+				row = layout.row()
+				row.prop(act, "uv_layer_index", text="UV Index")
+				
+				#Split row
+				row = layout.row()
+				c = row.column()
+				row = c.row()
+				split = row.split(factor=0.4, align=True)
+				c = split.column()
+				c.label(text="UV Name:")
+				split = split.split()
+				c = split.column()
+				c.prop(act, "uv_name")
+				#----
+
+				row = layout.row()
+				row.operator("object.uv_rename", text="Rename UV(s)")
 				layout.separator()
+
+
+				row = layout.row()
+				row.operator("object.uv_remove", text="Clear UV Maps")
 				
 
 classes = (

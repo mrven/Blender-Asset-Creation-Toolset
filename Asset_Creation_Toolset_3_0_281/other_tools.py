@@ -124,11 +124,6 @@ class Merge_Bones(bpy.types.Operator):
 		parent_mesh.select_set(True)
 		bpy.context.view_layer.objects.active = parent_mesh
 
-		print(active_bone_name)
-		print(parent_mesh.name)
-		for b in selected_bones_name:
-			print(b)
-
 		if len(selected_bones_name) > 0:
 			for b_name in selected_bones_name:
 				try:
@@ -199,17 +194,17 @@ class VIEW3D_Other_Tools_Panel(bpy.types.Panel):
 				row = layout.row()	
 				row.operator("object.objname_to_meshname", text="Obj Name -> Mesh Name")
 				layout.separator()
+
 				row = layout.row()
 				row.operator("object.clear_normals", text="Clear Custom Normals")
+				
 				row = layout.row()
 				row.operator("object.calc_normals", text="Flip/Calculate Normals")
 				layout.prop(act, "calc_normals_en", text="Recalc Normals")
 				if act.calc_normals_en:
 					layout.prop(act, "normals_inside", text="Inside")
 				layout.separator()
-				row = layout.row()	
-				row.operator("object.delete_unused_materials", text="Delete Unused Materials")
-				layout.separator()
+				
 
 			if context.mode == 'EDIT_ARMATURE':
 				#Split row

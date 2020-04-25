@@ -358,7 +358,7 @@ class Assign_Multiedit_Materials(bpy.types.Operator):
 #-------------------------------------------------------
 #Clear Vertex Colors
 class Clear_Vertex_Colors(bpy.types.Operator):
-	"""# Clear Vertex Colors"""
+	"""Clear Vertex Colors"""
 	bl_idname = "object.clear_vc"
 	bl_label = "# Clear Vertex Colors"
 	bl_options = {'REGISTER', 'UNDO'}
@@ -463,7 +463,7 @@ class Texture_From_Active_Material(bpy.types.Operator):
 
 
 #-------------------------------------------------------
-#Select Texture In UV Editor From Active Material
+#Menu for Select Texture In UV Editor From Active Material
 class Select_Texture_Menu(bpy.types.Menu):
 	bl_idname = "uv.select_texture_menu"
 	bl_label = "Select Texture"
@@ -483,6 +483,8 @@ class Select_Texture_Menu(bpy.types.Menu):
 			row.label("Object is not mesh")
 
 
+#-------------------------------------------------------
+#Call Menu for Select Texture In UV Editor From Active Material
 class Call_Select_Texture_Menu(bpy.types.Operator):
 	"""Select Texture In UV Editor From Active Material"""
 	bl_idname = "uv.call_select_texture_menu"
@@ -496,9 +498,9 @@ class Call_Select_Texture_Menu(bpy.types.Operator):
 
 
 #-------------------------------------------------------
-#Low-Poly Art Tools UI Panel
+#Material Tools UI Panel
 class VIEW3D_Material_Tools_Panel(bpy.types.Panel):
-	bl_label = "Low Poly Art Tools"
+	bl_label = "Material/Texture Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
 	bl_category = "ACT"
@@ -514,17 +516,23 @@ class VIEW3D_Material_Tools_Panel(bpy.types.Panel):
 		if context.object is not None:
 			if context.mode == 'OBJECT':
 				row = layout.row()
-				row.operator("object.palette_creator", text="Create Palette Texture")
-				layout.separator()
-				row = layout.row()
 				row.operator("object.material_to_viewport", text="Material -> Viewport Color")
 				layout.separator()
-
-			if context.mode == 'OBJECT':
-				row = layout.row()
-				row.operator("object.uv_remove", text="Clear UV Maps")
+				
 				row = layout.row()
 				row.operator("object.clear_vc", text="Clear Vertex Colors")
+				layout.separator()
+
+				row = layout.row()	
+				row.operator("object.delete_unused_materials", text="Delete Unused Materials")
+				layout.separator()
+
+				row = layout.row()
+				row.operator("object.palette_creator", text="Create Palette Texture")
+				layout.separator()
+
+				row = layout.row()
+				row.operator("uv.call_select_texture_menu", text="Open Texture in UV Editor")
 				layout.separator()
 
 

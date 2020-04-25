@@ -497,7 +497,6 @@ class VIEW3D_Import_Export_Tools_Panel(bpy.types.Panel):
 					c.prop(act, "export_path")
 					#----
 
-				
 				row = layout.row()
 				if act.export_target_engine == 'UNITY':
 					row.operator("object.multi_fbx_export", text="Export FBX to Unity")

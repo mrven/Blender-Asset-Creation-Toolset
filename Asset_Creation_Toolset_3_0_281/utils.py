@@ -4,8 +4,7 @@ import bmesh
 
 #-------------------------------------------------------
 #Find Min and Max Vertex Coordinates
-def Find_Min_Max_Verts(obj, CoordIndex, MinOrMax):
-	
+def Find_Min_Max_Verts(obj, coord_index, min_or_max):
 	bpy.ops.mesh.reveal()
 	
 	#get bmesh from active object
@@ -15,16 +14,16 @@ def Find_Min_Max_Verts(obj, CoordIndex, MinOrMax):
 	if len(bm.verts) == 0:
 		result = None
 	else:
-		min_co = (obj.matrix_world @ bm.verts[0].co)[CoordIndex]
-		max_co = (obj.matrix_world @ bm.verts[0].co)[CoordIndex]
+		min_co = (obj.matrix_world @ bm.verts[0].co)[coord_index]
+		max_co = (obj.matrix_world @ bm.verts[0].co)[coord_index]
 		
 		for v in bm.verts:
-			if (obj.matrix_world @ v.co)[CoordIndex] < min_co:
-				min_co = (obj.matrix_world @ v.co)[CoordIndex]
-			if (obj.matrix_world @ v.co)[CoordIndex] > max_co:
-				max_co = (obj.matrix_world @ v.co)[CoordIndex]
+			if (obj.matrix_world @ v.co)[coord_index] < min_co:
+				min_co = (obj.matrix_world @ v.co)[coord_index]
+			if (obj.matrix_world @ v.co)[coord_index] > max_co:
+				max_co = (obj.matrix_world @ v.co)[coord_index]
 		
-		if MinOrMax == 0:
+		if min_or_max == 0:
 			result = min_co
 		else:
 			result = max_co

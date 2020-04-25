@@ -3,7 +3,8 @@ import bpy
 from . import utils
 
 
-#------------------Align Origin To Min-------------------------------
+#-------------------------------------------------
+#Align Origin To Min
 class Align_Min(bpy.types.Operator):
 	"""Origin To Min """
 	bl_idname = "object.align_min"
@@ -85,7 +86,8 @@ class Align_Min(bpy.types.Operator):
 		return {'FINISHED'}
 	
 
-#------------------Align Origin To Max-------------------------------
+#-------------------------------------------------
+#Align Origin To Max
 class Align_Max(bpy.types.Operator):
 	"""Origin To Max """
 	bl_idname = "object.align_max"
@@ -167,7 +169,8 @@ class Align_Max(bpy.types.Operator):
 		return {'FINISHED'}
 
 	
-#------------------Align Cursor------------------
+#-----------------------------------------------------
+#Align Cursor
 class Align_Cur(bpy.types.Operator):
 	"""Origin Align To Cursor"""
 	bl_idname = "object.align_cur"
@@ -220,7 +223,8 @@ class Align_Cur(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-#------------------Align Coordinate------------------ 
+#------------------------------------------------------
+#Align Coordinate
 class Align_Co(bpy.types.Operator):
 	"""Origin Align To Spec Coordinate"""
 	bl_idname = "object.align_co"

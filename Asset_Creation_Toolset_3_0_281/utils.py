@@ -4,7 +4,7 @@ import bmesh
 
 #-------------------------------------------------------
 #Find Min and Max Vertex Coordinates
-def FindMinMaxVerts(obj, CoordIndex, MinOrMax):
+def Find_Min_Max_Verts(obj, CoordIndex, MinOrMax):
 	
 	bpy.ops.mesh.reveal()
 	
@@ -34,7 +34,7 @@ def FindMinMaxVerts(obj, CoordIndex, MinOrMax):
 
 #-------------------------------------------------------
 #Check String is a Number
-def StrIsInt(s):
+def Str_Is_Int(s):
     try: 
         int(s)
         return True

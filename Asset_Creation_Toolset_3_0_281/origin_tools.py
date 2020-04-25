@@ -9,7 +9,7 @@ class Align_Min(bpy.types.Operator):
 	bl_idname = "object.align_min"
 	bl_label = "Origin To Min"
 	bl_options = {'REGISTER', 'UNDO'}
-	TypeAlign: bpy.props.StringProperty()
+	align_type: bpy.props.StringProperty()
 	
 	def execute(self, context):
 		act = context.scene.act
@@ -30,27 +30,27 @@ class Align_Min(bpy.types.Operator):
 			if x.type == 'MESH':
 				bpy.ops.object.mode_set(mode = 'EDIT')
 				
-				if self.TypeAlign == 'X':
-					MinCo = FindMinMaxVerts(x, 0, 0)
-					if MinCo == None:
-						MinCo = saved_origin_loc[0]
-				if self.TypeAlign == 'Y':
-					MinCo = FindMinMaxVerts(x, 1, 0)
-					if MinCo == None:
-						MinCo = saved_origin_loc[1]
-				if self.TypeAlign == 'Z':
-					MinCo = FindMinMaxVerts(x, 2, 0)
-					if MinCo == None:
-						MinCo = saved_origin_loc[2]
+				if self.align_type == 'X':
+					min_co = utils.Find_Min_Max_Verts(x, 0, 0)
+					if min_co == None:
+						min_co = saved_origin_loc[0]
+				if self.align_type == 'Y':
+					min_co = utils.Find_Min_Max_Verts(x, 1, 0)
+					if min_co == None:
+						min_co = saved_origin_loc[1]
+				if self.align_type == 'Z':
+					min_co = utils.Find_Min_Max_Verts(x, 2, 0)
+					if min_co == None:
+						min_co = saved_origin_loc[2]
 				
 				if act.align_geom_to_orig == False:
 					bpy.ops.object.mode_set(mode = 'OBJECT')
-					if self.TypeAlign == 'X':
-						bpy.context.scene.cursor.location = [MinCo, saved_origin_loc[1], saved_origin_loc[2]] 
-					if self.TypeAlign == 'Y':
-						bpy.context.scene.cursor.location = [saved_origin_loc[0], MinCo, saved_origin_loc[2]] 
-					if self.TypeAlign == 'Z':
-						bpy.context.scene.cursor.location = [saved_origin_loc[0], saved_origin_loc[1], MinCo]
+					if self.align_type == 'X':
+						bpy.context.scene.cursor.location = [min_co, saved_origin_loc[1], saved_origin_loc[2]] 
+					if self.align_type == 'Y':
+						bpy.context.scene.cursor.location = [saved_origin_loc[0], min_co, saved_origin_loc[2]] 
+					if self.align_type == 'Z':
+						bpy.context.scene.cursor.location = [saved_origin_loc[0], saved_origin_loc[1], min_co]
 						
 					# Apply origin to Cursor position
 					bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
@@ -58,21 +58,21 @@ class Align_Min(bpy.types.Operator):
 					bpy.context.scene.cursor.location = saved_cursor_loc
 				
 				if act.align_geom_to_orig == True:
-					if self.TypeAlign == 'X':
-						Difference = saved_origin_loc[0] - MinCo
-					if self.TypeAlign == 'Y':
-						Difference = saved_origin_loc[1] - MinCo
-					if self.TypeAlign == 'Z':
-						Difference = saved_origin_loc[2] - MinCo
+					if self.align_type == 'X':
+						difference = saved_origin_loc[0] - min_co
+					if self.align_type == 'Y':
+						difference = saved_origin_loc[1] - min_co
+					if self.align_type == 'Z':
+						difference = saved_origin_loc[2] - min_co
 					
 					bpy.ops.mesh.reveal()
 					bpy.ops.mesh.select_all(action='SELECT')
-					if self.TypeAlign == 'X':
-						bpy.ops.transform.translate(value=(Difference, 0, 0), constraint_axis=(True, False, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-					if self.TypeAlign == 'Y':
-						bpy.ops.transform.translate(value=(0, Difference, 0), constraint_axis=(False, True, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-					if self.TypeAlign == 'Z':
-						bpy.ops.transform.translate(value=(0, 0, Difference), constraint_axis=(False, False, True), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+					if self.align_type == 'X':
+						bpy.ops.transform.translate(value=(difference, 0, 0), constraint_axis=(True, False, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+					if self.align_type == 'Y':
+						bpy.ops.transform.translate(value=(0, difference, 0), constraint_axis=(False, True, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+					if self.align_type == 'Z':
+						bpy.ops.transform.translate(value=(0, 0, difference), constraint_axis=(False, False, True), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
 						
 					bpy.ops.object.mode_set(mode = 'OBJECT')
 
@@ -91,7 +91,7 @@ class Align_Max(bpy.types.Operator):
 	bl_idname = "object.align_max"
 	bl_label = "Origin To Max"
 	bl_options = {'REGISTER', 'UNDO'}
-	TypeAlign: bpy.props.StringProperty()
+	align_type: bpy.props.StringProperty()
 	
 	def execute(self, context):
 		act = context.scene.act
@@ -112,27 +112,27 @@ class Align_Max(bpy.types.Operator):
 			if x.type == 'MESH':
 				bpy.ops.object.mode_set(mode = 'EDIT')
 				
-				if self.TypeAlign == 'X':
-					MaxCo = FindMinMaxVerts(x, 0, 1)
-					if MaxCo == None:
-						MaxCo = saved_origin_loc[0]
-				if self.TypeAlign == 'Y':
-					MaxCo = FindMinMaxVerts(x, 1, 1)
-					if MaxCo == None:
-						MaxCo = saved_origin_loc[1]
-				if self.TypeAlign == 'Z':
-					MaxCo = FindMinMaxVerts(x, 2, 1)
-					if MaxCo == None:
-						MaxCo = saved_origin_loc[2]
+				if self.align_type == 'X':
+					max_co = utils.Find_Min_Max_Verts(x, 0, 1)
+					if max_co == None:
+						max_co = saved_origin_loc[0]
+				if self.align_type == 'Y':
+					max_co = utils.Find_Min_Max_Verts(x, 1, 1)
+					if max_co == None:
+						max_co = saved_origin_loc[1]
+				if self.align_type == 'Z':
+					max_co = utils.Find_Min_Max_Verts(x, 2, 1)
+					if max_co == None:
+						max_co = saved_origin_loc[2]
 				
 				if act.align_geom_to_orig == False:
 					bpy.ops.object.mode_set(mode = 'OBJECT')
-					if self.TypeAlign == 'X':
-						bpy.context.scene.cursor.location = [MaxCo, saved_origin_loc[1], saved_origin_loc[2]] 
-					if self.TypeAlign == 'Y':
-						bpy.context.scene.cursor.location = [saved_origin_loc[0], MaxCo, saved_origin_loc[2]] 
-					if self.TypeAlign == 'Z':
-						bpy.context.scene.cursor.location = [saved_origin_loc[0], saved_origin_loc[1], MaxCo]
+					if self.align_type == 'X':
+						bpy.context.scene.cursor.location = [max_co, saved_origin_loc[1], saved_origin_loc[2]] 
+					if self.align_type == 'Y':
+						bpy.context.scene.cursor.location = [saved_origin_loc[0], max_co, saved_origin_loc[2]] 
+					if self.align_type == 'Z':
+						bpy.context.scene.cursor.location = [saved_origin_loc[0], saved_origin_loc[1], max_co]
 						
 					# Apply origin to Cursor position
 					bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
@@ -140,21 +140,21 @@ class Align_Max(bpy.types.Operator):
 					bpy.context.scene.cursor.location = saved_cursor_loc
 				
 				if act.align_geom_to_orig == True:
-					if self.TypeAlign == 'X':
-						Difference = saved_origin_loc[0] - MaxCo
-					if self.TypeAlign == 'Y':
-						Difference = saved_origin_loc[1] - MaxCo
-					if self.TypeAlign == 'Z':
-						Difference = saved_origin_loc[2] - MaxCo
+					if self.align_type == 'X':
+						difference = saved_origin_loc[0] - max_co
+					if self.align_type == 'Y':
+						difference = saved_origin_loc[1] - max_co
+					if self.align_type == 'Z':
+						difference = saved_origin_loc[2] - max_co
 					
 					bpy.ops.mesh.reveal()
 					bpy.ops.mesh.select_all(action='SELECT')
-					if self.TypeAlign == 'X':
-						bpy.ops.transform.translate(value=(Difference, 0, 0), constraint_axis=(True, False, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-					if self.TypeAlign == 'Y':
-						bpy.ops.transform.translate(value=(0, Difference, 0), constraint_axis=(False, True, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-					if self.TypeAlign == 'Z':
-						bpy.ops.transform.translate(value=(0, 0, Difference), constraint_axis=(False, False, True), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+					if self.align_type == 'X':
+						bpy.ops.transform.translate(value=(difference, 0, 0), constraint_axis=(True, False, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+					if self.align_type == 'Y':
+						bpy.ops.transform.translate(value=(0, difference, 0), constraint_axis=(False, True, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+					if self.align_type == 'Z':
+						bpy.ops.transform.translate(value=(0, 0, difference), constraint_axis=(False, False, True), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
 						
 					bpy.ops.object.mode_set(mode = 'OBJECT')
 
@@ -173,7 +173,7 @@ class Align_Cur(bpy.types.Operator):
 	bl_idname = "object.align_cur"
 	bl_label = "Origin To Cursor"
 	bl_options = {'REGISTER', 'UNDO'}
-	TypeAlign: bpy.props.StringProperty()
+	align_type: bpy.props.StringProperty()
 	
 	def execute(self, context):
 		act = context.scene.act
@@ -191,25 +191,25 @@ class Align_Cur(bpy.types.Operator):
 			# Save current origin and relocate 3D Cursor
 			saved_origin_loc = x.location.copy()
 			#Align to 3D Cursor
-			if self.TypeAlign == 'X':
+			if self.align_type == 'X':
 				bpy.context.scene.cursor.location = [saved_cursor_loc[0], saved_origin_loc[1], saved_origin_loc[2]] 
-			if self.TypeAlign == 'Y':
+			if self.align_type == 'Y':
 				bpy.context.scene.cursor.location = [saved_origin_loc[0], saved_cursor_loc[1], saved_origin_loc[2]] 
-			if self.TypeAlign == 'Z':
+			if self.align_type == 'Z':
 				bpy.context.scene.cursor.location = [saved_origin_loc[0], saved_origin_loc[1], saved_cursor_loc[2]] 
 			# Apply origin to Cursor position
 			if act.align_geom_to_orig == False:
 				bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
 			else:
-				if self.TypeAlign == 'X':
-					Difference = saved_cursor_loc[0] - saved_origin_loc[0]
-					bpy.ops.transform.translate(value=(Difference, 0, 0), constraint_axis=(True, False, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-				if self.TypeAlign == 'Y':
-					Difference = saved_cursor_loc[1] - saved_origin_loc[1]
-					bpy.ops.transform.translate(value=(0, Difference, 0), constraint_axis=(False, True, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-				if self.TypeAlign == 'Z':
-					Difference = saved_cursor_loc[2] - saved_origin_loc[2]
-					bpy.ops.transform.translate(value=(0, 0, Difference), constraint_axis=(False, False, True), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+				if self.align_type == 'X':
+					difference = saved_cursor_loc[0] - saved_origin_loc[0]
+					bpy.ops.transform.translate(value=(difference, 0, 0), constraint_axis=(True, False, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+				if self.align_type == 'Y':
+					difference = saved_cursor_loc[1] - saved_origin_loc[1]
+					bpy.ops.transform.translate(value=(0, difference, 0), constraint_axis=(False, True, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+				if self.align_type == 'Z':
+					difference = saved_cursor_loc[2] - saved_origin_loc[2]
+					bpy.ops.transform.translate(value=(0, 0, difference), constraint_axis=(False, False, True), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
 			# Reset 3D Cursor position  
 			bpy.context.scene.cursor.location = saved_cursor_loc
 		
@@ -226,13 +226,13 @@ class Align_Co(bpy.types.Operator):
 	bl_idname = "object.align_co"
 	bl_label = "Origin Align To Spec Coordinate"
 	bl_options = {'REGISTER', 'UNDO'}
-	TypeAlign: bpy.props.StringProperty()
+	align_type: bpy.props.StringProperty()
 
 	def execute(self, context):
 		act = context.scene.act
 
 		wrong_align_co = False
-		#Check coordinate if check tgis option
+		#Check coordinate if check this option
 		try:
 			align_coordinate = float(act.align_co)
 		except:
@@ -253,25 +253,25 @@ class Align_Co(bpy.types.Operator):
 				saved_origin_loc = x.location.copy()
 				
 				#Align to Coordinate
-				if self.TypeAlign == 'X':
+				if self.align_type == 'X':
 					bpy.context.scene.cursor.location = [align_coordinate, saved_origin_loc[1], saved_origin_loc[2]] 
-				if self.TypeAlign == 'Y':
+				if self.align_type == 'Y':
 					bpy.context.scene.cursor.location = [saved_origin_loc[0], align_coordinate, saved_origin_loc[2]] 
-				if self.TypeAlign == 'Z':
+				if self.align_type == 'Z':
 					bpy.context.scene.cursor.location = [saved_origin_loc[0], saved_origin_loc[1], align_coordinate] 
 				
 				if act.align_geom_to_orig == False:
 					bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
 				else:
-					if self.TypeAlign == 'X':
-						Difference = align_coordinate - saved_origin_loc[0]
-						bpy.ops.transform.translate(value=(Difference, 0, 0), constraint_axis=(True, False, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-					if self.TypeAlign == 'Y':
-						Difference = align_coordinate - saved_origin_loc[1]
-						bpy.ops.transform.translate(value=(0, Difference, 0), constraint_axis=(False, True, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-					if self.TypeAlign == 'Z':
-						Difference = align_coordinate - saved_origin_loc[2]
-						bpy.ops.transform.translate(value=(0, 0, Difference), constraint_axis=(False, False, True), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+					if self.align_type == 'X':
+						difference = align_coordinate - saved_origin_loc[0]
+						bpy.ops.transform.translate(value=(difference, 0, 0), constraint_axis=(True, False, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+					if self.align_type == 'Y':
+						difference = align_coordinate - saved_origin_loc[1]
+						bpy.ops.transform.translate(value=(0, difference, 0), constraint_axis=(False, True, False), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+					if self.align_type == 'Z':
+						difference = align_coordinate - saved_origin_loc[2]
+						bpy.ops.transform.translate(value=(0, 0, difference), constraint_axis=(False, False, True), orient_type='GLOBAL', orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
 				# Reset 3D Cursor position  
 				bpy.context.scene.cursor.location = saved_cursor_loc
 			
@@ -321,12 +321,6 @@ class VIEW3D_Origin_Tools_Panel(bpy.types.Panel):
 		
 		layout = self.layout
 		if context.object is not None:
-			
-			'''
-			row = layout.row()
-			row.operator("uv.test_call_menu", text="Show Texture List")
-			'''
-
 			if context.mode == 'OBJECT':
 				row = layout.row()
 				row.label(text="Origin Align")
@@ -355,13 +349,13 @@ class VIEW3D_Origin_Tools_Panel(bpy.types.Panel):
 				row = c.row()
 				split = row.split(factor=0.33, align=True)
 				c = split.column()
-				c.operator("object.align_min", text="Min").TypeAlign='X'
+				c.operator("object.align_min", text="Min").align_type='X'
 				split = split.split(factor=0.5, align=True)
 				c = split.column()
-				c.operator("object.align_min", text="Min").TypeAlign='Y'
+				c.operator("object.align_min", text="Min").align_type='Y'
 				split = split.split()
 				c = split.column()
-				c.operator("object.align_min", text="Min").TypeAlign='Z'
+				c.operator("object.align_min", text="Min").align_type='Z'
 				
 				#--Aligner Max Buttons----
 				row = layout.row()
@@ -369,13 +363,13 @@ class VIEW3D_Origin_Tools_Panel(bpy.types.Panel):
 				row = c.row()
 				split = row.split(factor=0.33, align=True)
 				c = split.column()
-				c.operator("object.align_max", text="Max").TypeAlign='X'
+				c.operator("object.align_max", text="Max").align_type='X'
 				split = split.split(factor=0.5, align=True)
 				c = split.column()
-				c.operator("object.align_max", text="Max").TypeAlign='Y'
+				c.operator("object.align_max", text="Max").align_type='Y'
 				split = split.split()
 				c = split.column()
-				c.operator("object.align_max", text="Max").TypeAlign='Z'
+				c.operator("object.align_max", text="Max").align_type='Z'
 				
 				#--Aligner Cursor Buttons----
 				row = layout.row()
@@ -383,13 +377,13 @@ class VIEW3D_Origin_Tools_Panel(bpy.types.Panel):
 				row = c.row()
 				split = row.split(factor=0.33, align=True)
 				c = split.column()
-				c.operator("object.align_cur", text="Cursor").TypeAlign='X'
+				c.operator("object.align_cur", text="Cursor").align_type='X'
 				split = split.split(factor=0.5, align=True)
 				c = split.column()
-				c.operator("object.align_cur", text="Cursor").TypeAlign='Y'
+				c.operator("object.align_cur", text="Cursor").align_type='Y'
 				split = split.split()
 				c = split.column()
-				c.operator("object.align_cur", text="Cursor").TypeAlign='Z'
+				c.operator("object.align_cur", text="Cursor").align_type='Z'
 				
 				#--Aligner Coordinates Buttons----
 				row = layout.row()
@@ -397,13 +391,13 @@ class VIEW3D_Origin_Tools_Panel(bpy.types.Panel):
 				row = c.row()
 				split = row.split(factor=0.33, align=True)
 				c = split.column()
-				c.operator("object.align_co", text="Coordinates").TypeAlign='X'
+				c.operator("object.align_co", text="Coordinates").align_type='X'
 				split = split.split(factor=0.5, align=True)
 				c = split.column()
-				c.operator("object.align_co", text="Coordinates").TypeAlign='Y'
+				c.operator("object.align_co", text="Coordinates").align_type='Y'
 				split = split.split()
 				c = split.column()
-				c.operator("object.align_co", text="Coordinates").TypeAlign='Z'
+				c.operator("object.align_co", text="Coordinates").align_type='Z'
 				
 		if context.object is not None:
 			if context.object.mode == 'EDIT':

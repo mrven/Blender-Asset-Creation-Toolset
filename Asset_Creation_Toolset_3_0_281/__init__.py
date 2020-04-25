@@ -10,8 +10,8 @@ bl_info = {
 	"category": "Object",
 }
 
-modules_names = ['props', 'preferences', 'utils', 'import_export_tools', 'low_poly_art_tools', 'material_tools', 'origin_tools', 'other_tools',
-				 'rename_tools', 'rig_tools', 'uv_tools', 'ui']
+modules_names = ['props', 'preferences', 'utils', 'import_export_tools', 'material_tools', 'origin_tools', 'other_tools',
+				 'rename_tools', 'uv_tools']
 
 modules_full_names = {}
 for current_module_name in modules_names:

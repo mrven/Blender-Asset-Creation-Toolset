@@ -1,29 +1,6 @@
 import bpy
 
 
-#-------------------------------------------------------
-#Rename UV(s)
-class RenameUV(bpy.types.Operator):
-	"""Rename UV(s)"""
-	bl_idname = "object.uv_rename"
-	bl_label = "Rename UV(s)"
-	bl_options = {'REGISTER', 'UNDO'}
-
-	def execute(self, context):
-		act = context.scene.act
-		
-		selected_obj = bpy.context.selected_objects	
-		uv_index = act.uv_layer_index
-		uv_name = act.uv_name
-		
-		for x in selected_obj:
-			if x.type == 'MESH':
-				if len(x.data.uv_layers) > 0:
-					if uv_index < len(x.data.uv_layers):
-						x.data.uv_layers[uv_index].name = uv_name	
-		return {'FINISHED'}
-
-
 #-------------------------------------------------------		
 #Numbering
 class Numbering(bpy.types.Operator):
@@ -120,9 +97,118 @@ class Numbering(bpy.types.Operator):
 		return {'FINISHED'}
 
 
+#-------------------------------------------------------
+#Rename bones
+class Rename_Bones(bpy.types.Operator):
+	"""Rename bones"""
+	bl_idname = "object.rename_bones"
+	bl_label = "Rename bones"
+	bl_options = {'REGISTER', 'UNDO'}
+	
+	Value: bpy.props.StringProperty()
+
+	def execute(self, context):
+		selected_bones = bpy.context.selected_bones	
+		for x in selected_bones:
+			x.name = x.name + self.Value
+
+		return {'FINISHED'}
+
+
+#-------------------------------------------------------
+#Rename Tools UI Panel
+class VIEW3D_Rename_Tools_Panel(bpy.types.Panel):
+	bl_label = "Rename Tools"
+	bl_space_type = "VIEW_3D"
+	bl_region_type = "UI"
+	bl_category = "ACT"
+
+	@classmethod
+	def poll(self, context):
+		return (context.object is not None and (context.object.mode == 'OBJECT'	or context.mode == 'EDIT_ARMATURE'))
+
+	def draw(self, context):
+		act = context.scene.act
+		
+		layout = self.layout	
+		if context.object is not None:
+			if context.mode == 'OBJECT':
+				layout.label(text="Rename UV")
+				row = layout.row()
+				row.prop(act, "uv_layer_index", text="UV Index")
+				
+				#Split row
+				row = layout.row()
+				c = row.column()
+				row = c.row()
+				split = row.split(factor=0.4, align=True)
+				c = split.column()
+				c.label(text="UV Name:")
+				split = split.split()
+				c = split.column()
+				c.prop(act, "uv_name")
+				#----
+
+				row = layout.row()
+				row.operator("object.uv_rename", text="Rename UV(s)")
+				layout.separator()
+				
+				layout.separator()
+				layout.label(text="Numbering Objects")
+				#Split row
+				row = layout.row()
+				c = row.column()
+				row = c.row()
+				split = row.split(factor=0.35, align=True)
+				c = split.column()
+				c.label(text="Method:")
+				split = split.split()
+				c = split.column()
+				c.prop(act, 'nums_method', expand=False)
+				#----
+				#Split row
+				row = layout.row()
+				c = row.column()
+				row = c.row()
+				split = row.split(factor=0.35, align=True)
+				c = split.column()
+				c.label(text="Format:")
+				split = split.split()
+				c = split.column()
+				c.prop(act, 'nums_format', expand=False)
+				#----
+				
+				row = layout.row()
+				row.prop(act, "delete_prev_nums", text="Delete Previous Nums")
+				row = layout.row()
+				row.operator("object.numbering", text="Set Numbering")
+			
+			elif context.mode == 'EDIT_ARMATURE':
+				#Split row
+				row = layout.row()
+				c = row.column()
+				row = c.row()
+				split = row.split(factor=0.5, align=True)
+				c = split.column()
+				row.operator("object.rename_bones", text="Add .L").Value=".L"
+				split = split.split()
+				c = split.column()
+				row.operator("object.rename_bones", text="Add .R").Value=".R"
+				#----
+
+			else:
+				row = layout.row()
+				row.label(text=" ")
+
+		else:
+			row = layout.row()
+			row.label(text=" ")
+
+
 classes = (
-	RenameUV,
 	Numbering,
+	Rename_Bones,
+	VIEW3D_Rename_Tools_Panel,
 )	
 
 

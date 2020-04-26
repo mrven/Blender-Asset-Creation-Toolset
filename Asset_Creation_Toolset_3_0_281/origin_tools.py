@@ -318,7 +318,8 @@ class VIEW3D_Origin_Tools_Panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(self, context):
-		return (context.object is not None and (context.mode == 'OBJECT' or context.mode == 'EDIT_MESH'))
+		preferences = bpy.context.preferences.addons[__package__].preferences
+		return (context.object is not None and (context.mode == 'OBJECT' or context.mode == 'EDIT_MESH')) and preferences['origin_enable']
 
 	def draw(self, context):
 		act = context.scene.act

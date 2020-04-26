@@ -361,7 +361,8 @@ class VIEW3D_Import_Export_Tools_Panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(self, context):
-		return (context.object is None or (context.object is not None and context.object.mode == 'OBJECT'))
+		preferences = bpy.context.preferences.addons[__package__].preferences
+		return (context.object is None or (context.object is not None and context.object.mode == 'OBJECT')) and preferences['export_import_enable']
 
 	def draw(self, context):
 		act = context.scene.act

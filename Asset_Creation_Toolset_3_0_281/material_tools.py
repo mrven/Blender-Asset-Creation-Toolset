@@ -507,7 +507,8 @@ class VIEW3D_Material_Tools_Panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(self, context):
-		return (context.object is not None and context.object.mode == 'OBJECT')
+		preferences = bpy.context.preferences.addons[__package__].preferences
+		return (context.object is not None and context.object.mode == 'OBJECT') and preferences['material_enable']
 
 	def draw(self, context):
 		act = context.scene.act
@@ -534,11 +535,12 @@ class VIEW3D_Material_Tools_Panel(bpy.types.Panel):
 #-------------------------------------------------------
 #Material Assign UI Panel
 def Material_Menu_Panel(self, context):
-	if context.object is not None:
-			if context.object.mode == 'EDIT' and len(context.selected_objects) > 1:
-				layout = self.layout
-				row = layout.row()		
-				row.operator("object.assign_multiedit_materials", text="Active Material -> Selected")
+	preferences = bpy.context.preferences.addons[__package__].preferences
+	if context.object is not None and preferences['material_properties_enable']:
+		if context.object.mode == 'EDIT' and len(context.selected_objects) > 1:
+			layout = self.layout
+			row = layout.row()		
+			row.operator("object.assign_multiedit_materials", text="Active Material -> Selected")
 
 
 classes = (

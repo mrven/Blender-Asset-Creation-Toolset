@@ -103,7 +103,8 @@ class UV_UV_Mover_Panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(self, context):
-		return (context.object.type == 'MESH' and context.object.mode == 'EDIT')
+		preferences = bpy.context.preferences.addons[__package__].preferences
+		return (context.mode == 'EDIT_MESH') and preferences['uv_uv_enable']
 
 	def draw(self, context):
 		act = context.scene.act
@@ -156,7 +157,8 @@ class VIEW3D_UV_Tools_Panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(self, context):
-		return (context.object is not None and context.object.mode == 'OBJECT')
+		preferences = bpy.context.preferences.addons[__package__].preferences
+		return (context.object is not None and context.object.mode == 'OBJECT') and preferences['uv_view3d_enable']
 
 	def draw(self, context):
 		act = context.scene.act

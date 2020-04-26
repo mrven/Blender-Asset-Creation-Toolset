@@ -43,17 +43,17 @@ class Numbering(bpy.types.Operator):
 
 		for x in selected_obj:
 			#List of Objects
-			if act.nums_method == '0' or act.nums_method == '3' or act.nums_method == '4':
+			if act.nums_method == 'ALONG_X' or act.nums_method == 'SIMPLE' or act.nums_method == 'NONE':
 				object_class = [x.name, x.location.x]
-			if act.nums_method == '1':
+			if act.nums_method == 'ALONG_Y':
 				object_class = [x.name, x.location.y]
-			if act.nums_method == '2':
+			if act.nums_method == 'ALONG_Z':
 				object_class = [x.name, x.location.z]
 			
 			objects_list.append(object_class)
 			
 		#Sort List
-		if act.nums_method != '3':
+		if act.nums_method != 'SIMPLE':
 			objects_list.sort(key=lambda object: object[1])
 
 
@@ -72,18 +72,18 @@ class Numbering(bpy.types.Operator):
 			num_str = ''
 			
 			#_X, _XX, _XXX
-			if act.nums_format == '0': 
+			if act.nums_format == 'NO_ZEROS': 
 				num_str = str(y+1)
 			
 			#_0X, _XX, _XXX
-			if act.nums_format == '1':
+			if act.nums_format == 'ONE_ZERO':
 				if (y <= 8):
 					num_str = '0' + str(y+1)
 				else:
 					num_str = str(y+1)
 			
 			#_00X, _0XX, _XXX
-			if act.nums_format == '2':
+			if act.nums_format == 'TWO_ZEROS':
 				if (y <= 8):
 					num_str = '00' + str(y+1)
 				elif (y >= 9) and (y <= 98):
@@ -91,7 +91,7 @@ class Numbering(bpy.types.Operator):
 				else:
 					num_str = str(y+1)
 					
-			if act.nums_method == '4':
+			if act.nums_method == 'NONE':
 				bpy.data.objects[objects_list[y][0]].name = ob_name;
 			else:
 				bpy.data.objects[objects_list[y][0]].name = ob_name + '_' + num_str;

@@ -454,17 +454,6 @@ class VIEW3D_Import_Export_Tools_Panel(bpy.types.Panel):
 					row = c.row()
 					split = row.split(factor=0.8, align=True)
 					c = split.column()
-					c.label(text=" Apply Modifiers")
-					split = split.split()
-					c = split.column()
-					c.prop(act, "export_apply_modifiers", text="")
-					#----
-					#Split row
-					row = layout.row()
-					c = row.column()
-					row = c.row()
-					split = row.split(factor=0.8, align=True)
-					c = split.column()
 					c.label(text=" Loose Edges")
 					split = split.split()
 					c = split.column()

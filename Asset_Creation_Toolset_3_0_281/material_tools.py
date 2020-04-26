@@ -517,23 +517,18 @@ class VIEW3D_Material_Tools_Panel(bpy.types.Panel):
 			if context.mode == 'OBJECT':
 				row = layout.row()
 				row.operator("object.material_to_viewport", text="Material -> Viewport Color")
-				layout.separator()
 				
 				row = layout.row()
 				row.operator("object.clear_vc", text="Clear Vertex Colors")
-				layout.separator()
 
 				row = layout.row()	
 				row.operator("object.delete_unused_materials", text="Delete Unused Materials")
-				layout.separator()
 
 				row = layout.row()
 				row.operator("object.palette_creator", text="Create Palette Texture")
-				layout.separator()
 
 				row = layout.row()
 				row.operator("uv.call_select_texture_menu", text="Open Texture in UV Editor")
-				layout.separator()
 
 
 #-------------------------------------------------------

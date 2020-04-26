@@ -193,31 +193,32 @@ class VIEW3D_Other_Tools_Panel(bpy.types.Panel):
 			if context.mode == 'OBJECT':
 				row = layout.row()	
 				row.operator("object.objname_to_meshname", text="Obj Name -> Mesh Name")
-				layout.separator()
 
 				row = layout.row()
 				row.operator("object.clear_normals", text="Clear Custom Normals")
 				
-				row = layout.row()
-				row.operator("object.calc_normals", text="Flip/Calculate Normals")
-				layout.prop(act, "calc_normals_en", text="Recalc Normals")
+				box = layout.box()
+				row = box.row()
+				row.operator("object.calc_normals", text="Flip/Calculate Normals")				
+				row = box.row(align=True)
 				if act.calc_normals_en:
-					layout.prop(act, "normals_inside", text="Inside")
-				layout.separator()
+					row.prop(act, "calc_normals_en", text="Recalc Normals", icon="CHECKBOX_HLT")
+					if act.normals_inside:
+						row.prop(act, "normals_inside", text="Inside", icon="CHECKBOX_HLT")
+					else:
+						row.prop(act, "normals_inside", text="Inside", icon="CHECKBOX_DEHLT")
+				else:
+					row.prop(act, "calc_normals_en", text="Recalc Normals", icon="CHECKBOX_DEHLT")
 				
 
 			if context.mode == 'EDIT_ARMATURE':
-				#Split row
 				row = layout.row()
-				c = row.column()
-				row = c.row()
-				split = row.split(factor=0.4, align=True)
-				c = split.column()
-				c.label(text="Method")
-				split = split.split()
-				c = split.column()
-				c.prop(act, "merge_bones_method", text="", expand=False)
-				#----
+				row.label(text="Merge Bones:")
+
+				row = layout.row(align=True)
+				row.label(text="Method")
+				row.prop(act, "merge_bones_method", text="", expand=False)
+				
 				row = layout.row()
 				row.operator("object.merge_bones", text="Merge Bones")
 

@@ -101,76 +101,45 @@ class UV_UV_Mover_Panel(bpy.types.Panel):
 	bl_region_type = "UI"
 	bl_category = "ACT"
 
+	@classmethod
+	def poll(self, context):
+		return (context.object.type == 'MESH' and context.object.mode == 'EDIT')
+
 	def draw(self, context):
 		act = context.scene.act
 		
 		layout = self.layout
 		if context.object.mode == 'EDIT' and context.area.ui_type == 'UV':
-			layout.label(text="Set Cursor To Corner:")
-			#--Aligner Buttons----
 			row = layout.row()
-			c = row.column()
-			row = c.row()
-			split = row.split(factor=0.5, align=True)
-			c = split.column()
-			c.operator("uv.uv_mover", text="Top Left").move_command="TL"
-			split = split.split()
-			c = split.column()
-			c.operator("uv.uv_mover", text="Top Right").move_command="TR"
-			#--Aligner Buttons----
-			row = layout.row()
-			c = row.column()
-			row = c.row()
-			split = row.split(factor=0.5, align=True)
-			c = split.column()
-			c.operator("uv.uv_mover", text="Bottom Left").move_command="BL"
-			split = split.split()
-			c = split.column()
-			c.operator("uv.uv_mover", text="Bottom Right").move_command="BR"
-			
-			layout.separator()
-			row = layout.row()
+			row.label(text="Set Cursor To Corner:")
 			
 			#--Aligner Buttons----
-			layout.label(text="Scale and Move:")
+			row = layout.row(align = True)
+			row.operator("uv.uv_mover", text="Top Left").move_command="TL"
+			row.operator("uv.uv_mover", text="Top Right").move_command="TR"
+			
+			row = layout.row(align = True)
+			row.operator("uv.uv_mover", text="Bottom Left").move_command="BL"
+			row.operator("uv.uv_mover", text="Bottom Right").move_command="BR"
+			
+			
 			row = layout.row()
-			c = row.column()
-			row = c.row()
-			split = row.split(factor=0.33, align=True)
-			c = split.column()
-			c.operator("uv.uv_mover", text="Scale-").move_command="MINUS"
-			split = split.split(factor=0.5, align=True)
-			c = split.column()
-			c.operator("uv.uv_mover", text="UP").move_command="UP"
-			split = split.split()
-			c = split.column()
-			c.operator("uv.uv_mover", text="Scale+").move_command="PLUS"
+			row.label(text="Scale and Move:")
+			
+			#--Aligner Buttons----
+			row = layout.row(align=True)
+			row.operator("uv.uv_mover", text="Scale-").move_command="MINUS"
+			row.operator("uv.uv_mover", text="UP").move_command="UP"
+			row.operator("uv.uv_mover", text="Scale+").move_command="PLUS"
 				
-			#--Aligner Buttons----
-			row = layout.row()
-			c = row.column()
-			row = c.row()
-			split = row.split(factor=0.33, align=True)
-			c = split.column()
-			c.operator("uv.uv_mover", text="LEFT").move_command="LEFT"
-			split = split.split(factor=0.5, align=True)
-			c = split.column()
-			c.operator("uv.uv_mover", text="DOWN").move_command="DOWN"
-			split = split.split()
-			c = split.column()
-			c.operator("uv.uv_mover", text="RIGHT").move_command="RIGHT"
+			row = layout.row(align=True)
+			row.operator("uv.uv_mover", text="LEFT").move_command="LEFT"
+			row.operator("uv.uv_mover", text="DOWN").move_command="DOWN"
+			row.operator("uv.uv_mover", text="RIGHT").move_command="RIGHT"
 			
-			layout.separator()
-			
-			row = layout.row()
-			c = row.column()
-			row = c.row()
-			split = row.split(factor=0.5, align=True)
-			c = split.column()
-			c.label(text="Move Step   1/")
-			split = split.split()
-			c = split.column()
-			c.prop(act, 'uv_move_factor', expand=False)
+			row = layout.row(align=True)
+			row.label(text="Move Step   1/")
+			row.prop(act, 'uv_move_factor', expand=False)
 
 		else:
 			row = layout.row()
@@ -187,11 +156,10 @@ class VIEW3D_UV_Tools_Panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(self, context):
-		return (context.object is not None and (context.object.mode == 'OBJECT' or context.mode == 'EDIT_ARMATURE'))
+		return (context.object is not None and context.object.mode == 'OBJECT')
 
 	def draw(self, context):
 		act = context.scene.act
-		
 		layout = self.layout
 		row = layout.row()	
 
@@ -201,27 +169,18 @@ class VIEW3D_UV_Tools_Panel(bpy.types.Panel):
 		
 		if context.object is not None:
 			if context.mode == 'OBJECT':
-				layout.label(text="Rename UV")
-				row = layout.row()
-				row.prop(act, "uv_layer_index", text="UV Index")
+				box = layout.box()
+				row = box.row()
+				row.label(text="Rename UV")
 				
-				#Split row
-				row = layout.row()
-				c = row.column()
-				row = c.row()
-				split = row.split(factor=0.4, align=True)
-				c = split.column()
-				c.label(text="UV Name:")
-				split = split.split()
-				c = split.column()
-				c.prop(act, "uv_name")
-				#----
-
-				row = layout.row()
+				row = box.row(align=True)
+				row.label(text="UV Name:")
+				row.prop(act, "uv_name")
+				
+				row = box.row(align=True)
+				row.prop(act, "uv_layer_index", text="UV ID:")
 				row.operator("object.uv_rename", text="Rename UV(s)")
-				layout.separator()
-
-
+				
 				row = layout.row()
 				row.operator("object.uv_remove", text="Clear UV Maps")
 				

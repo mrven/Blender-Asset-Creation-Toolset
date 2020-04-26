@@ -369,138 +369,86 @@ class VIEW3D_Import_Export_Tools_Panel(bpy.types.Panel):
 		layout = self.layout	
 		if context.object is not None:
 			if context.mode == 'OBJECT':
-				#Split row
-				row = layout.row()
-				c = row.column()
-				row = c.row()
-				split = row.split(factor=0.5, align=True)
-				c = split.column()
-				c.label(text="Export Mode:")
-				split = split.split()
-				c = split.column()
-				c.prop(act, 'fbx_export_mode', expand=False)
-				#----
-				#Split row
-				row = layout.row()
-				c = row.column()
-				row = c.row()
-				split = row.split(factor=0.5, align=True)
-				c = split.column()
-				c.label(text="Target Engine:")
-				split = split.split()
-				c = split.column()
-				c.prop(act, "export_target_engine", expand=False)
-				#----
-
-				row = layout.row()
-				layout.label(text="Apply:")
+				#Export Mode
+				row = layout.row(align=True)
+				row.label(text="Export Mode:")
+				row.prop(act, 'fbx_export_mode', expand=False)
 				
-				layout.prop(act, "apply_rot", text="Rotation")
+				#Target Engine
+				row = layout.row(align=True)
+				row.label(text="Target Engine:")
+				row.prop(act, "export_target_engine", expand=False)
+				
+				#Apply Transforms
+				box = layout.box()
+				row = box.row()
+				row.label(text="Apply:")
+				
+				row = box.row(align=True)
+				if act.apply_rot:
+					row.prop(act, "apply_rot", text="Rotation", icon="CHECKBOX_HLT")
+				else:
+					row.prop(act, "apply_rot", text="Rotation", icon="CHECKBOX_DEHLT")
+				if act.apply_scale:
+					row.prop(act, "apply_scale", text="Scale", icon="CHECKBOX_HLT")
+				else:
+					row.prop(act, "apply_scale", text="Scale", icon="CHECKBOX_DEHLT")
+
+				if act.fbx_export_mode == 'INDIVIDUAL' or act.fbx_export_mode == 'PARENT':
+					if act.apply_loc:
+						row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_HLT")
+					else:
+						row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_DEHLT")	
 
 				if act.apply_rot and act.fbx_export_mode == 'PARENT':
-						#Split row
-						row = layout.row()
-						c = row.column()
-						row = c.row()
-						split = row.split(factor=0.05, align=True)
-						c = split.column()
-						c.label(text="")
-						split = split.split()
-						c = split.column()
-						c.prop(act, "apply_rot_rotated")
-						#----
-
-				layout.prop(act, "apply_scale", text="Scale")
-				
-				if act.fbx_export_mode == 'INDIVIDUAL' or act.fbx_export_mode == 'PARENT':
-					layout.prop(act, "apply_loc", text="Location")
-				
+					row = box.row()
+					row.prop(act, "apply_rot_rotated")
+						
 				row = layout.row()
-				layout.prop(act, "delete_mats_before_export", text="Delete All Materials")
-
-				row = layout.row()
+				row.prop(act, "delete_mats_before_export", text="Delete All Materials")
 				if act.fbx_export_mode == 'ALL':
-					layout.prop(act, "set_custom_fbx_name", text="Custom Name for FBX")
+					row = layout.row()
+					row.prop(act, "set_custom_fbx_name", text="Custom Name for FBX")
 					if act.set_custom_fbx_name:
-						#Split row
-						row = layout.row()
-						c = row.column()
-						row = c.row()
-						split = row.split(factor=0.5, align=True)
-						c = split.column()
-						c.label(text="FBX Name:")
-						split = split.split()
-						c = split.column()
-						c.prop(act, "custom_fbx_name")
-						#----
+						row = layout.row(align=True)
+						row.label(text="FBX Name:")
+						row.prop(act, "custom_fbx_name")
 
-				row = layout.row()
-				layout.prop(act, "export_custom_options", text="Custom Export Options")
+				box = layout.box()
+				row = box.row()
+				row.prop(act, "export_custom_options", text="Custom Export Options")
 				if act.export_custom_options:
-					#Split row
-					row = layout.row()
-					c = row.column()
-					row = c.row()
-					split = row.split(factor=0.45, align=True)
-					c = split.column()
-					c.label(text=" Smoothing:")
-					split = split.split()
-					c = split.column()
-					c.prop(act, "export_smoothing", expand=False)
-					#----
-					#Split row
-					row = layout.row()
-					c = row.column()
-					row = c.row()
-					split = row.split(factor=0.8, align=True)
-					c = split.column()
-					c.label(text=" Loose Edges")
-					split = split.split()
-					c = split.column()
-					c.prop(act, "export_loose_edges",text="")
-					#----
-					#Split row
-					row = layout.row()
-					c = row.column()
-					row = c.row()
-					split = row.split(factor=0.8, align=True)
-					c = split.column()
-					c.label(text=" Tangent Space")
-					split = split.split()
-					c = split.column()
-					c.prop(act, "export_tangent_space", text="")
-					#----
+					row = box.row(align=True)
+					row.label(text=" Smoothing:")
+					row.prop(act, "export_smoothing", expand=False)
+					
+					row = box.row(align=True)
+					row.label(text=" Loose Edges")
+					row.prop(act, "export_loose_edges",text="")
+					
+					row = box.row(align=True)
+					row.label(text=" Tangent Space")
+					row.prop(act, "export_tangent_space", text="")
 
-				row = layout.row()
-				layout.prop(act, "custom_export_path", text="Custom Export Path")
+				box = layout.box()
+				row = box.row()
+				row.prop(act, "custom_export_path", text="Custom Export Path")
 				if act.custom_export_path:
-					#Split row
-					row = layout.row()
-					c = row.column()
-					row = c.row()
-					split = row.split(factor=0.5, align=True)
-					c = split.column()
-					c.label(text="Export Path:")
-					split = split.split()
-					c = split.column()
-					c.prop(act, "export_path")
-					#----
+					row = box.row(align=True)
+					row.label(text="Export Path:")
+					row.prop(act, "export_path")
 
 				row = layout.row()
 				if act.export_target_engine == 'UNITY':
 					row.operator("object.multi_fbx_export", text="Export FBX to Unity")
 				else:
 					row.operator("object.multi_fbx_export", text="Export FBX to Unreal")
-				row = layout.row()
 
 				if len(act.export_dir) > 0:
-					row = layout.row()
 					row.operator("object.open_export_dir", text="Open Export Directory")
-					row = layout.row()
-		
-		if context.mode == 'OBJECT':
-			row = layout.row()
-			row.operator("object.import_fbxobj", text="Import FBXs/OBJs")
+				
+				row = layout.row()
+				row.operator("object.import_fbxobj", text="Import FBXs/OBJs")
 
 		else:
 			row = layout.row()

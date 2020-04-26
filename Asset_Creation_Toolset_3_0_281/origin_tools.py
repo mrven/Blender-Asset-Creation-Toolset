@@ -328,86 +328,47 @@ class VIEW3D_Origin_Tools_Panel(bpy.types.Panel):
 			if context.mode == 'OBJECT':
 				row = layout.row()
 				row.label(text="Origin Align")
-				row = layout.row()
-				row.prop(act, "align_co", text="Coordinate")
+				
 				row = layout.row()
 				row.prop(act, "align_geom_to_orig", text="Geometry To Origin")
 				
 				#--Aligner Labels----
-				row = layout.row()
-				c = row.column()
-				row = c.row()
-				split = row.split(factor=0.33, align=True)
-				c = split.column()
-				c.label(text="X")
-				split = split.split(factor=0.5, align=True)
-				c = split.column()
-				c.label(text="Y")
-				split = split.split()
-				c = split.column()
-				c.label(text="Z")
+				row = layout.row(align=True)
+				row.label(text="X")
+				row.label(text="Y")
+				row.label(text="Z")
 				
 				#--Aligner Min Buttons----
-				row = layout.row()
-				c = row.column()
-				row = c.row()
-				split = row.split(factor=0.33, align=True)
-				c = split.column()
-				c.operator("object.align_min", text="Min").align_type='X'
-				split = split.split(factor=0.5, align=True)
-				c = split.column()
-				c.operator("object.align_min", text="Min").align_type='Y'
-				split = split.split()
-				c = split.column()
-				c.operator("object.align_min", text="Min").align_type='Z'
+				row = layout.row(align=True)
+				row.operator("object.align_min", text="Min").align_type='X'
+				row.operator("object.align_min", text="Min").align_type='Y'
+				row.operator("object.align_min", text="Min").align_type='Z'
 				
 				#--Aligner Max Buttons----
-				row = layout.row()
-				c = row.column()
-				row = c.row()
-				split = row.split(factor=0.33, align=True)
-				c = split.column()
-				c.operator("object.align_max", text="Max").align_type='X'
-				split = split.split(factor=0.5, align=True)
-				c = split.column()
-				c.operator("object.align_max", text="Max").align_type='Y'
-				split = split.split()
-				c = split.column()
-				c.operator("object.align_max", text="Max").align_type='Z'
+				row = layout.row(align=True)
+				row.operator("object.align_max", text="Max").align_type='X'
+				row.operator("object.align_max", text="Max").align_type='Y'
+				row.operator("object.align_max", text="Max").align_type='Z'
 				
 				#--Aligner Cursor Buttons----
-				row = layout.row()
-				c = row.column()
-				row = c.row()
-				split = row.split(factor=0.33, align=True)
-				c = split.column()
-				c.operator("object.align_cur", text="Cursor").align_type='X'
-				split = split.split(factor=0.5, align=True)
-				c = split.column()
-				c.operator("object.align_cur", text="Cursor").align_type='Y'
-				split = split.split()
-				c = split.column()
-				c.operator("object.align_cur", text="Cursor").align_type='Z'
+				row = layout.row(align=True)
+				row.operator("object.align_cur", text="Cursor").align_type='X'
+				row.operator("object.align_cur", text="Cursor").align_type='Y'
+				row.operator("object.align_cur", text="Cursor").align_type='Z'
 				
 				#--Aligner Coordinates Buttons----
+				row = layout.row(align=True)
+				row.operator("object.align_co", text="Coordinate").align_type='X'
+				row.operator("object.align_co", text="Coordinate").align_type='Y'
+				row.operator("object.align_co", text="Coordinate").align_type='Z'
+
 				row = layout.row()
-				c = row.column()
-				row = c.row()
-				split = row.split(factor=0.33, align=True)
-				c = split.column()
-				c.operator("object.align_co", text="Coordinates").align_type='X'
-				split = split.split(factor=0.5, align=True)
-				c = split.column()
-				c.operator("object.align_co", text="Coordinates").align_type='Y'
-				split = split.split()
-				c = split.column()
-				c.operator("object.align_co", text="Coordinates").align_type='Z'
+				row.prop(act, "align_co", text="Coordinate")
 				
 		if context.object is not None:
 			if context.object.mode == 'EDIT':
 				row = layout.row()
 				row.operator("object.set_origin_to_select", text="Set Origin To Selected")
-				layout.separator()
 
 		else:
 			row = layout.row()

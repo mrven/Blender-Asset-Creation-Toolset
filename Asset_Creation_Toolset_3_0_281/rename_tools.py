@@ -135,49 +135,28 @@ class VIEW3D_Rename_Tools_Panel(bpy.types.Panel):
 		layout = self.layout	
 		if context.object is not None:
 			if context.mode == 'OBJECT':
-				layout.separator()
-				layout.label(text="Numbering Objects")
-				#Split row
 				row = layout.row()
-				c = row.column()
-				row = c.row()
-				split = row.split(factor=0.35, align=True)
-				c = split.column()
-				c.label(text="Method:")
-				split = split.split()
-				c = split.column()
-				c.prop(act, 'nums_method', expand=False)
-				#----
-				#Split row
-				row = layout.row()
-				c = row.column()
-				row = c.row()
-				split = row.split(factor=0.35, align=True)
-				c = split.column()
-				c.label(text="Format:")
-				split = split.split()
-				c = split.column()
-				c.prop(act, 'nums_format', expand=False)
-				#----
+				row.label(text="Numbering Objects")
+				
+				row = layout.row(align=True)
+				row.label(text="Method:")
+				row.prop(act, 'nums_method', expand=False)
+				
+				row = layout.row(align=True)
+				row.label(text="Format:")
+				row.prop(act, 'nums_format', expand=False)
 				
 				row = layout.row()
 				row.prop(act, "delete_prev_nums", text="Delete Previous Nums")
+				
 				row = layout.row()
 				row.operator("object.numbering", text="Set Numbering")
 			
 			elif context.mode == 'EDIT_ARMATURE':
-				#Split row
-				row = layout.row()
-				c = row.column()
-				row = c.row()
-				split = row.split(factor=0.5, align=True)
-				c = split.column()
+				row = layout.row(align=True)
 				row.operator("object.rename_bones", text="Add .L").Value=".L"
-				split = split.split()
-				c = split.column()
 				row.operator("object.rename_bones", text="Add .R").Value=".R"
-				#----
-
+				
 			else:
 				row = layout.row()
 				row.label(text=" ")

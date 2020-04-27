@@ -353,7 +353,7 @@ class Import_FBX_OBJ(bpy.types.Operator, ImportHelper):
 
 #-------------------------------------------------------
 #Import Export UI Panel
-class VIEW3D_Import_Export_Tools_Panel(bpy.types.Panel):
+class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 	bl_label = "Import/Export Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -362,7 +362,7 @@ class VIEW3D_Import_Export_Tools_Panel(bpy.types.Panel):
 	@classmethod
 	def poll(self, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is None or (context.object is not None and context.object.mode == 'OBJECT')) and preferences['export_import_enable']
+		return (context.object is None or (context.object is not None and context.object.mode == 'OBJECT')) and preferences.export_import_enable
 
 	def draw(self, context):
 		act = context.scene.act
@@ -460,7 +460,7 @@ classes = (
 	Multi_FBX_Export,
 	Open_Export_Dir,
 	Import_FBX_OBJ,
-	VIEW3D_Import_Export_Tools_Panel,
+	VIEW3D_PT_Import_Export_Tools_Panel,
 )	
 
 

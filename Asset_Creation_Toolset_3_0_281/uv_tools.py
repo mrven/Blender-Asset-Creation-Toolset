@@ -95,7 +95,7 @@ class UV_Mover(bpy.types.Operator):
 
 #-------------------------------------------------------
 #UV Mover UI Panel
-class UV_UV_Mover_Panel(bpy.types.Panel):
+class UV_PT_UV_Mover_Panel(bpy.types.Panel):
 	bl_label = "UV Mover"
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = "UI"
@@ -104,7 +104,7 @@ class UV_UV_Mover_Panel(bpy.types.Panel):
 	@classmethod
 	def poll(self, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.mode == 'EDIT_MESH') and preferences['uv_uv_enable']
+		return (context.mode == 'EDIT_MESH') and preferences.uv_uv_enable
 
 	def draw(self, context):
 		act = context.scene.act
@@ -149,7 +149,7 @@ class UV_UV_Mover_Panel(bpy.types.Panel):
 
 #-------------------------------------------------------
 #UV Tools UI Panels
-class VIEW3D_UV_Tools_Panel(bpy.types.Panel):
+class VIEW3D_PT_UV_Tools_Panel(bpy.types.Panel):
 	bl_label = "UV Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -158,7 +158,7 @@ class VIEW3D_UV_Tools_Panel(bpy.types.Panel):
 	@classmethod
 	def poll(self, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is not None and context.object.mode == 'OBJECT') and preferences['uv_view3d_enable']
+		return (context.object is not None and context.object.mode == 'OBJECT') and preferences.uv_view3d_enable
 
 	def draw(self, context):
 		act = context.scene.act
@@ -191,8 +191,8 @@ classes = (
 	UV_Remove,
 	Rename_UV,
 	UV_Mover,
-	UV_UV_Mover_Panel,
-	VIEW3D_UV_Tools_Panel,
+	UV_PT_UV_Mover_Panel,
+	VIEW3D_PT_UV_Tools_Panel,
 )	
 
 

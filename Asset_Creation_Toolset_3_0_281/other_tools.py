@@ -169,7 +169,7 @@ class Merge_Bones(bpy.types.Operator):
 
 #-------------------------------------------------------
 #Panels
-class VIEW3D_Other_Tools_Panel(bpy.types.Panel):
+class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 	bl_label = "Other Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -178,7 +178,7 @@ class VIEW3D_Other_Tools_Panel(bpy.types.Panel):
 	@classmethod
 	def poll(self, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is not None and (context.object.mode == 'OBJECT' or context.mode == 'EDIT_ARMATURE')) and preferences['other_enable']
+		return (context.object is not None and (context.object.mode == 'OBJECT' or context.mode == 'EDIT_ARMATURE')) and preferences.other_enable
 
 	def draw(self, context):
 		act = context.scene.act
@@ -229,7 +229,7 @@ classes = (
 	Calc_Normals,
 	Obj_Name_To_Mesh_Name,
 	Merge_Bones,
-	VIEW3D_Other_Tools_Panel,
+	VIEW3D_PT_Other_Tools_Panel,
 )	
 
 

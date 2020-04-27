@@ -119,7 +119,7 @@ class Rename_Bones(bpy.types.Operator):
 
 #-------------------------------------------------------
 #Rename Tools UI Panel
-class VIEW3D_Rename_Tools_Panel(bpy.types.Panel):
+class VIEW3D_PT_Rename_Tools_Panel(bpy.types.Panel):
 	bl_label = "Renaming Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -128,7 +128,7 @@ class VIEW3D_Rename_Tools_Panel(bpy.types.Panel):
 	@classmethod
 	def poll(self, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is not None and (context.object.mode == 'OBJECT'	or context.mode == 'EDIT_ARMATURE')) and preferences['renaming_enable']
+		return (context.object is not None and (context.object.mode == 'OBJECT'	or context.mode == 'EDIT_ARMATURE')) and preferences.renaming_enable
 
 	def draw(self, context):
 		act = context.scene.act
@@ -170,7 +170,7 @@ class VIEW3D_Rename_Tools_Panel(bpy.types.Panel):
 classes = (
 	Numbering,
 	Rename_Bones,
-	VIEW3D_Rename_Tools_Panel,
+	VIEW3D_PT_Rename_Tools_Panel,
 )	
 
 

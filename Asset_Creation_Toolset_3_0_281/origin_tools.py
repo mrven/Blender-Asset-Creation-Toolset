@@ -310,7 +310,7 @@ class Set_Origin_To_Select(bpy.types.Operator):
 
 #-------------------------------------------------------
 #Origin Tools UI Panel
-class VIEW3D_Origin_Tools_Panel(bpy.types.Panel):
+class VIEW3D_PT_Origin_Tools_Panel(bpy.types.Panel):
 	bl_label = "Origin Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -319,7 +319,7 @@ class VIEW3D_Origin_Tools_Panel(bpy.types.Panel):
 	@classmethod
 	def poll(self, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is not None and (context.mode == 'OBJECT' or context.mode == 'EDIT_MESH')) and preferences['origin_enable']
+		return (context.object is not None and (context.mode == 'OBJECT' or context.mode == 'EDIT_MESH')) and preferences.origin_enable
 
 	def draw(self, context):
 		act = context.scene.act
@@ -382,7 +382,7 @@ classes = (
 	Align_Cur,
 	Align_Co,
 	Set_Origin_To_Select,
-	VIEW3D_Origin_Tools_Panel,
+	VIEW3D_PT_Origin_Tools_Panel,
 )	
 
 

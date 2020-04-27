@@ -40,7 +40,7 @@ class Calc_Normals(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 		
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
@@ -94,7 +94,7 @@ class Merge_Bones(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 
 		#BUG!! Active Bone not updating if switch MODE frome POSE to EDIT
 		bpy.ops.object.mode_set(mode='OBJECT')
@@ -181,7 +181,7 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 		return (context.object is not None and (context.object.mode == 'OBJECT' or context.mode == 'EDIT_ARMATURE')) and preferences.other_enable
 
 	def draw(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 		
 		layout = self.layout
 		row = layout.row()	
@@ -229,7 +229,6 @@ classes = (
 	Calc_Normals,
 	Obj_Name_To_Mesh_Name,
 	Merge_Bones,
-	VIEW3D_PT_Other_Tools_Panel,
 )	
 
 

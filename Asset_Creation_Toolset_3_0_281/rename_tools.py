@@ -12,7 +12,7 @@ class Numbering(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 		
 		selected_obj = bpy.context.selected_objects	
 		objects_list = []
@@ -131,7 +131,7 @@ class VIEW3D_PT_Rename_Tools_Panel(bpy.types.Panel):
 		return (context.object is not None and (context.object.mode == 'OBJECT'	or context.mode == 'EDIT_ARMATURE')) and preferences.renaming_enable
 
 	def draw(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 		
 		layout = self.layout	
 		if context.object is not None:
@@ -170,7 +170,6 @@ class VIEW3D_PT_Rename_Tools_Panel(bpy.types.Panel):
 classes = (
 	Numbering,
 	Rename_Bones,
-	VIEW3D_PT_Rename_Tools_Panel,
 )	
 
 

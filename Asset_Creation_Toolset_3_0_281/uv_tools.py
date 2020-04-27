@@ -37,7 +37,7 @@ class Rename_UV(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 		
 		selected_obj = bpy.context.selected_objects	
 		uv_index = act.uv_layer_index
@@ -61,7 +61,7 @@ class UV_Mover(bpy.types.Operator):
 	move_command: bpy.props.StringProperty()
 	
 	def execute(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 
 		Start_Pivot_Mode = bpy.context.space_data.pivot_point
 		bpy.context.space_data.pivot_point = 'CURSOR'
@@ -107,7 +107,7 @@ class UV_PT_UV_Mover_Panel(bpy.types.Panel):
 		return (context.mode == 'EDIT_MESH') and preferences.uv_uv_enable
 
 	def draw(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 		
 		layout = self.layout
 		if context.object.mode == 'EDIT' and context.area.ui_type == 'UV':
@@ -161,7 +161,8 @@ class VIEW3D_PT_UV_Tools_Panel(bpy.types.Panel):
 		return (context.object is not None and context.object.mode == 'OBJECT') and preferences.uv_view3d_enable
 
 	def draw(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
+		
 		layout = self.layout
 		row = layout.row()	
 
@@ -191,8 +192,6 @@ classes = (
 	UV_Remove,
 	Rename_UV,
 	UV_Mover,
-	UV_PT_UV_Mover_Panel,
-	VIEW3D_PT_UV_Tools_Panel,
 )	
 
 

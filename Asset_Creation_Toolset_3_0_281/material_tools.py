@@ -307,7 +307,7 @@ class Assign_Multiedit_Materials(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	def execute(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 		
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
@@ -511,7 +511,7 @@ class VIEW3D_PT_Material_Tools_Panel(bpy.types.Panel):
 		return (context.object is not None and context.object.mode == 'OBJECT') and preferences.material_enable
 
 	def draw(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 		
 		layout = self.layout
 		if context.object is not None:
@@ -552,7 +552,6 @@ classes = (
 	Texture_From_Active_Material,
 	Select_Texture_Menu,
 	Call_Select_Texture_Menu,
-	VIEW3D_PT_Material_Tools_Panel,
 )	
 
 

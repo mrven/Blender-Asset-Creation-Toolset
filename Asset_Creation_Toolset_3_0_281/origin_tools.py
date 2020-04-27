@@ -13,7 +13,7 @@ class Align_Min(bpy.types.Operator):
 	align_type: bpy.props.StringProperty()
 	
 	def execute(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 
 		# Save selected objects and current position of 3D Cursor
 		current_selected_obj = bpy.context.selected_objects
@@ -96,7 +96,7 @@ class Align_Max(bpy.types.Operator):
 	align_type: bpy.props.StringProperty()
 	
 	def execute(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 
 		# Save selected objects and current position of 3D Cursor
 		current_selected_obj = bpy.context.selected_objects
@@ -179,7 +179,7 @@ class Align_Cur(bpy.types.Operator):
 	align_type: bpy.props.StringProperty()
 	
 	def execute(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 
 		# Save selected objects and current position of 3D Cursor
 		current_selected_obj = bpy.context.selected_objects
@@ -233,7 +233,7 @@ class Align_Co(bpy.types.Operator):
 	align_type: bpy.props.StringProperty()
 
 	def execute(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 
 		wrong_align_co = False
 		#Check coordinate if check this option
@@ -322,7 +322,7 @@ class VIEW3D_PT_Origin_Tools_Panel(bpy.types.Panel):
 		return (context.object is not None and (context.mode == 'OBJECT' or context.mode == 'EDIT_MESH')) and preferences.origin_enable
 
 	def draw(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 		
 		layout = self.layout
 		if context.object is not None:
@@ -382,7 +382,6 @@ classes = (
 	Align_Cur,
 	Align_Co,
 	Set_Origin_To_Select,
-	VIEW3D_PT_Origin_Tools_Panel,
 )	
 
 

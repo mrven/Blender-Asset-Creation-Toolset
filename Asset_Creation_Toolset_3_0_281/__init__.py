@@ -13,6 +13,7 @@ bl_info = {
 modules_names = ['props', 'preferences', 'utils', 'import_export_tools', 'material_tools', 'origin_tools', 'other_tools',
 				 'rename_tools', 'uv_tools']
 
+
 modules_full_names = {}
 for current_module_name in modules_names:
 	modules_full_names[current_module_name] = ('{}.{}'.format(__name__, current_module_name))

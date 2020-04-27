@@ -4,8 +4,23 @@ from bpy.props import (
 		StringProperty,
 		EnumProperty,
 		BoolProperty
-        )
+		)
 
+from . import import_export_tools
+
+'''
+def update_export_import_panel_category(self, context):
+	is_panel = hasattr(bpy.types, 'VIEW3D_Import_Export_Tools_Panel')
+	category = bpy.context.preferences.addons[__package__].preferences.export_import_panel_category
+
+	if is_panel:
+		try:
+			bpy.utils.unregister_class(VIEW3D_Import_Export_Tools_Panel)
+		except:
+			pass
+	VIEW3D_Import_Export_Tools_Panel.bl_category = category
+	bpy.utils.register_class(VIEW3D_Import_Export_Tools_Panel)
+'''
 
 class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 	bl_idname = __package__
@@ -48,14 +63,25 @@ class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 	material_properties_enable: BoolProperty(
 		name="Material (Properties) Tools",
 		description="Show/Hide Import/Export Material (Properties) UI Panel",
-		default=True)	
+		default=True)
+
+	export_import_panel_category: StringProperty(
+		description="Choose a name for the category of the Import/Export panel",
+		default="ACT"
+		)
 
 	def draw(self, context):
 		layout = self.layout
 		row = layout.row()
 		row.label(text='Visibility of Addon UI Panels:')
-		row = layout.row()
+		
+		box = layout.box()
+		row = box.row()
 		row.prop(self, 'export_import_enable')
+		row = box.row(align=True)
+		row.label(text='    Import/Export Panel Category:')
+		row.prop(self, 'export_import_panel_category', text="")
+		
 		row = layout.row()
 		row.prop(self, 'material_enable')
 		row = layout.row()
@@ -72,7 +98,7 @@ class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 		row.prop(self, 'material_properties_enable')
 
 classes = (
-    ACT_Addon_Preferences,
+	ACT_Addon_Preferences,
 )	
 
 

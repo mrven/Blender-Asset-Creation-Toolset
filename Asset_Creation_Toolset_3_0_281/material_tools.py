@@ -465,7 +465,7 @@ class Texture_From_Active_Material(bpy.types.Operator):
 #-------------------------------------------------------
 #Menu for Select Texture In UV Editor From Active Material
 class Select_Texture_Menu(bpy.types.Menu):
-	bl_idname = "uv.select_texture_menu"
+	bl_idname = "OBJECT_MT_select_texture_menu"
 	bl_label = "Select Texture"
 
 	def draw(self, context):
@@ -492,14 +492,14 @@ class Call_Select_Texture_Menu(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
-		bpy.ops.wm.call_menu(name="uv.select_texture_menu")
+		bpy.ops.wm.call_menu(name="OBJECT_MT_select_texture_menu")
 		
 		return {'FINISHED'}	
 
 
 #-------------------------------------------------------
 #Material Tools UI Panel
-class VIEW3D_Material_Tools_Panel(bpy.types.Panel):
+class VIEW3D_PT_Material_Tools_Panel(bpy.types.Panel):
 	bl_label = "Material/Texture Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -508,7 +508,7 @@ class VIEW3D_Material_Tools_Panel(bpy.types.Panel):
 	@classmethod
 	def poll(self, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is not None and context.object.mode == 'OBJECT') and preferences['material_enable']
+		return (context.object is not None and context.object.mode == 'OBJECT') and preferences.material_enable
 
 	def draw(self, context):
 		act = context.scene.act
@@ -536,7 +536,7 @@ class VIEW3D_Material_Tools_Panel(bpy.types.Panel):
 #Material Assign UI Panel
 def Material_Menu_Panel(self, context):
 	preferences = bpy.context.preferences.addons[__package__].preferences
-	if context.object is not None and preferences['material_properties_enable']:
+	if context.object is not None and preferences.material_properties_enable:
 		if context.object.mode == 'EDIT' and len(context.selected_objects) > 1:
 			layout = self.layout
 			row = layout.row()		
@@ -552,7 +552,7 @@ classes = (
 	Texture_From_Active_Material,
 	Select_Texture_Menu,
 	Call_Select_Texture_Menu,
-	VIEW3D_Material_Tools_Panel,
+	VIEW3D_PT_Material_Tools_Panel,
 )	
 
 

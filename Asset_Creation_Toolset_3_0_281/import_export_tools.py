@@ -13,7 +13,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 		act.export_dir = ""
 
 		#FBX Export Scale Mode depends selected Target Engine
@@ -309,7 +309,7 @@ class Open_Export_Dir(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 
 		if not os.path.exists(os.path.realpath(bpy.path.abspath(act.export_path))):
 			act.export_dir = "";
@@ -365,7 +365,7 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 		return (context.object is None or (context.object is not None and context.object.mode == 'OBJECT')) and preferences.export_import_enable
 
 	def draw(self, context):
-		act = context.scene.act
+		act = bpy.context.scene.act
 		
 		layout = self.layout	
 		if context.object is not None:
@@ -460,14 +460,12 @@ classes = (
 	Multi_FBX_Export,
 	Open_Export_Dir,
 	Import_FBX_OBJ,
-	VIEW3D_PT_Import_Export_Tools_Panel,
 )	
 
 
 def register():
 	for cls in classes:
 		bpy.utils.register_class(cls)
-
 
 def unregister():
 	for cls in reversed(classes):

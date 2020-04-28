@@ -449,7 +449,7 @@ class Delete_Unused_Materials(bpy.types.Operator):
 #Select Texture In UV Editor From Active Material
 class Texture_From_Active_Material(bpy.types.Operator):
 	"""Select Texture In UV Editor From Active Material"""
-	bl_idname = "uv.texture_from_material"
+	bl_idname = "object.texture_from_material"
 	bl_label = "Select Texture In UV Editor From Active Material"
 	bl_options = {'REGISTER', 'UNDO'}
 	texture_name: bpy.props.StringProperty()
@@ -470,24 +470,47 @@ class Select_Texture_Menu(bpy.types.Menu):
 
 	def draw(self, context):
 		layout = self.layout
-		if bpy.context.active_object.type == 'MESH':
-			if len(bpy.context.active_object.data.materials) > 0:
-				for node in bpy.context.active_object.active_material.node_tree.nodes:
-					if node.type == 'TEX_IMAGE':
-						texture_name = node.image.name_full
-						row = layout.row()
-						row.operator("uv.texture_from_material", text=texture_name).texture_name=texture_name
-			else:
-				row.label("Mesh has not materials")
-		else:
-			row.label("Object is not mesh")
+		texture_list = []
 
+		has_opened_image_editor = False
+		for area in bpy.context.screen.areas:
+			if area.type == "IMAGE_EDITOR":
+				has_opened_image_editor = True
+
+		if has_opened_image_editor:
+			if bpy.context.active_object.type == 'MESH':
+				if len(bpy.context.active_object.data.materials) > 0:
+					has_textures = False
+					
+					for node in bpy.context.active_object.active_material.node_tree.nodes:
+						if node.type == 'TEX_IMAGE':
+							texture_name = node.image.name_full
+							texture_in_list = False
+							for texture in texture_list:
+								if texture_name == texture:
+									texture_in_list = True
+
+							if not texture_in_list:
+								texture_list.append(texture_name)
+							has_textures = True
+					
+					if not has_textures:
+						layout.label(text="Material has not textures")	
+				else:
+					layout.label(text="Mesh has not materials")
+			else:
+				layout.label(text="Object is not mesh")
+		else:
+			layout.label(text="Opened UV Editor not found")
+
+		for texture in texture_list:
+			layout.operator("object.texture_from_material", text=texture).texture_name=texture
 
 #-------------------------------------------------------
 #Call Menu for Select Texture In UV Editor From Active Material
 class Call_Select_Texture_Menu(bpy.types.Operator):
 	"""Select Texture In UV Editor From Active Material"""
-	bl_idname = "uv.call_select_texture_menu"
+	bl_idname = "object.call_select_texture_menu"
 	bl_label = "Select Texture In UV Editor From Active Material"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -529,7 +552,7 @@ class VIEW3D_PT_Material_Tools_Panel(bpy.types.Panel):
 				row.operator("object.palette_creator", text="Create Palette Texture")
 
 				row = layout.row()
-				row.operator("uv.call_select_texture_menu", text="Open Texture in UV Editor")
+				row.operator("object.call_select_texture_menu", text="Open Texture in UV Editor")
 
 
 #-------------------------------------------------------

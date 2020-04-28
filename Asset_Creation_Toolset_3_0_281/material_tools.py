@@ -508,9 +508,22 @@ class Select_Texture_Menu(bpy.types.Menu):
 
 #-------------------------------------------------------
 #Call Menu for Select Texture In UV Editor From Active Material
-class Call_Select_Texture_Menu(bpy.types.Operator):
+class Call_Select_Texture_Menu_View3D(bpy.types.Operator):
 	"""Select Texture In UV Editor From Active Material"""
-	bl_idname = "object.call_select_texture_menu"
+	bl_idname = "view3d.call_select_texture_menu"
+	bl_label = "Select Texture In UV Editor From Active Material"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		bpy.ops.wm.call_menu(name="OBJECT_MT_select_texture_menu")
+		
+		return {'FINISHED'}	
+
+#-------------------------------------------------------
+#Call Menu for Select Texture In UV Editor From Active Material
+class Call_Select_Texture_Menu_Image_Editor(bpy.types.Operator):
+	"""Select Texture In UV Editor From Active Material"""
+	bl_idname = "image.call_select_texture_menu"
 	bl_label = "Select Texture In UV Editor From Active Material"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -521,7 +534,7 @@ class Call_Select_Texture_Menu(bpy.types.Operator):
 
 
 #-------------------------------------------------------
-#Material Tools UI Panel
+#Material Tools UI Panel in View 3D
 class VIEW3D_PT_Material_Tools_Panel(bpy.types.Panel):
 	bl_label = "Material/Texture Tools"
 	bl_space_type = "VIEW_3D"
@@ -531,7 +544,7 @@ class VIEW3D_PT_Material_Tools_Panel(bpy.types.Panel):
 	@classmethod
 	def poll(self, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is not None and context.object.mode == 'OBJECT') and preferences.material_enable
+		return (context.object is not None and (context.mode == 'OBJECT' or context.mode == 'EDIT_MESH')) and preferences.material_enable
 
 	def draw(self, context):
 		act = bpy.context.scene.act
@@ -551,8 +564,30 @@ class VIEW3D_PT_Material_Tools_Panel(bpy.types.Panel):
 				row = layout.row()
 				row.operator("object.palette_creator", text="Create Palette Texture")
 
-				row = layout.row()
-				row.operator("object.call_select_texture_menu", text="Open Texture in UV Editor")
+			row = layout.row()
+			row.operator("view3d.call_select_texture_menu", text="Open Texture in UV Editor")
+
+
+#-------------------------------------------------------
+#Material Tools UI Panel in UV Editor
+class UV_PT_Material_UV_Tools_Panel(bpy.types.Panel):
+	bl_label = "Material/Texture Tools"
+	bl_space_type = 'IMAGE_EDITOR'
+	bl_region_type = "UI"
+	bl_category = "ACT"
+
+	@classmethod
+	def poll(self, context):
+		preferences = bpy.context.preferences.addons[__package__].preferences
+		return (context.object is not None and (context.mode == 'OBJECT' or context.mode == 'EDIT_MESH')) and preferences.uv_material_enable
+
+	def draw(self, context):
+		act = bpy.context.scene.act
+		
+		layout = self.layout
+		if context.object is not None:
+			row = layout.row()
+			row.operator("image.call_select_texture_menu", text="Open Texture in UV Editor")
 
 
 #-------------------------------------------------------
@@ -574,7 +609,8 @@ classes = (
 	Delete_Unused_Materials,
 	Texture_From_Active_Material,
 	Select_Texture_Menu,
-	Call_Select_Texture_Menu,
+	Call_Select_Texture_Menu_View3D,
+	Call_Select_Texture_Menu_Image_Editor,
 )	
 
 

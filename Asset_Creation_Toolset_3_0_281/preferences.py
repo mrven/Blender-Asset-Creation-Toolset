@@ -9,7 +9,7 @@ from bpy.props import (
 from . import import_export_tools, material_tools, origin_tools, other_tools, rename_tools, uv_tools
 
 from .import_export_tools import VIEW3D_PT_Import_Export_Tools_Panel
-from .material_tools import VIEW3D_PT_Material_Tools_Panel
+from .material_tools import VIEW3D_PT_Material_Tools_Panel, UV_PT_Material_UV_Tools_Panel
 from .origin_tools import VIEW3D_PT_Origin_Tools_Panel
 from .other_tools import VIEW3D_PT_Other_Tools_Panel
 from .rename_tools import VIEW3D_PT_Rename_Tools_Panel
@@ -104,6 +104,19 @@ def update_view3d_uv_panel_category(self, context):
 			pass
 	VIEW3D_PT_UV_Tools_Panel.bl_category = category
 	bpy.utils.register_class(VIEW3D_PT_UV_Tools_Panel)
+
+
+def update_uv_material_panel_category(self, context):
+	is_panel = hasattr(bpy.types, 'UV_PT_Material_UV_Tools_Panel')
+	category = bpy.context.preferences.addons[__package__].preferences.uv_material_panel_category
+	
+	if is_panel:
+		try:
+			bpy.utils.unregister_class(UV_PT_Material_UV_Tools_Panel)
+		except:
+			pass
+	UV_PT_Material_UV_Tools_Panel.bl_category = category
+	bpy.utils.register_class(UV_PT_Material_UV_Tools_Panel)
 	
 
 class ACT_Addon_Preferences(bpy.types.AddonPreferences):
@@ -116,7 +129,7 @@ class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 
 	material_enable: BoolProperty(
 		name="Material/Texture Tools",
-		description="Show/Hide Material/Texture Tools UI Panel",
+		description="Show/Hide Material/Texture Tools (3D View) UI Panel",
 		default=True)
 
 	origin_enable: BoolProperty(
@@ -144,6 +157,11 @@ class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 		description="Show/Hide Renaming Tools UI Panel",
 		default=True)
 
+	uv_material_enable: BoolProperty(
+		name="Material/Texture Tools (Image Editor)",
+		description="Show/Hide Material/Texture Tools (Image Editor) UI Panel",
+		default=True)
+
 	material_properties_enable: BoolProperty(
 		name="Material (Properties) Tools",
 		description="Show/Hide Import/Export Material (Properties) UI Panel",
@@ -156,7 +174,7 @@ class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 		)
 
 	material_panel_category: StringProperty(
-		description="Choose a name for the category of the Material panel",
+		description="Choose a name for the category of the Material (3D View) panel",
 		default="ACT",
 		update = update_material_panel_category
 		)
@@ -191,6 +209,12 @@ class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 		update = update_view3d_uv_panel_category
 		)
 
+	uv_material_panel_category: StringProperty(
+		description="Choose a name for the category of the Material (Image Editor) panel",
+		default="ACT",
+		update = update_uv_material_panel_category
+		)
+
 	def draw(self, context):
 		layout = self.layout
 		row = layout.row()
@@ -209,7 +233,7 @@ class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 		row.prop(self, 'material_enable')
 		if self.material_enable:
 			row = box.row(align=True)
-			row.label(text='    Material Panel Category:')
+			row.label(text='    Material (3D View) Panel Category:')
 			row.prop(self, 'material_panel_category', text="")
 		
 		box = layout.box()
@@ -251,6 +275,14 @@ class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 			row = box.row(align=True)
 			row.label(text='    Renaming Panel Category:')
 			row.prop(self, 'rename_panel_category', text="")
+
+		box = layout.box()
+		row = box.row()
+		row.prop(self, 'uv_material_enable')
+		if self.uv_material_enable:
+			row = box.row(align=True)
+			row.label(text='    Material/Texture (Image Editor) Panel Category:')
+			row.prop(self, 'uv_material_panel_category', text="")
 		
 		box = layout.box()
 		row = box.row()
@@ -265,6 +297,7 @@ classes = (
 	VIEW3D_PT_Rename_Tools_Panel,
 	UV_PT_UV_Mover_Panel,
 	VIEW3D_PT_UV_Tools_Panel,
+	UV_PT_Material_UV_Tools_Panel,
 )	
 
 
@@ -282,6 +315,7 @@ def register():
 	update_rename_panel_category(prefs, context)
 	update_uv_uv_panel_category(prefs, context)
 	update_view3d_uv_panel_category(prefs, context)
+	update_uv_material_panel_category(prefs, context)
 
 
 

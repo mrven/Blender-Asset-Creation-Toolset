@@ -6,14 +6,15 @@ from bpy.props import (
 		BoolProperty
 		)
 
-from . import import_export_tools, material_tools, origin_tools, other_tools, rename_tools, uv_tools
+from . import origin_tools, rename_tools, uv_tools, import_export_tools, material_tools, other_tools
 
-from .import_export_tools import VIEW3D_PT_Import_Export_Tools_Panel
-from .material_tools import VIEW3D_PT_Material_Tools_Panel, UV_PT_Material_UV_Tools_Panel
 from .origin_tools import VIEW3D_PT_Origin_Tools_Panel
-from .other_tools import VIEW3D_PT_Other_Tools_Panel
 from .rename_tools import VIEW3D_PT_Rename_Tools_Panel
 from .uv_tools import UV_PT_UV_Mover_Panel, VIEW3D_PT_UV_Tools_Panel
+from .import_export_tools import VIEW3D_PT_Import_Export_Tools_Panel
+from .material_tools import VIEW3D_PT_Material_Tools_Panel, UV_PT_Material_UV_Tools_Panel
+from .other_tools import VIEW3D_PT_Other_Tools_Panel
+
 
 def update_export_import_panel_category(self, context):
 	is_panel = hasattr(bpy.types, 'VIEW3D_PT_Import_Export_Tools_Panel')
@@ -290,13 +291,13 @@ class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 
 classes = (
 	ACT_Addon_Preferences,
+	VIEW3D_PT_Origin_Tools_Panel,
+	VIEW3D_PT_Rename_Tools_Panel,
+	VIEW3D_PT_UV_Tools_Panel,
 	VIEW3D_PT_Import_Export_Tools_Panel,
 	VIEW3D_PT_Material_Tools_Panel,
-	VIEW3D_PT_Origin_Tools_Panel,
 	VIEW3D_PT_Other_Tools_Panel,
-	VIEW3D_PT_Rename_Tools_Panel,
 	UV_PT_UV_Mover_Panel,
-	VIEW3D_PT_UV_Tools_Panel,
 	UV_PT_Material_UV_Tools_Panel,
 )	
 
@@ -308,15 +309,14 @@ def register():
 	# Update Category
 	context = bpy.context
 	prefs = bpy.context.preferences.addons[__package__].preferences
-	update_export_import_panel_category(prefs, context)
-	update_material_panel_category(prefs, context)
 	update_origin_panel_category(prefs, context)
-	update_other_panel_category(prefs, context)
 	update_rename_panel_category(prefs, context)
-	update_uv_uv_panel_category(prefs, context)
 	update_view3d_uv_panel_category(prefs, context)
+	update_export_import_panel_category(prefs, context)
+	update_material_panel_category(prefs, context)	
+	update_other_panel_category(prefs, context)	
+	update_uv_uv_panel_category(prefs, context)
 	update_uv_material_panel_category(prefs, context)
-
 
 
 def unregister():

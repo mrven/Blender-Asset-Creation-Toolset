@@ -78,17 +78,30 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 			for obj in current_selected_obj:
 				obj.name += "_ex"
-				obj.data.name += "_ex"
+				if obj.type == 'MESH' or obj.type == 'ARMATURE':
+					obj.data.name += "_ex"
 
 			bpy.ops.object.duplicate()
 			exp_objects = bpy.context.selected_objects
 
-			bpy.ops.object.convert(target='MESH')
 			bpy.ops.object.make_single_user(type='SELECTED_OBJECTS', object=True, obdata=True)
 
 			for obj in exp_objects:
+				bpy.ops.object.select_all(action='DESELECT')
+				obj.select_set(True)
+				bpy.context.view_layer.objects.active = obj
+
+				if obj.type == 'MESH':
+					for modifier in obj.modifiers:
+						if modifier.type != 'ARMATURE':
+							bpy.ops.object.modifier_apply(apply_as='DATA', modifier=modifier.name)
+				else:
+					bpy.ops.object.convert(target='MESH')		
+
+			for obj in exp_objects:
 				obj.name = obj.name[:-7]
-				obj.data.name = obj.name
+				if obj.type == 'MESH' or obj.type == 'ARMATURE':
+					obj.data.name = obj.name
 			
 			if act.delete_mats_before_export:
 				for o in exp_objects:
@@ -96,6 +109,9 @@ class Multi_FBX_Export(bpy.types.Operator):
 						for q in reversed(range(len(o.data.materials))):
 							bpy.context.object.active_material_index = q
 							o.data.materials.pop(index = q)	
+
+			for obj in exp_objects:
+				obj.select_set(True)
 
 			#Apply Scale
 			if act.apply_scale:
@@ -282,7 +298,8 @@ class Multi_FBX_Export(bpy.types.Operator):
 			
 			for j in start_selected_obj:
 				j.name = j.name[:-3]
-				j.data.name = j.data.name[:-3]
+				if j.type == 'MESH' or j.type == 'ARMATURE':
+					j.data.name = j.data.name[:-3]
 				j.select_set(True)
 	
 			bpy.context.view_layer.objects.active = start_active_obj
@@ -362,7 +379,7 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 	@classmethod
 	def poll(self, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is None or (context.object is not None and context.object.mode == 'OBJECT')) and preferences.export_import_enable
+		return (context.object is None or (context.object is not None and context.mode == 'OBJECT')) and preferences.export_import_enable
 
 	def draw(self, context):
 		act = bpy.context.scene.act
@@ -408,10 +425,11 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 				row = layout.row()
 				row.prop(act, "delete_mats_before_export", text="Delete All Materials")
 				if act.fbx_export_mode == 'ALL':
-					row = layout.row()
+					box = layout.box()
+					row = box.row()
 					row.prop(act, "set_custom_fbx_name", text="Custom Name for FBX")
 					if act.set_custom_fbx_name:
-						row = layout.row(align=True)
+						row = box.row(align=True)
 						row.label(text="FBX Name:")
 						row.prop(act, "custom_fbx_name")
 
@@ -446,10 +464,12 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 					row.operator("object.multi_fbx_export", text="Export FBX to Unreal")
 
 				if len(act.export_dir) > 0:
+					row = layout.row()
 					row.operator("object.open_export_dir", text="Open Export Directory")
 				
-				row = layout.row()
-				row.operator("object.import_fbxobj", text="Import FBXs/OBJs")
+		if context.mode == 'OBJECT':
+			row = layout.row()
+			row.operator("object.import_fbxobj", text="Import FBXs/OBJs")
 
 		else:
 			row = layout.row()

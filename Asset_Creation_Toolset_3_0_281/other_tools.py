@@ -104,6 +104,7 @@ class Merge_Bones(bpy.types.Operator):
 		armature = bpy.context.active_object
 		active_bone_name = armature.data.bones.active.name
 		selected_bones_name = []
+		parent_mesh = None
 
 		bpy.ops.object.mode_set(mode='OBJECT')
 
@@ -120,6 +121,11 @@ class Merge_Bones(bpy.types.Operator):
 					for n in m.modifiers:
 						if n.type == 'ARMATURE' and n.object.name_full == armature.name_full:
 							parent_mesh = m
+
+		if parent_mesh == None:
+			self.report({'INFO'}, 'Armature has no mesh')
+			bpy.ops.object.mode_set(mode='EDIT')
+			return {'CANCELLED'}
 
 		bpy.ops.object.select_all(action='DESELECT')
 		parent_mesh.select_set(True)
@@ -184,8 +190,7 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 	def draw(self, context):
 		act = bpy.context.scene.act
 		
-		layout = self.layout
-		row = layout.row()	
+		layout = self.layout	
 
 		if context.object is not None:
 			if context.object.mode == 'EDIT':

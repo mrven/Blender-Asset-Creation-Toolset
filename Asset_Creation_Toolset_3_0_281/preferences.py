@@ -219,8 +219,40 @@ class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 	def draw(self, context):
 		layout = self.layout
 		row = layout.row()
-		row.label(text='Visibility of Addon UI Panels:')
+		row.label(text='Visibility and Category for Panels:')
 		
+		box = layout.box()
+		row = box.row()
+		row.prop(self, 'origin_enable')
+		if self.origin_enable:
+			row = box.row(align=True)
+			row.label(text='    Origin Panel Category:')
+			row.prop(self, 'origin_panel_category', text="")
+
+		box = layout.box()
+		row = box.row()
+		row.prop(self, 'renaming_enable')
+		if self.renaming_enable:
+			row = box.row(align=True)
+			row.label(text='    Renaming Panel Category:')
+			row.prop(self, 'rename_panel_category', text="")
+
+		box = layout.box()
+		row = box.row()
+		row.prop(self, 'uv_view3d_enable')
+		if self.uv_view3d_enable:
+			row = box.row(align=True)
+			row.label(text='    UV (3D View) Panel Category:')
+			row.prop(self, 'view3d_uv_panel_category', text="")
+		
+		box = layout.box()
+		row = box.row()
+		row.prop(self, 'uv_uv_enable')
+		if self.uv_uv_enable:
+			row = box.row(align=True)
+			row.label(text='    UV (UV Editor) Panel Category:')
+			row.prop(self, 'uv_uv_category', text="")
+
 		box = layout.box()
 		row = box.row()
 		row.prop(self, 'export_import_enable')
@@ -239,46 +271,6 @@ class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 		
 		box = layout.box()
 		row = box.row()
-		row.prop(self, 'origin_enable')
-		if self.origin_enable:
-			row = box.row(align=True)
-			row.label(text='    Origin Panel Category:')
-			row.prop(self, 'origin_panel_category', text="")
-		
-		box = layout.box()
-		row = box.row()
-		row.prop(self, 'other_enable')
-		if self.other_enable:
-			row = box.row(align=True)
-			row.label(text='    Other Panel Category:')
-			row.prop(self, 'other_panel_category', text="")
-		
-		box = layout.box()
-		row = box.row()
-		row.prop(self, 'uv_view3d_enable')
-		if self.uv_view3d_enable:
-			row = box.row(align=True)
-			row.label(text='    UV (3D View) Panel Category:')
-			row.prop(self, 'view3d_uv_panel_category', text="")
-		
-		box = layout.box()
-		row = box.row()
-		row.prop(self, 'uv_uv_enable')
-		if self.uv_uv_enable:
-			row = box.row(align=True)
-			row.label(text='    UV (UV Editor) Panel Category:')
-			row.prop(self, 'uv_uv_category', text="")
-		
-		box = layout.box()
-		row = box.row()
-		row.prop(self, 'renaming_enable')
-		if self.renaming_enable:
-			row = box.row(align=True)
-			row.label(text='    Renaming Panel Category:')
-			row.prop(self, 'rename_panel_category', text="")
-
-		box = layout.box()
-		row = box.row()
 		row.prop(self, 'uv_material_enable')
 		if self.uv_material_enable:
 			row = box.row(align=True)
@@ -287,7 +279,16 @@ class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 		
 		box = layout.box()
 		row = box.row()
-		row.prop(self, 'material_properties_enable')
+		row.prop(self, 'material_properties_enable')		
+		
+		box = layout.box()
+		row = box.row()
+		row.prop(self, 'other_enable')
+		if self.other_enable:
+			row = box.row(align=True)
+			row.label(text='    Other Panel Category:')
+			row.prop(self, 'other_panel_category', text="")
+
 
 classes = (
 	ACT_Addon_Preferences,

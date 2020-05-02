@@ -103,12 +103,13 @@ class Multi_FBX_Export(bpy.types.Operator):
 				if obj.type == 'MESH' or obj.type == 'ARMATURE':
 					obj.data.name = obj.name
 			
+			#Delete All Materials
 			if act.delete_mats_before_export:
 				for o in exp_objects:
 					if o.type == 'MESH' and len(o.data.materials) > 0:
 						for q in reversed(range(len(o.data.materials))):
 							bpy.context.object.active_material_index = q
-							o.data.materials.pop(index = q)	
+							o.data.materials.pop(index = q)
 
 			for obj in exp_objects:
 				obj.select_set(True)
@@ -155,6 +156,22 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 			#Export All as one fbx
 			if act.fbx_export_mode == 'ALL':
+
+				#Combine All Meshes
+				if act.export_combine_meshes:
+					if bpy.data.objects[name].type == 'MESH':
+						bpy.context.view_layer.objects.active = bpy.data.objects[name]
+						bpy.ops.object.join()
+					else:
+						current_active = bpy.context.view_layer.objects.active
+						for obj in exp_objects:
+							if obj.type == 'MESH':
+								bpy.context.view_layer.objects.active = obj
+						bpy.ops.object.join()
+						bpy.context.view_layer.objects.active = current_active
+
+					exp_objects = bpy.context.selected_objects
+				
 				if act.set_custom_fbx_name:
 					name = act.custom_fbx_name
 				
@@ -357,14 +374,24 @@ class Import_FBX_OBJ(bpy.types.Operator, ImportHelper):
 	directory: bpy.props.StringProperty(subtype="DIR_PATH")
 	
 	def execute(self, context):
+		act = bpy.context.scene.act
 		directory = self.directory
 		for f in self.files:
 			filepath = os.path.join(directory, f.name)
 			extension = (os.path.splitext(f.name)[1])[1:]
 			if extension == "fbx" or extension == "FBX":
-				bpy.ops.import_scene.fbx(filepath = filepath)
+				if act.import_custom_options:
+					bpy.ops.import_scene.fbx(filepath = filepath, use_custom_normals = act.import_normals, use_anim = act.import_animation, 
+												automatic_bone_orientation = act.import_automatic_bone_orientation, ignore_leaf_bones = act.import_ignore_leaf_bones)
+				else:
+					bpy.ops.import_scene.fbx(filepath = filepath)
+
 			if extension == "obj" or extension == "OBJ":
-				bpy.ops.import_scene.obj(filepath = filepath)	
+				if act.import_custom_options:
+					bpy.ops.import_scene.obj(filepath = filepath, use_smooth_groups = act.import_normals)
+				else:
+					bpy.ops.import_scene.obj(filepath = filepath)	
+
 		return {'FINISHED'}
 
 
@@ -424,6 +451,11 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 						
 				row = layout.row()
 				row.prop(act, "delete_mats_before_export", text="Delete All Materials")
+
+				if act.fbx_export_mode == 'ALL':
+					row = layout.row()
+					row.prop(act, "export_combine_meshes", text="Combine All Meshes")
+
 				if act.fbx_export_mode == 'ALL':
 					box = layout.box()
 					row = box.row()
@@ -438,7 +470,7 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 				row.prop(act, "export_custom_options", text="Custom Export Options")
 				if act.export_custom_options:
 					row = box.row(align=True)
-					row.label(text=" Smoothing:")
+					row.label(text=" Smoothing")
 					row.prop(act, "export_smoothing", expand=False)
 					
 					row = box.row(align=True)
@@ -468,8 +500,28 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 					row.operator("object.open_export_dir", text="Open Export Directory")
 				
 		if context.mode == 'OBJECT':
-			row = layout.row()
+			box = layout.box()
+			row = box.row()
 			row.operator("object.import_fbxobj", text="Import FBXs/OBJs")
+
+			row = box.row()
+			row.prop(act, "import_custom_options", text="Custom Import Options")
+			if act.import_custom_options:
+				row = box.row(align=True)
+				row.label(text=" Import Normals")
+				row.prop(act, "import_normals", text="")
+				
+				row = box.row(align=True)
+				row.label(text=" Import Animation")
+				row.prop(act, "import_animation", text="")
+				
+				row = box.row(align=True)
+				row.label(text=" Auto Bone Orientation")
+				row.prop(act, "import_automatic_bone_orientation", text="")
+
+				row = box.row(align=True)
+				row.label(text=" Ignore Leaf Bones")
+				row.prop(act, "import_ignore_leaf_bones", text="")
 
 		else:
 			row = layout.row()

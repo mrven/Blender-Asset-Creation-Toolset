@@ -101,6 +101,37 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		('UNREAL','Unreal',''))
 	export_target_engine: EnumProperty(name="", items = export_target_engine_items)
 
+	export_combine_meshes: BoolProperty(
+		name="Combine Meshes before Export",
+		description="Combine Meshes before Export",
+		default = False)	
+
+	#Custom Import Options
+	import_custom_options: BoolProperty(
+		name="Custom Import Options",
+		description="Custom FBX/OBJ Import Options",
+		default = False)
+
+	import_normals: BoolProperty(
+		name="Import Normals/Smooth Groups",
+		description="Import Normals/Smooth Groups",
+		default = True)
+
+	import_animation: BoolProperty(
+	name="Import Animation",
+	description="Import Animation",
+	default = True)
+
+	import_automatic_bone_orientation: BoolProperty(
+	name="Automatic Bone Orientation",
+	description="Automatic Bone Orientation",
+	default = True)
+
+	import_ignore_leaf_bones: BoolProperty(
+	name="Ignore Leaf Bones",
+	description="Ignore Leaf Bones",
+	default = False)		
+
 
 	#-----------------------------------------------------------	
 	#Rename Props

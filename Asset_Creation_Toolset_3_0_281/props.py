@@ -73,7 +73,7 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
       subtype = 'DIR_PATH'
       )
 
-	#Custom FBX Export Opyions
+	#Custom FBX Export Options
 	export_custom_options: BoolProperty(
 		name="Custom Export Options",
 		description="Custom FBX Export Options",
@@ -155,18 +155,22 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		('5','32',''))
 	uv_move_factor: EnumProperty(name="", items = uv_move_factor_items, default = '3')
 	
-	uv_layer_index: IntProperty(
+	uv_index_rename: IntProperty(
         name = "UV Index", 
         description = "UV Index",
 		default = 0,
 		min = 0,
         max = 10)
 	
-	uv_name: StringProperty(
+	uv_name_rename: StringProperty(
 		name="",
 		description="UV Name",
 		default="")
 
+	uv_name_add: StringProperty(
+		name="",
+		description="UV Name",
+		default="")
 	
 	#-----------------------------------------------------------	
 	#Other Tools Props

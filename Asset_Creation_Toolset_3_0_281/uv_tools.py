@@ -2,10 +2,10 @@ import bpy
 
 #-------------------------------------------------------
 #UV-Remover
-class UV_Remove(bpy.types.Operator):
-	"""Remove UV layer"""
-	bl_idname = "object.uv_remove"
-	bl_label = "Remove UV layer"
+class Clear_UV(bpy.types.Operator):
+	"""Clear UV layers"""
+	bl_idname = "object.uv_clear"
+	bl_label = "Claer UV layers"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -29,25 +29,118 @@ class UV_Remove(bpy.types.Operator):
 
 
 #-------------------------------------------------------
-#Rename UV(s)
+#Rename UV
 class Rename_UV(bpy.types.Operator):
-	"""Rename UV(s)"""
+	"""Rename UV"""
 	bl_idname = "object.uv_rename"
-	bl_label = "Rename UV(s)"
+	bl_label = "Rename UV"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
 		act = bpy.context.scene.act
 		
 		selected_obj = bpy.context.selected_objects	
-		uv_index = act.uv_layer_index
-		uv_name = act.uv_name
+		uv_index = act.uv_index_rename
+		uv_name = act.uv_name_rename
 		
 		for x in selected_obj:
 			if x.type == 'MESH':
 				if len(x.data.uv_layers) > 0:
 					if uv_index < len(x.data.uv_layers):
 						x.data.uv_layers[uv_index].name = uv_name	
+		return {'FINISHED'}
+
+
+#-------------------------------------------------------
+#Add UV
+class Add_UV(bpy.types.Operator):
+	"""Add UV"""
+	bl_idname = "object.uv_add"
+	bl_label = "Add UV"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		act = bpy.context.scene.act
+		
+		selected_obj = bpy.context.selected_objects	
+		active_obj = bpy.context.active_object
+
+		uv_name = act.uv_name_add
+		
+		for x in selected_obj:
+			bpy.ops.object.select_all(action='DESELECT')
+			x.select_set(True)
+			bpy.context.view_layer.objects.active = x
+			if x.type == 'MESH':
+				bpy.ops.mesh.uv_texture_add()
+				x.data.uv_layers.active.name = uv_name
+
+		# Select again objects
+		for j in selected_obj:
+			j.select_set(True)
+			
+		bpy.context.view_layer.objects.active = active_obj
+
+		return {'FINISHED'}
+
+
+#-------------------------------------------------------
+#Remove UV
+class Remove_UV(bpy.types.Operator):
+	"""Add UV"""
+	bl_idname = "object.uv_remove"
+	bl_label = "Remove UV"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		act = bpy.context.scene.act
+		
+		selected_obj = bpy.context.selected_objects	
+		active_obj = bpy.context.active_object
+		
+		uv_index = act.uv_index_rename
+		
+		for x in selected_obj:
+			bpy.ops.object.select_all(action='DESELECT')
+			x.select_set(True)
+			bpy.context.view_layer.objects.active = x
+			if x.type == 'MESH':
+				if len(x.data.uv_layers) > 0:
+					if uv_index < len(x.data.uv_layers):
+						x.data.uv_layers[uv_index].active = True
+						bpy.ops.mesh.uv_texture_remove()
+
+		# Select again objects
+		for j in selected_obj:
+			j.select_set(True)
+			
+		bpy.context.view_layer.objects.active = active_obj
+
+		return {'FINISHED'}
+
+
+#-------------------------------------------------------
+#Select UV
+class Select_UV(bpy.types.Operator):
+	"""Add UV"""
+	bl_idname = "object.uv_select"
+	bl_label = "Set Active UV"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		act = bpy.context.scene.act
+		
+		selected_obj = bpy.context.selected_objects	
+
+		uv_index = act.uv_index_rename
+		
+		for x in selected_obj:
+			if x.type == 'MESH':
+				if len(x.data.uv_layers) > 0:
+					if uv_index < len(x.data.uv_layers):
+						x.data.uv_layers[uv_index].active_render = True
+						x.data.uv_layers[uv_index].active = True
+
 		return {'FINISHED'}
 
 
@@ -172,25 +265,35 @@ class VIEW3D_PT_UV_Tools_Panel(bpy.types.Panel):
 		
 		if context.object is not None:
 			if context.mode == 'OBJECT':
+				#Rename UV
 				box = layout.box()
+				row = box.row(align=True)
+				row.prop(act, "uv_index_rename", text="UV ID:")
+
+				row = box.row(align=True)
+				row.prop(act, "uv_name_rename")
+				row.operator("object.uv_rename", text="Rename UV")
+				
 				row = box.row()
-				row.label(text="Rename UV")
-				
-				row = box.row(align=True)
-				row.label(text="UV Name:")
-				row.prop(act, "uv_name")
-				
-				row = box.row(align=True)
-				row.prop(act, "uv_layer_index", text="UV ID:")
-				row.operator("object.uv_rename", text="Rename UV(s)")
-				
+				row.operator("object.uv_remove", text="Remove UV")
+
+				row = box.row()
+				row.operator("object.uv_select", text="Set Active UV")
+
+				row = layout.row(align=True)
+				row.prop(act, "uv_name_add")
+				row.operator("object.uv_add", text="Add UV")
+
 				row = layout.row()
-				row.operator("object.uv_remove", text="Clear UV Maps")
+				row.operator("object.uv_clear", text="Clear UV Maps")
 				
 
 classes = (
-	UV_Remove,
+	Clear_UV,
 	Rename_UV,
+	Add_UV,
+	Remove_UV,
+	Select_UV,
 	UV_Mover,
 )	
 

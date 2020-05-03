@@ -10,7 +10,7 @@
 
 * ***[Blender 2.79](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_4_1_279.zip)***
 * ***[Blender 2.80](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_5_0_280.zip)***
-* ***[Blender 2.81](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_6_1_281.zip)***
+* ***[Blender 2.81](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_0_281.zip)***
 
 Если вы хотите поддержать меня, то можете купить аддон на следующих площадках:
 * ***[Gumroad (Свободная цена)](https://gumroad.com/l/hPXIh)***
@@ -29,10 +29,19 @@
 ![Origin To Selected](/images/gifs/13_OriginToSelected.gif)
 
 
-#### Rename UV
-Позволяет переименовать UV-развёртку выделенных объектов по заданному индексу (каналу) развёртки. Например, у объектов, импортированных из 3Ds Max название развёртки UVChannel_1, а у объектов, созданных в Blender UVMap. Таким образом при объединении объектов вместо объединения развёрток они разбросаются по двум каналам. Также удобно задавать имя для канала Lightmap и т.п.
+#### UV Tools
+* Переименовывание UV-развёртку выделенных объектов по заданному индексу (каналу) развёртки. Например, у объектов, импортированных из 3Ds Max название развёртки UVChannel_1, а у объектов, созданных в Blender UVMap. Таким образом при объединении объектов вместо объединения развёрток они разбросаются по двум каналам. Также удобно задавать имя для канала Lightmap и т.п.
+* Добавление нового UV-канала c заданным именем на выделенные объекты
+* Удаление UV-канала по индексу с выделенных объектов
+* Выбор активного UV-канала в 3D View и Image/UV Editor по индексу
 
 ![Rename UV](/images/gifs/02_RenameUV.gif)
+![UV Tools](/images/pngs/02_UV_Tools.png)
+
+
+#### Быстрый выбор текстуры из активного материала в Image/UV Editor
+
+![Quick Select Texture](/images/pngs/03_Quick_Select_Texture.png)
 
 
 #### Numbering Objects
@@ -120,3 +129,10 @@
 Назначить активный материал на выделенные полигоны в режиме MultiEdit.
 
 ![Active Material To Selected](/images/gifs/14_ActiveMatToSelected.gif)
+
+
+#### Addon Preferences
+* Возможность включать/отключать через настройки аддона видимость панелей
+* Возможность изменять категорию для каждой панели через настройки аддона
+
+![Addon Preferences](/images/pngs/01_Addon_Prefs.png)

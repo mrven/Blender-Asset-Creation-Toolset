@@ -10,7 +10,7 @@
 
 * ***[Blender 2.79](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_4_1_279.zip)***
 * ***[Blender 2.80](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_5_0_280.zip)***
-* ***[Blender 2.81](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_6_1_281.zip)***
+* ***[Blender 2.81](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_0_281.zip)***
 
 If you want to support me you can buy this addon:
 * ***[Gumroad (Pay what you want)](https://gumroad.com/l/hPXIh)***
@@ -35,10 +35,19 @@ Set Origin Point to Selected Element(s)
 ![Origin To Selected](/images/gifs/13_OriginToSelected.gif)
 
 
-#### Rename UV
-Tool for Batch Renaming UV by Index (example, Lightmap - second uv channel).
+#### UV Tools
+* Batch Renaming UV by Index (example, Lightmap - second uv channel)
+* Batch Add UV with custom name
+* Batch Remove UV by Index
+* Set Active UV Layer for Selected Objects in 3D View and Image/UV Editor by UV Index
 
 ![Rename UV](/images/gifs/02_RenameUV.gif)
+![UV Tools](/images/pngs/02_UV_Tools.png)
+
+
+#### Quick Select Texture from Active material in UV Editor
+
+![Quick Select Texture](/images/pngs/03_Quick_Select_Texture.png)
 
 
 #### Numbering Objects
@@ -131,3 +140,10 @@ Tool For Easy Simplifying Armature: Delete (or Dissolve) Selected Bones (Exclude
 Assign active material to selected faces in MultiEdit Mode.
 
 ![Active Material To Selected](/images/gifs/14_ActiveMatToSelected.gif)
+
+
+#### Addon Preferences
+* Show/Hide UI Panels via Addon Preferences
+* Changing Category for each Panel from Preferences
+
+![Addon Preferences](/images/pngs/01_Addon_Prefs.png)

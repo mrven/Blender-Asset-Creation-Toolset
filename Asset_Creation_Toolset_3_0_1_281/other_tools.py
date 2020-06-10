@@ -175,23 +175,6 @@ class Merge_Bones(bpy.types.Operator):
 
 
 #-------------------------------------------------------
-#Weight Paint Brush Mode Invert
-class Weight_Paint_Brush_Invert(bpy.types.Operator):
-	"""Weight Paint Brush Substract Mode"""
-	bl_idname = "paint.weigth_paint_brush_invert"
-	bl_label = "Weight Paint Brush Substract Mode"
-	bl_options = {'REGISTER', 'UNDO'}
-	
-	def execute(self, context):
-		if bpy.data.brushes["Draw"].blend == 'ADD':
-			bpy.data.brushes["Draw"].blend = 'SUB'
-		elif bpy.data.brushes["Draw"].blend == 'SUB':
-			bpy.data.brushes["Draw"].blend = 'ADD'
-
-		return {'FINISHED'}
-
-
-#-------------------------------------------------------
 #Panels
 class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 	bl_label = "Other Tools"
@@ -202,7 +185,7 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 	@classmethod
 	def poll(self, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is not None and (context.object.mode == 'OBJECT' or context.mode == 'EDIT_ARMATURE' or context.mode == 'PAINT_WEIGHT')) and preferences.other_enable
+		return (context.object is not None and (context.object.mode == 'OBJECT' or context.mode == 'EDIT_ARMATURE')) and preferences.other_enable
 
 	def draw(self, context):
 		act = bpy.context.scene.act
@@ -246,24 +229,12 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 				row = layout.row()
 				row.operator("object.merge_bones", text="Merge Bones")
 
-			if context.mode == 'PAINT_WEIGHT':
-				box = layout.box()
-				row = box.row(align = True)
-				row.label(text="Current Mode:")
-				if bpy.data.brushes["Draw"].blend == 'ADD':
-					row.label(text="Add")
-				elif bpy.data.brushes["Draw"].blend == 'SUB':
-					row.label(text="Substract")	
-				row = box.row()
-				row.operator("paint.weigth_paint_brush_invert", text="Invert Brush")		
-
 
 classes = (
 	Clear_Normals,
 	Calc_Normals,
 	Obj_Name_To_Mesh_Name,
 	Merge_Bones,
-	Weight_Paint_Brush_Invert,
 )	
 
 

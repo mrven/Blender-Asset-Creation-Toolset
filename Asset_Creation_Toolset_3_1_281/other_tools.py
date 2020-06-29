@@ -183,11 +183,14 @@ class Weight_Paint_Brush_Invert(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	def execute(self, context):
-		if bpy.data.brushes["Draw"].blend == 'ADD':
-			bpy.data.brushes["Draw"].blend = 'SUB'
-		elif bpy.data.brushes["Draw"].blend == 'SUB':
-			bpy.data.brushes["Draw"].blend = 'ADD'
-
+		current_brush = bpy.context.scene.tool_settings.weight_paint.brush
+		if current_brush.blend == 'ADD':
+			current_brush.blend = 'SUB'
+		elif current_brush.blend == 'SUB':
+			current_brush.blend = 'ADD'
+		else:
+			weight = bpy.context.scene.tool_settings.unified_paint_settings.weight
+			bpy.context.scene.tool_settings.unified_paint_settings.weight = 1 - weight
 		return {'FINISHED'}
 
 
@@ -250,10 +253,7 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 				box = layout.box()
 				row = box.row(align = True)
 				row.label(text="Current Mode:")
-				if bpy.data.brushes["Draw"].blend == 'ADD':
-					row.label(text="Add")
-				elif bpy.data.brushes["Draw"].blend == 'SUB':
-					row.label(text="Substract")	
+				row.label(text=bpy.context.scene.tool_settings.weight_paint.brush.blend)
 				row = box.row()
 				row.operator("paint.weigth_paint_brush_invert", text="Invert Brush")		
 

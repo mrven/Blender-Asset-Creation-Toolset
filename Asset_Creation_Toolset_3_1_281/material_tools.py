@@ -1,4 +1,7 @@
 import bpy
+import random
+import colorsys
+
 
 #-------------------------------------------------------
 #Palette Texture Creator
@@ -395,7 +398,6 @@ class Material_To_Viewport(bpy.types.Operator):
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
 
-		#Delete Unused Materials
 		for x in selected_obj:
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
@@ -404,6 +406,77 @@ class Material_To_Viewport(bpy.types.Operator):
 				for mat in x.data.materials:
 					try:
 						mat.diffuse_color = mat.node_tree.nodes['Principled BSDF'].inputs[0].default_value
+					except:
+						print("Can\'t change viewport material color")
+			
+		# Select again objects
+		for j in selected_obj:
+			j.select_set(True)
+		
+		bpy.context.view_layer.objects.active = active_obj
+
+		return {'FINISHED'}
+
+
+#-------------------------------------------------------
+#Random Material Viewport Color
+class Random_Viewport_Color(bpy.types.Operator):
+	"""Random Material Viewport Color"""
+	bl_idname = "object.random_viewport_color"
+	bl_label = "Random Material Viewport Color"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		selected_obj = bpy.context.selected_objects
+		active_obj = bpy.context.active_object
+
+		for x in selected_obj:
+			bpy.ops.object.select_all(action='DESELECT')
+			x.select_set(True)
+			bpy.context.view_layer.objects.active = x
+			if x.type == 'MESH':
+				for mat in x.data.materials:
+					random_hue = random.randrange(0, 10, 1)/10
+					random_value = random.randrange(2, 10, 1)/10
+					random_saturation = random.randrange(7, 10, 1)/10
+					color = colorsys.hsv_to_rgb(random_hue, random_saturation, random_value)
+					color4 = (color[0], color[1], color[2], 1)
+					try:
+						mat.diffuse_color = color4
+					except:
+						print("Can\'t change viewport material color")
+			
+		# Select again objects
+		for j in selected_obj:
+			j.select_set(True)
+		
+		bpy.context.view_layer.objects.active = active_obj
+
+		return {'FINISHED'}
+
+
+#-------------------------------------------------------
+#Clear Viewport Color
+class Clear_Viewport_Color(bpy.types.Operator):
+	"""Clear Viewport Color"""
+	bl_idname = "object.clear_viewport_color"
+	bl_label = "Clear Viewport Color"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		selected_obj = bpy.context.selected_objects
+		active_obj = bpy.context.active_object
+
+		for x in selected_obj:
+			bpy.ops.object.select_all(action='DESELECT')
+			x.select_set(True)
+			bpy.context.view_layer.objects.active = x
+			if x.type == 'MESH':
+				for mat in x.data.materials:
+					color = colorsys.hsv_to_rgb(0, 0, 0.906)
+					color4 = (color[0], color[1], color[2], 1)
+					try:
+						mat.diffuse_color = color4
 					except:
 						print("Can\'t change viewport material color")
 			
@@ -552,8 +625,15 @@ class VIEW3D_PT_Material_Tools_Panel(bpy.types.Panel):
 		layout = self.layout
 		if context.object is not None:
 			if context.mode == 'OBJECT':
-				row = layout.row()
+				box = layout.box()
+				row = box.row()
 				row.operator("object.material_to_viewport", text="Material -> Viewport Color")
+
+				row = box.row()
+				row.operator("object.random_viewport_color", text="Random Material Viewport Color")
+
+				row = box.row()
+				row.operator("object.clear_viewport_color", text="Clear Viewport Color")
 				
 				row = layout.row()
 				row.operator("object.clear_vc", text="Clear Vertex Colors")
@@ -606,6 +686,8 @@ classes = (
 	Assign_Multiedit_Materials,
 	Clear_Vertex_Colors,
 	Material_To_Viewport,
+	Clear_Viewport_Color,
+	Random_Viewport_Color,
 	Delete_Unused_Materials,
 	Texture_From_Active_Material,
 	Select_Texture_Menu,

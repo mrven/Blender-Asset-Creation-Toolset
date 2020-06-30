@@ -13,6 +13,24 @@ from bpy.props import (
 class ACT_Addon_Props(bpy.types.PropertyGroup):
 	
 	#-----------------------------------------------------------
+	#Palette Props
+	save_dir: StringProperty(
+		name="",
+		description="Save Directory",
+		default="")
+	custom_save_path: BoolProperty(
+		name="Custom Save Path",
+		description="Custom Save Path",
+		default = False)
+
+	save_path: StringProperty(
+      name = "",
+      default = "",
+      description = "Path for Save FBX",
+      subtype = 'DIR_PATH'
+      )
+
+	#-----------------------------------------------------------
 	#Export Props
 	export_dir: StringProperty(
 		name="",

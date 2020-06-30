@@ -1,7 +1,8 @@
 import bpy
 import random
 import colorsys
-
+import os
+import subprocess
 
 #-------------------------------------------------------
 #Palette Texture Creator
@@ -12,18 +13,48 @@ class Palette_Create(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		act = bpy.context.scene.act
+		act.export_dir = ""
+
+		#check saved blend file
+		if len(bpy.data.filepath) == 0 and not act.custom_save_path:
+			self.report({'INFO'}, 'Blend file is not saved. Try use Custom Save Path')
+			return {'CANCELLED'}
+
+		if len(bpy.data.filepath) > 0 or act.custom_save_path:	
+
+			if len(bpy.data.filepath) > 0:
+				path = bpy.path.abspath('//Textures/')
+			
+			if act.custom_save_path:
+				if len(act.save_path) == 0:
+					self.report({'INFO'}, 'Save Path can\'t be empty')
+					return {'CANCELLED'}
+
+				if not os.path.exists(os.path.realpath(bpy.path.abspath(act.save_path))):
+					self.report({'INFO'}, 'Directory for saving not exist')
+					return {'CANCELLED'}
+				else:
+					path = os.path.realpath(bpy.path.abspath(act.save_path)) + '/'
+		
+			#Create export folder
+			if not os.path.exists(path):
+				os.makedirs(path)
+
 		#Check Render Engine
 		current_engine = bpy.context.scene.render.engine
 		bpy.context.scene.render.engine = 'CYCLES'
 
 		#check opened image editor window
-		ie_area = 0
+		ie_areas = []
 		flag_exist_area = False
 		for area in range(len(bpy.context.screen.areas)):
-			if bpy.context.screen.areas[area].type == 'IMAGE_EDITOR':
-				ie_area = area
+			if bpy.context.screen.areas[area].type == 'IMAGE_EDITOR' and bpy.context.screen.areas[area].ui_type == 'UV':
+				ie_areas.append(area)
 				flag_exist_area = True
-				bpy.context.screen.areas[area].type = 'CONSOLE'
+
+		for ie_area in ie_areas:
+			bpy.context.screen.areas[ie_area].ui_type = 'VIEW'
 
 		# get selected MESH objects and get active object name
 		start_active_obj = bpy.context.active_object
@@ -268,6 +299,20 @@ class Palette_Create(bpy.types.Operator):
 		ob.select_set(True)
 		bpy.ops.object.delete()
 		
+		bpy.context.area.type = 'IMAGE_EDITOR'
+
+		#Save Palette Image
+		palette_image_name = 'Palette_' + add_name_palette
+		current_image = bpy.context.area.spaces[0].image
+		bpy.context.area.spaces[0].image = bpy.data.images[palette_image_name]
+		bpy.ops.image.save_as(save_as_render=False, filepath=str(path + palette_image_name + '.png'), relative_path=True, show_multiview=False, use_multiview=False)
+		bpy.context.area.spaces[0].image = current_image
+
+		#save saving dir
+		act.save_dir = path
+
+		bpy.context.area.type = 'VIEW_3D'
+
 		# Select again objects
 		for j in start_selected_obj:
 			j.select_set(True)	
@@ -277,7 +322,8 @@ class Palette_Create(bpy.types.Operator):
 		bpy.context.area.type = current_area
 
 		if flag_exist_area == True:
-			bpy.context.screen.areas[ie_area].type = 'IMAGE_EDITOR'
+			for ie_area in ie_areas:
+				bpy.context.screen.areas[ie_area].ui_type = 'UV'
 
 		atlas_material_exist = False
 		for material in bpy.data.materials:
@@ -297,6 +343,35 @@ class Palette_Create(bpy.types.Operator):
 				bpy.data.materials.remove(material)
 
 		bpy.context.scene.render.engine = current_engine
+
+		return {'FINISHED'}
+
+
+#-------------------------------------------------------
+#Open Save Directory
+class Open_Save_Dir(bpy.types.Operator):
+	"""Open Save Directory in OS"""
+	bl_idname = "object.open_save_dir"
+	bl_label = "Open Save Directory in OS"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		act = bpy.context.scene.act
+
+		if not os.path.exists(os.path.realpath(bpy.path.abspath(act.save_path))):
+			act.save_dir = "";
+			self.report({'INFO'}, 'Directory not exist')
+
+			return {'CANCELLED'}
+
+		if len(act.save_dir) > 0:
+			try:
+				os.startfile(act.save_dir)
+			except:
+				subprocess.Popen(['xdg-open', act.save_dir])
+		else:
+			self.report({'INFO'}, 'Create Palette\'s before')
+			return {'FINISHED'}
 
 		return {'FINISHED'}
 
@@ -641,8 +716,18 @@ class VIEW3D_PT_Material_Tools_Panel(bpy.types.Panel):
 				row = layout.row()	
 				row.operator("object.delete_unused_materials", text="Delete Unused Materials")
 
-				row = layout.row()
+				box = layout.box()
+				row = box.row()
+				row.prop(act, "custom_save_path", text="Custom Save Path")
+				if act.custom_save_path:
+					row = box.row(align=True)
+					row.label(text="Save Path:")
+					row.prop(act, "save_path")
+				row = box.row()
 				row.operator("object.palette_creator", text="Create Palette Texture")
+				if len(act.save_dir) > 0:
+					row = box.row()
+					row.operator("object.open_save_dir", text="Open Save Directory")
 
 			row = layout.row()
 			row.operator("view3d.call_select_texture_menu", text="Open Texture in UV Editor")
@@ -683,6 +768,7 @@ def Material_Menu_Panel(self, context):
 
 classes = (
 	Palette_Create,
+	Open_Save_Dir,
 	Assign_Multiedit_Materials,
 	Clear_Vertex_Colors,
 	Material_To_Viewport,

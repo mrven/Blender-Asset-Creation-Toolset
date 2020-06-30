@@ -94,7 +94,10 @@ class Multi_FBX_Export(bpy.types.Operator):
 				if obj.type == 'MESH':
 					for modifier in obj.modifiers:
 						if modifier.type != 'ARMATURE':
-							bpy.ops.object.modifier_apply(apply_as='DATA', modifier=modifier.name)
+							try:
+								bpy.ops.object.modifier_apply(apply_as='DATA', modifier=modifier.name)
+							except:
+								bpy.ops.object.modifier_remove(modifier=modifier.name)
 				else:
 					bpy.ops.object.convert(target='MESH')		
 

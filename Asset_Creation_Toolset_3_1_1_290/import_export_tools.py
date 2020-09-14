@@ -95,7 +95,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 					for modifier in obj.modifiers:
 						if modifier.type != 'ARMATURE':
 							try:
-								bpy.ops.object.modifier_apply(apply_as='DATA', modifier=modifier.name)
+								bpy.ops.object.modifier_apply(modifier=modifier.name)
 							except:
 								bpy.ops.object.modifier_remove(modifier=modifier.name)
 				else:

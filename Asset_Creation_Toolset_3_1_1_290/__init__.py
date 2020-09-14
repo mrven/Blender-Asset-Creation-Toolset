@@ -4,8 +4,8 @@ bl_info = {
 	"author": "Ivan 'mrven' Vostrikov",
 	"wiki_url": "https://gum.co/hPXIh",
 	"tracker_url": "https://blenderartists.org/t/asset-creation-toolset-2-6-1-update-23-jan-2020/686880",
-	"version": (3, 1, 0),
-	"blender": (2, 81, 0),
+	"version": (3, 1, 1),
+	"blender": (2, 90, 0),
 	"location": "3D View > Toolbox",
 	"category": "Object",
 }

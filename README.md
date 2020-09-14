@@ -10,7 +10,8 @@
 
 * ***[Blender 2.79](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_4_1_279.zip)***
 * ***[Blender 2.80](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_5_0_280.zip)***
-* ***[Blender 2.81](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_281.zip)***
+* ***[Blender 2.81 - 2.83](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_281.zip)***
+* ***[Blender 2.90](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_1_290.zip)***
 
 If you want to support me you can buy this addon:
 * ***[Gumroad (Pay what you want)](https://gumroad.com/l/hPXIh)***

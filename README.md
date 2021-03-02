@@ -4,11 +4,11 @@
 
 **[Russian README](/README_ru.md)**
 
-**Asset Creation Toolset** is Many Tools for Game Asset Creation (Batch Import/Export FBXs, Origin Aligment Tool, Renaming, Low-Poly Art workflow tools, etc.) for Blender 2.79 and 2.8.
+**Asset Creation Toolset** is Many Tools for Game Asset Creation (Batch Import/Export FBXs, Origin Aligment Tool, Renaming, Low-Poly Art workflow tools, etc.) for Blender 2.79 and 2.8 (and higher).
 
 ***Download latest version:***
 
-* ***[(3.1.2) Blender 2.90](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_2_290.zip)***
+* ***[(3.1.3) Blender 2.90 and higher](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_3_290.zip)***
 * ***[(3.1.2) Blender 2.83](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_2_283.zip)***
 * ***[(2.4.1) Blender 2.79](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_4_1_279.zip)***
 

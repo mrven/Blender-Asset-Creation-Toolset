@@ -4,11 +4,11 @@
 
 **[English README](/README.md)**
 
-**Asset Creation Toolset** аддон для Blender, который содержит в себе набор инструментов, помогающих при создании низкополигональных ассетов для Blender 2.79 и 2.8.
+**Asset Creation Toolset** аддон для Blender, который содержит в себе набор инструментов, помогающих при создании низкополигональных ассетов для Blender 2.79 и 2.8 (и выше).
 
 ***Скачать последнюю версию:***
 
-* ***[(3.1.2) Blender 2.90](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_2_290.zip)***
+* ***[(3.1.3) Blender 2.90 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_3_290.zip)***
 * ***[(3.1.2) Blender 2.83](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_2_283.zip)***
 * ***[(2.4.1) Blender 2.79](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_4_1_279.zip)***
 

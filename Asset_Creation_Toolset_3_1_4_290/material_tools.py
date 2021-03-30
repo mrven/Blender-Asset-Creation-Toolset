@@ -224,6 +224,7 @@ class Palette_Create(bpy.types.Operator):
 
 			# select polygon
 			bpy.ops.object.mode_set(mode = 'EDIT')
+			bpy.ops.mesh.reveal()
 			bpy.ops.mesh.select_all(action='DESELECT')
 			bpy.ops.object.mode_set(mode = 'OBJECT')
 			ob.data.polygons[collect_uv_mat].select = True
@@ -261,8 +262,12 @@ class Palette_Create(bpy.types.Operator):
 			# unwrap selected objects and add palette texture
 			bpy.context.view_layer.objects.active = r	
 			bpy.ops.object.mode_set(mode = 'EDIT')
+			bpy.ops.mesh.reveal()
 			bpy.ops.mesh.select_all(action='SELECT')
-			bpy.ops.uv.smart_project(angle_limit=89, island_margin=0.01, user_area_weight=0, use_aspect=True)
+			if is_blender_292_or_higher:
+				bpy.ops.uv.smart_project(angle_limit=89, island_margin=0.01)
+			else:
+				bpy.ops.uv.smart_project(angle_limit=89, island_margin=0.01, user_area_weight=0, use_aspect=True)
 			
 			bpy.ops.mesh.select_all(action='DESELECT')
 			# select poly with 1 material 

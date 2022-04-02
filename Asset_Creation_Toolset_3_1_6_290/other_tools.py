@@ -70,18 +70,18 @@ class Calc_Normals(bpy.types.Operator):
 
 
 #-------------------------------------------------------
-#Obj Name to Mesh Name
+#Obj Name to Data Name
 class Obj_Name_To_Mesh_Name(bpy.types.Operator):
-	"""Obj Name to Mesh Name"""
+	"""Obj Name to Data Name"""
 	bl_idname = "object.objname_to_meshname"
-	bl_label = "Obj Name to Mesh Name"
+	bl_label = "Obj Name to Data Name"
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	def execute(self, context):
 		current_selected_obj = bpy.context.selected_objects
 		
 		for x in current_selected_obj:
-			if x.type == 'MESH':
+			if x.type != 'EMPTY':
 				x.data.name = x.name
 		return {'FINISHED'}
 
@@ -219,7 +219,7 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 		if context.object is not None:
 			if context.mode == 'OBJECT':
 				row = layout.row()	
-				row.operator("object.objname_to_meshname", text="Obj Name -> Mesh Name")
+				row.operator("object.objname_to_meshname", text="Obj Name -> Data Name")
 
 				row = layout.row()
 				row.operator("object.clear_normals", text="Clear Custom Normals")

@@ -485,7 +485,7 @@ class Material_To_Viewport(bpy.types.Operator):
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
 			bpy.context.view_layer.objects.active = x
-			if x.type == 'MESH':
+			if x.type in ['MESH','CURVE','SURFACE','META','FONT']:
 				for mat in x.data.materials:
 					try:
 						mat.diffuse_color = mat.node_tree.nodes['Principled BSDF'].inputs[0].default_value
@@ -517,7 +517,7 @@ class Random_Viewport_Color(bpy.types.Operator):
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
 			bpy.context.view_layer.objects.active = x
-			if x.type == 'MESH':
+			if x.type in ['MESH','CURVE','SURFACE','META','FONT']:
 				for mat in x.data.materials:
 					random_hue = random.randrange(0, 10, 1)/10
 					random_value = random.randrange(2, 10, 1)/10
@@ -554,7 +554,7 @@ class Clear_Viewport_Color(bpy.types.Operator):
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
 			bpy.context.view_layer.objects.active = x
-			if x.type == 'MESH':
+			if x.type in ['MESH','CURVE','SURFACE','META','FONT']:
 				for mat in x.data.materials:
 					color = colorsys.hsv_to_rgb(0, 0, 0.906)
 					color4 = (color[0], color[1], color[2], 1)
@@ -589,7 +589,7 @@ class Delete_Unused_Materials(bpy.types.Operator):
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
 			bpy.context.view_layer.objects.active = x
-			if x.type == 'MESH':
+			if x.type in ['MESH','CURVE','SURFACE','META','FONT']:
 				bpy.ops.object.material_slot_remove_unused()
 			
 		# Select again objects

@@ -57,7 +57,7 @@ class Palette_Create(bpy.types.Operator):
 				flag_exist_area = True
 
 		for ie_area in ie_areas:
-			bpy.context.screen.areas[ie_area].ui_type = 'VIEW'
+			bpy.context.screen.areas[ie_area].ui_type = 'IMAGE_EDITOR'
 
 		# get selected MESH objects and get active object name
 		start_active_obj = bpy.context.active_object

@@ -200,6 +200,16 @@ class Palette_Create(bpy.types.Operator):
 		tex_node.location = (-500,0)
 		tex_node.image = bpy.data.images['Palette_' + add_name_palette]
 
+		materials_metallic = []
+		#Set metallic to zero for all materials on the plane
+		for mat in palette_mat:
+			try:
+				materials_metallic.append(mat.node_tree.nodes['Principled BSDF'].inputs['Metallic'].default_value)
+				mat.node_tree.nodes['Principled BSDF'].inputs['Metallic'].default_value = 0
+			except:
+				materials_metallic.append(0)
+				continue
+
 		#Bake Action
 		ob.select_set(True)
 		bpy.context.scene.cycles.bake_type = 'DIFFUSE'
@@ -208,6 +218,13 @@ class Palette_Create(bpy.types.Operator):
 		bpy.context.scene.render.bake.use_pass_color = True
 		bpy.context.scene.render.bake.use_selected_to_active = True
 		bpy.ops.object.bake(type='DIFFUSE')
+
+		#Revet Materials Metallic
+		for index in range(palette_mat_len):
+			try:
+				palette_mat[index].node_tree.nodes['Principled BSDF'].inputs['Metallic'].default_value = materials_metallic[index]
+			except:
+				continue
 
 		#Delete Bake Plane
 		bpy.ops.object.select_all(action='DESELECT')
@@ -222,7 +239,6 @@ class Palette_Create(bpy.types.Operator):
 		current_area = bpy.context.area.type
 
 		for collect_uv_mat in range(palette_mat_len - 1):
-
 			# select polygon
 			bpy.ops.object.mode_set(mode = 'EDIT')
 			bpy.ops.mesh.reveal()

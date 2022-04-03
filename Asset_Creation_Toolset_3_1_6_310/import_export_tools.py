@@ -37,11 +37,11 @@ class Multi_FBX_Export(bpy.types.Operator):
 			return {'CANCELLED'}
 
 
-		if len(bpy.data.filepath) > 0 or act.custom_export_path:	
+		if len(bpy.data.filepath) > 0 or act.custom_export_path:
 			#Check Export Path
 			if len(bpy.data.filepath) > 0:
 				path = bpy.path.abspath('//FBXs/')
-			
+
 			if act.custom_export_path:
 				if len(act.export_path) == 0:
 					self.report({'INFO'}, 'Export Path can\'t be empty')
@@ -52,11 +52,11 @@ class Multi_FBX_Export(bpy.types.Operator):
 					return {'CANCELLED'}
 				else:
 					path = os.path.realpath(bpy.path.abspath(act.export_path)) + '/'
-		
+
 			#Create export folder
 			if not os.path.exists(path):
 				os.makedirs(path)
-			
+
 			# Save selected objects and active object
 			start_selected_obj = bpy.context.selected_objects
 			start_active_obj = bpy.context.active_object
@@ -66,7 +66,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 			current_pivot_point_align = bpy.context.scene.tool_settings.use_transform_pivot_point_align
 			if current_pivot_point_align:
 				bpy.context.scene.tool_settings.use_transform_pivot_point_align = False
-			
+
 			#Save Cursor Location and Pivot Point Mode
 			saved_cursor_loc = bpy.context.scene.cursor.location.copy()
 			current_pivot_point = bpy.context.scene.tool_settings.transform_pivot_point
@@ -109,15 +109,15 @@ class Multi_FBX_Export(bpy.types.Operator):
 							except:
 								bpy.ops.object.modifier_remove(modifier=modifier.name)
 				elif obj.type != 'EMPTY':
-					bpy.ops.object.convert(target='MESH')		
+					bpy.ops.object.convert(target='MESH')
 
-			#Delete _ex.001 suffix from object names. 
+			#Delete _ex.001 suffix from object names.
 			#Mesh name and armature name = object name
 			for obj in exp_objects:
 				obj.name = obj.name[:-7]
 				if obj.type == 'MESH' or obj.type == 'ARMATURE':
 					obj.data.name = obj.name
-			
+
 			#Delete All Materials (Optional)
 			if act.delete_mats_before_export:
 				for o in exp_objects:
@@ -133,11 +133,11 @@ class Multi_FBX_Export(bpy.types.Operator):
 			#Apply Scale
 			if act.apply_scale:
 				bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
-			
+
 			#Rotation Fix. Rotate X -90, Apply, Rotate X 90
 			if act.apply_rot:
 				bpy.context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
-				#Operate only with higher level parents 
+				#Operate only with higher level parents
 				for x in exp_objects:
 					bpy.ops.object.select_all(action='DESELECT')
 					if x.parent == None:
@@ -157,18 +157,18 @@ class Multi_FBX_Export(bpy.types.Operator):
 						if act.apply_rot_rotated or (not act.apply_rot_rotated and not child_rotated) or not act.fbx_export_mode == 'PARENT':
 							bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
 							if is_blender_292:
-								bpy.ops.transform.rotate(value= (math.pi * 90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)						
+								bpy.ops.transform.rotate(value=(math.pi * 90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
 							else:
-								bpy.ops.transform.rotate(value= (math.pi * -90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+								bpy.ops.transform.rotate(value=(math.pi * -90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
 							bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
 							bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
-							
+
 							bpy.ops.object.select_all(action='DESELECT')
 							x.select_set(True)
 							if is_blender_292:
-								bpy.ops.transform.rotate(value= (math.pi * -90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+								bpy.ops.transform.rotate(value=(math.pi * -90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
 							else:
-								bpy.ops.transform.rotate(value= (math.pi * 90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+								bpy.ops.transform.rotate(value=(math.pi * 90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
 
 			bpy.ops.object.select_all(action='DESELECT')
 
@@ -193,14 +193,14 @@ class Multi_FBX_Export(bpy.types.Operator):
 						bpy.context.view_layer.objects.active = current_active
 
 					exp_objects = bpy.context.selected_objects
-				
+
 				if act.set_custom_fbx_name:
 					name = act.custom_fbx_name
-				
+
 				#Export FBX
 				if act.export_custom_options:
-					bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = fbx_scale_mode, 
-							use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing, 
+					bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = fbx_scale_mode,
+							use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing,
 								use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space)
 				else:
 					if act.export_target_engine == 'UNITY':
@@ -230,20 +230,20 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 					#Export FBX
 					if act.export_custom_options:
-						bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = fbx_scale_mode, 
-							use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing, 
+						bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = fbx_scale_mode,
+							use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing,
 								use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space)
 					else:
 						if act.export_target_engine == 'UNITY':
 							bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
 						else:
 							bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_NONE', mesh_smooth_type='FACE', use_tspace=True)
-					
+
 					#Restore Object Location
 					if act.apply_loc:
 						bpy.context.scene.cursor.location = object_loc
 						bpy.ops.view3d.snap_selected_to_cursor(use_offset=True)
-			
+
 			#Export By Parents
 			if act.fbx_export_mode == 'PARENT':
 				bpy.ops.object.select_all(action='DESELECT')
@@ -270,59 +270,59 @@ class Multi_FBX_Export(bpy.types.Operator):
 						bpy.context.scene.tool_settings.transform_pivot_point = 'CURSOR'
 					name = x.name
 					bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
-					
+
 					#Export FBX
 					if act.export_custom_options:
-						bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = fbx_scale_mode, 
-							use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing, 
+						bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = fbx_scale_mode,
+							use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing,
 								use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space)
 					else:
 						if act.export_target_engine == 'UNITY':
 							bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
 						else:
 							bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_NONE', mesh_smooth_type='FACE', use_tspace=True)
-					
+
 					bpy.ops.object.select_all(action='DESELECT')
 					x.select_set(True)
-					
+
 					#Restore Object Location
 					if act.apply_loc:
 						bpy.context.scene.cursor.location = object_loc
 						bpy.ops.view3d.snap_selected_to_cursor(use_offset=True)
-			
+
 			#Export by Collection
 			if act.fbx_export_mode == 'COLLECTION':
 
 				#Collect used collections
 				used_collections = []
 
-				for x in exp_objects:  
+				for x in exp_objects:
 					collection_in_list = False
-				    
+
 					for c in used_collections:
 						if x.users_collection[0].name == c:
 							collection_in_list = True
-				            
+
 					if collection_in_list == False:
-						used_collections.append(x.users_collection[0].name) 
+						used_collections.append(x.users_collection[0].name)
 
 				for c in used_collections:
 					bpy.ops.object.select_all(action='DESELECT')
 					for x in exp_objects:
 						if x.users_collection[0].name == c:
 							x.select_set(True)
-				            
+
 					#Export FBX
 					if act.export_custom_options:
-						bpy.ops.export_scene.fbx(filepath=str(path + c + '.fbx'), use_selection=True, apply_scale_options = fbx_scale_mode, 
-							use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing, 
+						bpy.ops.export_scene.fbx(filepath=str(path + c + '.fbx'), use_selection=True, apply_scale_options = fbx_scale_mode,
+							use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing,
 								use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space)
 					else:
 						if act.export_target_engine == 'UNITY':
 							bpy.ops.export_scene.fbx(filepath=str(path + c + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
 						else:
 							bpy.ops.export_scene.fbx(filepath=str(path + c + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_NONE', mesh_smooth_type='FACE', use_tspace=True)
-					
+
 				bpy.ops.object.select_all(action='DESELECT')
 
 
@@ -330,19 +330,19 @@ class Multi_FBX_Export(bpy.types.Operator):
 			for obj in exp_objects:
 				obj.select_set(True)
 
-			bpy.ops.object.delete()			
+			bpy.ops.object.delete()
 
 			#Select again objects and set active object
 			bpy.ops.object.select_all(action='DESELECT')
-			
+
 			for j in current_selected_obj:
 				j.name = j.name[:-3]
 				if j.type == 'MESH' or j.type == 'ARMATURE':
 					j.data.name = j.data.name[:-3]
-				
+
 			for i in start_selected_obj:
 				i.select_set(True)
-	
+
 			bpy.context.view_layer.objects.active = start_active_obj
 
 			#Restore "Pivot Point Align" option
@@ -354,7 +354,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 			#save export dir
 			act.export_dir = path
-		
+
 		return {'FINISHED'}
 
 
@@ -396,7 +396,7 @@ class Import_FBX_OBJ(bpy.types.Operator, ImportHelper):
 	bl_options = {'REGISTER', 'UNDO'}
 	files: bpy.props.CollectionProperty(name="File Path", type=bpy.types.OperatorFileListElement)
 	directory: bpy.props.StringProperty(subtype="DIR_PATH")
-	
+
 	def execute(self, context):
 		act = bpy.context.scene.act
 		directory = self.directory
@@ -405,7 +405,7 @@ class Import_FBX_OBJ(bpy.types.Operator, ImportHelper):
 			extension = (os.path.splitext(f.name)[1])[1:]
 			if extension == "fbx" or extension == "FBX":
 				if act.import_custom_options:
-					bpy.ops.import_scene.fbx(filepath = filepath, use_custom_normals = act.import_normals, use_anim = act.import_animation, 
+					bpy.ops.import_scene.fbx(filepath = filepath, use_custom_normals = act.import_normals, use_anim = act.import_animation,
 												automatic_bone_orientation = act.import_automatic_bone_orientation, ignore_leaf_bones = act.import_ignore_leaf_bones)
 				else:
 					bpy.ops.import_scene.fbx(filepath = filepath)
@@ -414,7 +414,7 @@ class Import_FBX_OBJ(bpy.types.Operator, ImportHelper):
 				if act.import_custom_options:
 					bpy.ops.import_scene.obj(filepath = filepath, use_smooth_groups = act.import_normals)
 				else:
-					bpy.ops.import_scene.obj(filepath = filepath)	
+					bpy.ops.import_scene.obj(filepath = filepath)
 
 		return {'FINISHED'}
 
@@ -434,25 +434,25 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 
 	def draw(self, context):
 		act = bpy.context.scene.act
-		
-		layout = self.layout	
+
+		layout = self.layout
 		if context.object is not None:
 			if context.mode == 'OBJECT':
 				#Export Mode
 				row = layout.row(align=True)
 				row.label(text="Export Mode:")
 				row.prop(act, 'fbx_export_mode', expand=False)
-				
+
 				#Target Engine
 				row = layout.row(align=True)
 				row.label(text="Target Engine:")
 				row.prop(act, "export_target_engine", expand=False)
-				
+
 				#Apply Transforms
 				box = layout.box()
 				row = box.row()
 				row.label(text="Apply:")
-				
+
 				row = box.row(align=True)
 				if act.apply_rot:
 					row.prop(act, "apply_rot", text="Rotation", icon="CHECKBOX_HLT")
@@ -467,12 +467,12 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 					if act.apply_loc:
 						row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_HLT")
 					else:
-						row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_DEHLT")	
+						row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_DEHLT")
 
 				if act.apply_rot and act.fbx_export_mode == 'PARENT':
 					row = box.row()
 					row.prop(act, "apply_rot_rotated")
-						
+
 				row = layout.row()
 				row.prop(act, "delete_mats_before_export", text="Delete All Materials")
 
@@ -496,11 +496,11 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 					row = box.row(align=True)
 					row.label(text=" Smoothing")
 					row.prop(act, "export_smoothing", expand=False)
-					
+
 					row = box.row(align=True)
 					row.label(text=" Loose Edges")
 					row.prop(act, "export_loose_edges",text="")
-					
+
 					row = box.row(align=True)
 					row.label(text=" Tangent Space")
 					row.prop(act, "export_tangent_space", text="")
@@ -522,7 +522,7 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 				if len(act.export_dir) > 0:
 					row = layout.row()
 					row.operator("object.open_export_dir", text="Open Export Directory")
-				
+
 		if context.mode == 'OBJECT':
 			box = layout.box()
 			row = box.row()
@@ -534,11 +534,11 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 				row = box.row(align=True)
 				row.label(text=" Import Normals")
 				row.prop(act, "import_normals", text="")
-				
+
 				row = box.row(align=True)
 				row.label(text=" Import Animation")
 				row.prop(act, "import_animation", text="")
-				
+
 				row = box.row(align=True)
 				row.label(text=" Auto Bone Orientation")
 				row.prop(act, "import_automatic_bone_orientation", text="")
@@ -556,7 +556,7 @@ classes = (
 	Multi_FBX_Export,
 	Open_Export_Dir,
 	Import_FBX_OBJ,
-)	
+)
 
 
 def register():

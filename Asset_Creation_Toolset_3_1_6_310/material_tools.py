@@ -17,7 +17,7 @@ class Palette_Create(bpy.types.Operator):
 		act = bpy.context.scene.act
 		act.export_dir = ""
 
-		is_blender_292_or_higher = utils.Get_Version() >= 2.92
+		pbr_mode = True
 
 		#check saved blend file
 		if len(bpy.data.filepath) == 0 and not act.custom_save_path:
@@ -114,6 +114,11 @@ class Palette_Create(bpy.types.Operator):
 		# Add palette background material to palette plane
 		pln.data.materials.append(palette_back_color)
 
+		albedo_texture_name = 'Palette_' + add_name_palette + '_Albedo'
+		roughness_texture_name = 'Palette_' + add_name_palette + '_Roughness'
+		metallic_texture_name = 'Palette_' + add_name_palette + '_Metallic'
+		opacity_texture_name = 'Palette_' + add_name_palette + '_Opacity'
+
 		# Add materials to palette plane
 		mat_offset = len(me)
 		i = 0
@@ -157,15 +162,52 @@ class Palette_Create(bpy.types.Operator):
 		# create texture and unwrap
 		bpy.ops.mesh.select_all(action='SELECT')
 
-		#TEST check exist texture image
-		flag_exist_texture = False
+		# Check exist albedo texture image
+		flag_exist_texture_albedo = False
 		for t in range(len(bpy.data.images)):
-			if bpy.data.images[t].name == ('Palette_' + add_name_palette):
-				flag_exist_texture = True
+			if bpy.data.images[t].name == albedo_texture_name:
+				flag_exist_texture_albedo = True
 				
-		# create or not texture
-		if flag_exist_texture == False:
-			bpy.ops.image.new( name='Palette_' + add_name_palette, width = 32, height = 32)
+		# create or not albedo texture
+		if flag_exist_texture_albedo == False:
+			bpy.ops.image.new( name=albedo_texture_name, width = 32, height = 32)
+
+		if pbr_mode:
+			# Roughness baking Texture
+			# Check exist roughness texture image
+			flag_exist_texture_roughness = False
+			for t in range(len(bpy.data.images)):
+				if bpy.data.images[t].name == roughness_texture_name:
+					flag_exist_texture_roughness = True
+
+			# create or not roughness texture
+			if flag_exist_texture_roughness == False:
+				bpy.ops.image.new(name=roughness_texture_name, width=32, height=32)
+				bpy.data.images[roughness_texture_name].colorspace_settings.name = 'Linear'
+
+			# Metallic baking Texture
+			# Check exist metallic texture image
+			flag_exist_texture_metallic = False
+			for t in range(len(bpy.data.images)):
+				if bpy.data.images[t].name == metallic_texture_name:
+					flag_exist_texture_metallic = True
+
+			# create or not metallic texture
+			if flag_exist_texture_metallic == False:
+				bpy.ops.image.new(name=metallic_texture_name, width=32, height=32)
+				bpy.data.images[metallic_texture_name].colorspace_settings.name = 'Linear'
+
+			# Opacity baking Texture
+			# Check exist opacity texture image
+			flag_exist_texture_opacity = False
+			for t in range(len(bpy.data.images)):
+				if bpy.data.images[t].name == opacity_texture_name:
+					flag_exist_texture_opacity = True
+
+			# create or not opacity texture
+			if flag_exist_texture_opacity == False:
+				bpy.ops.image.new(name=opacity_texture_name, width=32, height=32)
+				bpy.data.images[opacity_texture_name].colorspace_settings.name = 'Linear'
 
 		# set materials to plane's polygons
 		bpy.ops.object.mode_set(mode = 'OBJECT')
@@ -175,7 +217,7 @@ class Palette_Create(bpy.types.Operator):
 			if (poly.index + 1) < palette_mat_len:
 				poly.material_index = poly.index + 1
 
-		#BAKING!!!!!
+		#BAKING ALBEDO!!!!!
 		#ob - plane with materials (source)
 
 		#create another plane (destination for baking)
@@ -198,7 +240,7 @@ class Palette_Create(bpy.types.Operator):
 		nodes = palette_bake_mat.node_tree.nodes
 		tex_node = nodes.new('ShaderNodeTexImage')
 		tex_node.location = (-500,0)
-		tex_node.image = bpy.data.images['Palette_' + add_name_palette]
+		tex_node.image = bpy.data.images[albedo_texture_name]
 
 		materials_metallic = []
 		#Set metallic to zero for all materials on the plane
@@ -210,6 +252,15 @@ class Palette_Create(bpy.types.Operator):
 				materials_metallic.append(0)
 				continue
 
+		if pbr_mode:
+			materials_roughness = []
+			for mat in palette_mat:
+				try:
+					materials_roughness.append(mat.node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value)
+				except:
+					materials_roughness.append(1)
+					continue
+
 		#Bake Action
 		ob.select_set(True)
 		bpy.context.scene.cycles.bake_type = 'DIFFUSE'
@@ -218,6 +269,12 @@ class Palette_Create(bpy.types.Operator):
 		bpy.context.scene.render.bake.use_pass_color = True
 		bpy.context.scene.render.bake.use_selected_to_active = True
 		bpy.ops.object.bake(type='DIFFUSE')
+
+		# Bake Roughness
+		if pbr_mode:
+			tex_node.image = bpy.data.images[roughness_texture_name]
+			bpy.context.scene.cycles.bake_type = 'ROUGHNESS'
+			bpy.ops.object.bake(type='ROUGHNESS')
 
 		#Revet Materials Metallic
 		for index in range(palette_mat_len):
@@ -281,10 +338,7 @@ class Palette_Create(bpy.types.Operator):
 			bpy.ops.object.mode_set(mode = 'EDIT')
 			bpy.ops.mesh.reveal()
 			bpy.ops.mesh.select_all(action='SELECT')
-			if is_blender_292_or_higher:
-				bpy.ops.uv.smart_project(angle_limit=89, island_margin=0.01)
-			else:
-				bpy.ops.uv.smart_project(angle_limit=89, island_margin=0.01, user_area_weight=0, use_aspect=True)
+			bpy.ops.uv.smart_project(angle_limit=89, island_margin=0.01)
 			
 			bpy.ops.mesh.select_all(action='DESELECT')
 			# select poly with 1 material 
@@ -322,14 +376,18 @@ class Palette_Create(bpy.types.Operator):
 		bpy.ops.object.select_all(action='DESELECT')
 		ob.select_set(True)
 		bpy.ops.object.delete()
-		
+
+
+		# TO DO: Why this?
 		bpy.context.area.type = 'IMAGE_EDITOR'
 
-		#Save Palette Image
-		palette_image_name = 'Palette_' + add_name_palette
+		#Save Palette Images
 		current_image = bpy.context.area.spaces[0].image
-		bpy.context.area.spaces[0].image = bpy.data.images[palette_image_name]
-		bpy.ops.image.save_as(save_as_render=False, filepath=str(path + palette_image_name + '.png'), relative_path=True, show_multiview=False, use_multiview=False)
+		bpy.context.area.spaces[0].image = bpy.data.images[albedo_texture_name]
+		bpy.ops.image.save_as(save_as_render=False, filepath=str(path + albedo_texture_name + '.png'), relative_path=True, show_multiview=False, use_multiview=False)
+		if pbr_mode:
+			bpy.context.area.spaces[0].image = bpy.data.images[roughness_texture_name]
+			bpy.ops.image.save_as(save_as_render=False, filepath=str(path + roughness_texture_name + '.png'), relative_path=True, show_multiview=False, use_multiview=False)
 		bpy.context.area.spaces[0].image = current_image
 
 		#save saving dir

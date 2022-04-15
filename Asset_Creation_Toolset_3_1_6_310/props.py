@@ -22,11 +22,15 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		name="Custom Save Path",
 		description="Custom Save Path",
 		default = False)
+	pbr_workflow: BoolProperty(
+		name="PBR Workflow",
+		description="PBR Workflow",
+		default=False)
 
 	save_path: StringProperty(
       name = "",
       default = "",
-      description = "Path for Save FBX",
+      description = "Path for Save Palettes",
       subtype = 'DIR_PATH'
       )
 

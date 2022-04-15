@@ -8,7 +8,8 @@
 
 ***Скачать последнюю версию:***
 
-* ***[(3.1.5) Blender 2.90 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_5_290.zip)***
+* ***[(3.2) Blender 3.1 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_2_310.zip)***
+* ***[(3.1.5) Blender 2.90 - 3.0](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_5_290.zip)***
 * ***[(3.1.2) Blender 2.83](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_2_283.zip)***
 * ***[(2.4.1) Blender 2.79](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_4_1_279.zip)***
 
@@ -65,8 +66,8 @@
 ![Flip Calculate Normals](/images/gifs/11_CalcNormals.gif)
 
 
-#### Export FBX to Unity/UE4
-Пакетный экспорт выделенных объектов в FBX с корректным масштабом и поворотом. Рядом с файлом .Blend будет создана папка “FBXs”, в которую будут экспортированы объекты. Каждый объект будет экспортирован в отдельный FBX. Работает только со статичными мешами. Также обратите внимание, что у объектов в сцене перед экспортом применяются масштабы и поворот.
+#### Export OBJ или FBX to Unity/UE4
+Пакетный экспорт выделенных объектов в FBX/OBJ с корректным масштабом и поворотом. Рядом с файлом .Blend будет создана папка “FBXs” или "OBJs", в которую будут экспортированы объекты. Каждый объект будет экспортирован в отдельный FBX/OBJ. Работает только со статичными мешами. Также обратите внимание, что у объектов в сцене перед экспортом применяются масштабы и поворот.
 
 ![Export FBXs](/images/gifs/04_ExportFBX.gif)
 
@@ -77,8 +78,8 @@
 ![Import FBXs OBJs](/images/gifs/05_ImportFBX.gif)
 
 
-#### Create Palette Texture
-Создание текстуры-палитры для выделенных объектов, раскрашенных разными материалами. Инструмент работает только с Blender Render. С объектов индексируются Diffuse цвета материалов и распределяются на текстуре 32 пикселя (одна палитра может содержать до 256 цветов). Затем на объектах создаётся UV-развёртка, в которой полигоны, имеющие один материал сводятся в точку и размещаются на палитре в соответсвующее место.
+#### Create Palette Textures (Albedo, Roughness, Metallic, Opacity and Emission)
+Создание текстуры-палитры для выделенных объектов, раскрашенных разными материалами. С объектов индексируются Diffuse цвета (или PBR сет) материалов и распределяются на текстуре 32 пикселя (одна палитра может содержать до 256 цветов). Затем на объектах создаётся UV-развёртка, в которой полигоны, имеющие один материал сводятся в точку и размещаются на палитре в соответсвующее место.
 **Примечание: для Blender 2.79 используется Blender Render, а для Blender 2.8 используется Cycles Render**
 
 ![Create Palette Texture](/images/gifs/06_PaletteTexture.gif)
@@ -90,8 +91,8 @@
 ![Clear UV Maps](/images/gifs/08_ClearUVandVC.gif)
 
 
-#### Obj Name -> Mesh Name
-Назначение имени меша по имени объекта.
+#### Obj Name -> Data Name
+Назначение имени меша/шрифта и т.п. по имени объекта.
 
 ![Copy Name](/images/gifs/09_ObjToMeshName.gif)
 

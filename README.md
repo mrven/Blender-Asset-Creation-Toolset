@@ -8,7 +8,8 @@
 
 ***Download latest version:***
 
-* ***[(3.1.5) Blender 2.90 and higher](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_5_290.zip)***
+* ***[(3.2) Blender 3.1 and higher](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_2_310.zip)***
+* ***[(3.1.5) Blender 2.90 - 3.0](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_5_290.zip)***
 * ***[(3.1.2) Blender 2.83](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_2_283.zip)***
 * ***[(2.4.1) Blender 2.79](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_4_1_279.zip)***
 
@@ -71,10 +72,10 @@ Flip or Recalculate Normals for Selected Objects in Object Mode.
 ![Flip Calculate Normals](/images/gifs/11_CalcNormals.gif)
 
 
-#### Export FBX to Unity/UE4
+#### Export OBJ or FBX to Unity/UE4
 Batch Export Selected Objects for Unity or UE4 (Fix Scale and Rotation). Available some modes:
-* Export All Selected Object into One FBX
-* Export Each Object into Individual FBX
+* Export All Selected Object into One FBX/OBJ
+* Export Each Object into Individual FBX/OBJ
 * Batch Objects by Parent
 * Batch Objects by Collection
 
@@ -87,8 +88,8 @@ Batch Import FBX and OBJ files with default parameters.
 ![Import FBXs OBJs](/images/gifs/05_ImportFBX.gif)
 
 
-#### Create Palette Texture
-Create Palette Texture (32x32px) for Selected Objects painted with colored materials. In one palette texture can be up to 256 colors (materials).
+#### Create Palette Textures (Albedo, Roughness, Metallic, Opacity and Emission)
+Create Palette Textures (32x32px) for Selected Objects painted with colored materials. In one palette texture can be up to 256 colors (materials).
 **Note: for Blender 2.79 uses Blender Render, for Blender 2.8 uses Cycles Render**
 
 ![Create Palette Texture](/images/gifs/06_PaletteTexture.gif)
@@ -100,8 +101,8 @@ Just remove all UV Maps or all Vertex Colors from selected objects.
 ![Clear UV Maps](/images/gifs/08_ClearUVandVC.gif)
 
 
-#### Obj Name -> Mesh Name
-Copy Object Name to Mesh(Data-Block) Name.
+#### Obj Name -> Data Name
+Copy Object Name to Mesh/Font/Etc.(Data-Block) Name.
 
 ![Copy Name](/images/gifs/09_ObjToMeshName.gif)
 

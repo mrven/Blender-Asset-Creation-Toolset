@@ -4,7 +4,7 @@ bl_info = {
 	"author": "Ivan 'mrven' Vostrikov,  Felipe Torrents",
 	"wiki_url": "https://gum.co/hPXIh",
 	"tracker_url": "https://blenderartists.org/t/asset-creation-toolset-2-6-1-update-23-jan-2020/686880",
-	"version": (3, 1, 6),
+	"version": (3, 2, 0),
 	"blender": (3, 1, 0),
 	"location": "3D View > Toolbox",
 	"category": "Object",

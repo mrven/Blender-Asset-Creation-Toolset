@@ -17,8 +17,6 @@ class Multi_FBX_Export(bpy.types.Operator):
 		act = bpy.context.scene.act
 		act.export_dir = ""
 
-		is_blender_292 = utils.Get_Version() == 2.92
-
 		#FBX Export Scale Mode depends selected Target Engine
 		fbx_scale_mode = 'FBX_SCALE_ALL'
 		if act.export_target_engine == 'UNREAL':
@@ -93,8 +91,6 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 			bpy.ops.object.make_single_user(type='SELECTED_OBJECTS', object=True, obdata=True)
 
-			#Apply Modifiers on Objects. All Except Armature
-			#TODO: Added Check Enable/Disable Modifier
 			#Convert All non-mesh objects to mesh (except empties)
 			for obj in exp_objects:
 				bpy.ops.object.select_all(action='DESELECT')
@@ -177,19 +173,13 @@ class Multi_FBX_Export(bpy.types.Operator):
 						# X-rotation fix
 						if act.apply_rot_rotated or (not act.apply_rot_rotated and not child_rotated) or not act.fbx_export_mode == 'PARENT':
 							bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
-							if is_blender_292:
-								bpy.ops.transform.rotate(value=(math.pi * 90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-							else:
-								bpy.ops.transform.rotate(value=(math.pi * -90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+							bpy.ops.transform.rotate(value=(math.pi * -90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
 							bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
 							bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
 
 							bpy.ops.object.select_all(action='DESELECT')
 							x.select_set(True)
-							if is_blender_292:
-								bpy.ops.transform.rotate(value=(math.pi * -90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
-							else:
-								bpy.ops.transform.rotate(value=(math.pi * 90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
+							bpy.ops.transform.rotate(value=(math.pi * 90 / 180), orient_axis='X', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)), orient_type='GLOBAL', constraint_axis=(True, False, False), orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1)
 
 			bpy.ops.object.select_all(action='DESELECT')
 
@@ -199,7 +189,6 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 			#Export All as one fbx
 			if act.fbx_export_mode == 'ALL':
-
 				#Combine All Meshes
 				if act.export_combine_meshes:
 					if bpy.data.objects[name].type == 'MESH':
@@ -313,7 +302,6 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 			#Export by Collection
 			if act.fbx_export_mode == 'COLLECTION':
-
 				#Collect used collections
 				used_collections = []
 
@@ -345,7 +333,6 @@ class Multi_FBX_Export(bpy.types.Operator):
 							bpy.ops.export_scene.fbx(filepath=str(path + c + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_NONE', mesh_smooth_type='FACE', use_tspace=True)
 
 				bpy.ops.object.select_all(action='DESELECT')
-
 
 			bpy.ops.object.select_all(action='DESELECT')
 			for obj in exp_objects:
@@ -464,69 +451,88 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 				row.label(text="Export Mode:")
 				row.prop(act, 'fbx_export_mode', expand=False)
 
-				#Target Engine
+				# Export Format (FBX or OBJ)
 				row = layout.row(align=True)
-				row.label(text="Target Engine:")
-				row.prop(act, "export_target_engine", expand=False)
+				row.label(text="File Format:")
+				row.prop(act, "export_format", expand=False)
 
-				#Apply Transforms
-				box = layout.box()
-				row = box.row()
-				row.label(text="Apply:")
+				if act.export_format == 'FBX':
+					# Target Engine
+					row = layout.row(align=True)
+					row.label(text="Target Engine:")
+					row.prop(act, "export_target_engine", expand=False)
 
-				row = box.row(align=True)
-				if act.apply_rot:
-					row.prop(act, "apply_rot", text="Rotation", icon="CHECKBOX_HLT")
-				else:
-					row.prop(act, "apply_rot", text="Rotation", icon="CHECKBOX_DEHLT")
-				if act.apply_scale:
-					row.prop(act, "apply_scale", text="Scale", icon="CHECKBOX_HLT")
-				else:
-					row.prop(act, "apply_scale", text="Scale", icon="CHECKBOX_DEHLT")
-
-				if act.fbx_export_mode == 'INDIVIDUAL' or act.fbx_export_mode == 'PARENT':
-					if act.apply_loc:
-						row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_HLT")
-					else:
-						row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_DEHLT")
-
-				if act.apply_rot and act.fbx_export_mode == 'PARENT':
+					#Apply Transforms
+					box = layout.box()
 					row = box.row()
-					row.prop(act, "apply_rot_rotated")
+					row.label(text="Apply:")
+
+					row = box.row(align=True)
+					if act.apply_rot:
+						row.prop(act, "apply_rot", text="Rotation", icon="CHECKBOX_HLT")
+					else:
+						row.prop(act, "apply_rot", text="Rotation", icon="CHECKBOX_DEHLT")
+					if act.apply_scale:
+						row.prop(act, "apply_scale", text="Scale", icon="CHECKBOX_HLT")
+					else:
+						row.prop(act, "apply_scale", text="Scale", icon="CHECKBOX_DEHLT")
+
+					if act.fbx_export_mode == 'INDIVIDUAL' or act.fbx_export_mode == 'PARENT':
+						if act.apply_loc:
+							row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_HLT")
+						else:
+							row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_DEHLT")
+
+					if act.apply_rot and act.fbx_export_mode == 'PARENT':
+						row = box.row()
+						row.prop(act, "apply_rot_rotated")
+
+					row = layout.row()
+					row.prop(act, "delete_mats_before_export", text="Delete All Materials")
+
+					if act.fbx_export_mode == 'ALL':
+						row = layout.row()
+						row.prop(act, "export_combine_meshes", text="Combine All Meshes")
 
 				row = layout.row()
 				row.prop(act, "triangulate_before_export", text="Triangulate Meshes")
-				row = layout.row()
-				row.prop(act, "delete_mats_before_export", text="Delete All Materials")
 
-				if act.fbx_export_mode == 'ALL':
-					row = layout.row()
-					row.prop(act, "export_combine_meshes", text="Combine All Meshes")
 
 				if act.fbx_export_mode == 'ALL':
 					box = layout.box()
 					row = box.row()
-					row.prop(act, "set_custom_fbx_name", text="Custom Name for FBX")
+					row.prop(act, "set_custom_fbx_name", text="Custom Name for File")
 					if act.set_custom_fbx_name:
 						row = box.row(align=True)
-						row.label(text="FBX Name:")
+						row.label(text="File Name:")
 						row.prop(act, "custom_fbx_name")
 
 				box = layout.box()
 				row = box.row()
 				row.prop(act, "export_custom_options", text="Custom Export Options")
 				if act.export_custom_options:
-					row = box.row(align=True)
-					row.label(text=" Smoothing")
-					row.prop(act, "export_smoothing", expand=False)
+					if act.export_format == 'FBX':
+						row = box.row(align=True)
+						row.label(text=" Smoothing")
+						row.prop(act, "export_smoothing", expand=False)
 
-					row = box.row(align=True)
-					row.label(text=" Loose Edges")
-					row.prop(act, "export_loose_edges",text="")
+						row = box.row(align=True)
+						row.label(text=" Loose Edges")
+						row.prop(act, "export_loose_edges",text="")
 
-					row = box.row(align=True)
-					row.label(text=" Tangent Space")
-					row.prop(act, "export_tangent_space", text="")
+						row = box.row(align=True)
+						row.label(text=" Tangent Space")
+						row.prop(act, "export_tangent_space", text="")
+
+					if act.export_format == 'OBJ':
+						row = box.row(align=True)
+						row.label(text=" Separate By Mats")
+						row.prop(act, "obj_separate_by_materials", text="")
+
+						row = box.row(align=True)
+						row.label(text=" Smooth Groups")
+						row.prop(act, "obj_export_smooth_groups", text="")
+
 
 				box = layout.box()
 				row = box.row()

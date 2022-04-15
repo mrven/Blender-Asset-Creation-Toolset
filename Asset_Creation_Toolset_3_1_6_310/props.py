@@ -48,6 +48,21 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		('COLLECTION','By Collection',''))
 	fbx_export_mode: EnumProperty(name="", items = fbx_export_mode_menu_items)
 
+	export_format_menu_items = (
+		('FBX', 'FBX', ''),
+		('OBJ', 'OBJ', ''))
+	export_format: EnumProperty(name="", items=export_format_menu_items)
+
+	obj_separate_by_materials:BoolProperty(
+		name="Separate By Materials",
+		description="Separate Objects By Materials",
+		default = True)
+
+	obj_export_smooth_groups: BoolProperty(
+		name="Smooth Groups",
+		description="Export Smooth Groups",
+		default=True)
+
 	apply_rot: BoolProperty(
 		name="Apply Rotation",
 		description="Apply Rotation for Exported Models",

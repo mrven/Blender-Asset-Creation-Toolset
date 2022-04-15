@@ -124,7 +124,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 				if obj.type == 'MESH' or obj.type == 'ARMATURE':
 					obj.data.name = obj.name
 
-			#Delete All Materials (Optional)
+			# Delete All Materials (Optional)
 			if act.delete_mats_before_export:
 				for o in exp_objects:
 					if o.type == 'MESH' and len(o.data.materials) > 0:
@@ -132,9 +132,24 @@ class Multi_FBX_Export(bpy.types.Operator):
 							bpy.context.object.active_material_index = q
 							o.data.materials.pop(index = q)
 
+			# Triangulate Meshes
+			if act.triangulate_before_export:
+				for o in exp_objects:
+					if o.type == 'MESH':
+						bpy.ops.object.select_all(action='DESELECT')
+						o.select_set(True)
+						bpy.context.view_layer.objects.active = o
+						bpy.ops.object.mode_set(mode='EDIT')
+						bpy.ops.mesh.reveal()
+						bpy.ops.mesh.select_all(action='SELECT')
+						bpy.ops.mesh.quads_convert_to_tris(quad_method='BEAUTY', ngon_method='BEAUTY')
+						bpy.ops.mesh.select_all(action='DESELECT')
+						bpy.ops.object.mode_set(mode='OBJECT')
+
 			#Select All Exported Objects
 			for obj in exp_objects:
 				obj.select_set(True)
+
 
 			#Apply Scale
 			if act.apply_scale:
@@ -479,6 +494,8 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 					row = box.row()
 					row.prop(act, "apply_rot_rotated")
 
+				row = layout.row()
+				row.prop(act, "triangulate_before_export", text="Triangulate Meshes")
 				row = layout.row()
 				row.prop(act, "delete_mats_before_export", text="Delete All Materials")
 

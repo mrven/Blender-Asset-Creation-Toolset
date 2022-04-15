@@ -88,6 +88,11 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		description="Delete Materials before Export",
 		default = False)
 
+	triangulate_before_export: BoolProperty(
+		name="Triangulate",
+		description="Triangulate Meshes before Export",
+		default=False)
+
 	export_path: StringProperty(
       name = "",
       default = "",

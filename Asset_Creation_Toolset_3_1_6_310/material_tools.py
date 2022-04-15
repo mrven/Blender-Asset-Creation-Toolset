@@ -17,7 +17,7 @@ class Palette_Create(bpy.types.Operator):
 		act = bpy.context.scene.act
 		act.export_dir = ""
 
-		pbr_mode = True
+		pbr_mode = act.pbr_workflow
 
 		#check saved blend file
 		if len(bpy.data.filepath) == 0 and not act.custom_save_path:
@@ -118,6 +118,7 @@ class Palette_Create(bpy.types.Operator):
 		roughness_texture_name = 'Palette_' + add_name_palette + '_Roughness'
 		metallic_texture_name = 'Palette_' + add_name_palette + '_Metallic'
 		opacity_texture_name = 'Palette_' + add_name_palette + '_Opacity'
+		emission_texture_name = 'Palette_' + add_name_palette + '_Emission'
 
 		# Add materials to palette plane
 		mat_offset = len(me)
@@ -209,6 +210,17 @@ class Palette_Create(bpy.types.Operator):
 				bpy.ops.image.new(name=opacity_texture_name, width=32, height=32)
 				bpy.data.images[opacity_texture_name].colorspace_settings.name = 'Linear'
 
+			# Emission baking Texture
+			# Check exist emission texture image
+			flag_exist_texture_emission = False
+			for t in range(len(bpy.data.images)):
+				if bpy.data.images[t].name == emission_texture_name:
+					flag_exist_texture_emission = True
+
+			# create or not emission texture
+			if flag_exist_texture_emission == False:
+				bpy.ops.image.new(name=emission_texture_name, width=32, height=32)
+
 		# set materials to plane's polygons
 		bpy.ops.object.mode_set(mode = 'OBJECT')
 		ob = bpy.context.object
@@ -270,16 +282,45 @@ class Palette_Create(bpy.types.Operator):
 		bpy.context.scene.render.bake.use_selected_to_active = True
 		bpy.ops.object.bake(type='DIFFUSE')
 
-		# Bake Roughness
 		if pbr_mode:
+			# Bake Roughness
 			tex_node.image = bpy.data.images[roughness_texture_name]
 			bpy.context.scene.cycles.bake_type = 'ROUGHNESS'
 			bpy.ops.object.bake(type='ROUGHNESS')
 
-		#Revet Materials Metallic
+			# Bake Metallic
+			tex_node.image = bpy.data.images[metallic_texture_name]
+
+			for index in range(palette_mat_len):
+				try:
+					palette_mat[index].node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value = materials_metallic[index]
+				except:
+					continue
+
+			bpy.ops.object.bake(type='ROUGHNESS')
+
+			# Bake Opacity
+			tex_node.image = bpy.data.images[opacity_texture_name]
+
+			for index in range(palette_mat_len):
+				try:
+					palette_mat[index].node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value = \
+						palette_mat[index].node_tree.nodes['Principled BSDF'].inputs['Alpha'].default_value
+				except:
+					continue
+
+			bpy.ops.object.bake(type='ROUGHNESS')
+
+			# Bake Emission
+			tex_node.image = bpy.data.images[emission_texture_name]
+			bpy.context.scene.cycles.bake_type = 'EMIT'
+			bpy.ops.object.bake(type='EMIT')
+
+		#Revet Materials Metallic and Roughness
 		for index in range(palette_mat_len):
 			try:
 				palette_mat[index].node_tree.nodes['Principled BSDF'].inputs['Metallic'].default_value = materials_metallic[index]
+				palette_mat[index].node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value = materials_roughness[index]
 			except:
 				continue
 
@@ -378,7 +419,6 @@ class Palette_Create(bpy.types.Operator):
 		bpy.ops.object.delete()
 
 
-		# TO DO: Why this?
 		bpy.context.area.type = 'IMAGE_EDITOR'
 
 		#Save Palette Images
@@ -388,6 +428,12 @@ class Palette_Create(bpy.types.Operator):
 		if pbr_mode:
 			bpy.context.area.spaces[0].image = bpy.data.images[roughness_texture_name]
 			bpy.ops.image.save_as(save_as_render=False, filepath=str(path + roughness_texture_name + '.png'), relative_path=True, show_multiview=False, use_multiview=False)
+			bpy.context.area.spaces[0].image = bpy.data.images[metallic_texture_name]
+			bpy.ops.image.save_as(save_as_render=False, filepath=str(path + metallic_texture_name + '.png'), relative_path=True, show_multiview=False, use_multiview=False)
+			bpy.context.area.spaces[0].image = bpy.data.images[opacity_texture_name]
+			bpy.ops.image.save_as(save_as_render=False, filepath=str(path + opacity_texture_name + '.png'), relative_path=True, show_multiview=False, use_multiview=False)
+			bpy.context.area.spaces[0].image = bpy.data.images[emission_texture_name]
+			bpy.ops.image.save_as(save_as_render=False, filepath=str(path + emission_texture_name + '.png'), relative_path=True, show_multiview=False, use_multiview=False)
 		bpy.context.area.spaces[0].image = current_image
 
 		#save saving dir
@@ -799,6 +845,8 @@ class VIEW3D_PT_Material_Tools_Panel(bpy.types.Panel):
 				row.operator("object.delete_unused_materials", text="Delete Unused Materials")
 
 				box = layout.box()
+				row = box.row()
+				row.prop(act, "pbr_workflow", text="PBR_Workflow")
 				row = box.row()
 				row.prop(act, "custom_save_path", text="Custom Save Path")
 				if act.custom_save_path:

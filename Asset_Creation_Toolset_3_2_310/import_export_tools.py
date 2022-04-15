@@ -38,7 +38,10 @@ class Multi_FBX_Export(bpy.types.Operator):
 		if len(bpy.data.filepath) > 0 or act.custom_export_path:
 			#Check Export Path
 			if len(bpy.data.filepath) > 0:
-				path = bpy.path.abspath('//FBXs/')
+				if act.export_format == 'FBX':
+					path = bpy.path.abspath('//FBXs/')
+				if act.export_format == 'OBJ':
+					path = bpy.path.abspath('//OBJs/')
 
 			if act.custom_export_path:
 				if len(act.export_path) == 0:

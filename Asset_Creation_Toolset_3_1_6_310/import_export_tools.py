@@ -101,6 +101,12 @@ class Multi_FBX_Export(bpy.types.Operator):
 				obj.select_set(True)
 				bpy.context.view_layer.objects.active = obj
 
+				# Remove Disabled Modifiers
+				if obj.type != 'EMPTY':
+					for modifier in reversed(obj.modifiers):
+						if not (modifier.show_viewport and modifier.show_render):
+							obj.modifiers.remove(modifier)
+
 				if obj.type == 'MESH':
 					for modifier in obj.modifiers:
 						if modifier.type != 'ARMATURE':

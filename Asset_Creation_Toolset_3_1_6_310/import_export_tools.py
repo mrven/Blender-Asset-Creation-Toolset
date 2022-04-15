@@ -207,16 +207,8 @@ class Multi_FBX_Export(bpy.types.Operator):
 				if act.set_custom_fbx_name:
 					name = act.custom_fbx_name
 
-				#Export FBX
-				if act.export_custom_options:
-					bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = fbx_scale_mode,
-							use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing,
-								use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space)
-				else:
-					if act.export_target_engine == 'UNITY':
-						bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
-					else:
-						bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_NONE', mesh_smooth_type='FACE', use_tspace=True)
+				#Export FBX/OBJ
+				utils.export_model(path, name, fbx_scale_mode)
 
 			#Individual Export
 			if act.fbx_export_mode == 'INDIVIDUAL':
@@ -238,16 +230,8 @@ class Multi_FBX_Export(bpy.types.Operator):
 						bpy.context.scene.tool_settings.transform_pivot_point = 'CURSOR'
 					name = x.name
 
-					#Export FBX
-					if act.export_custom_options:
-						bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = fbx_scale_mode,
-							use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing,
-								use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space)
-					else:
-						if act.export_target_engine == 'UNITY':
-							bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
-						else:
-							bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_NONE', mesh_smooth_type='FACE', use_tspace=True)
+					# Export FBX/OBJ
+					utils.export_model(path, name, fbx_scale_mode)
 
 					#Restore Object Location
 					if act.apply_loc:
@@ -281,16 +265,8 @@ class Multi_FBX_Export(bpy.types.Operator):
 					name = x.name
 					bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
 
-					#Export FBX
-					if act.export_custom_options:
-						bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = fbx_scale_mode,
-							use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing,
-								use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space)
-					else:
-						if act.export_target_engine == 'UNITY':
-							bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
-						else:
-							bpy.ops.export_scene.fbx(filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_NONE', mesh_smooth_type='FACE', use_tspace=True)
+					# Export FBX/OBJ
+					utils.export_model(path, name, fbx_scale_mode)
 
 					bpy.ops.object.select_all(action='DESELECT')
 					x.select_set(True)
@@ -321,16 +297,8 @@ class Multi_FBX_Export(bpy.types.Operator):
 						if x.users_collection[0].name == c:
 							x.select_set(True)
 
-					#Export FBX
-					if act.export_custom_options:
-						bpy.ops.export_scene.fbx(filepath=str(path + c + '.fbx'), use_selection=True, apply_scale_options = fbx_scale_mode,
-							use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing,
-								use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space)
-					else:
-						if act.export_target_engine == 'UNITY':
-							bpy.ops.export_scene.fbx(filepath=str(path + c + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_ALL')
-						else:
-							bpy.ops.export_scene.fbx(filepath=str(path + c + '.fbx'), use_selection=True, apply_scale_options = 'FBX_SCALE_NONE', mesh_smooth_type='FACE', use_tspace=True)
+					# Export FBX/OBJ
+					utils.export_model(path, c, fbx_scale_mode)
 
 				bpy.ops.object.select_all(action='DESELECT')
 
@@ -364,7 +332,6 @@ class Multi_FBX_Export(bpy.types.Operator):
 			act.export_dir = path
 
 		return {'FINISHED'}
-
 
 #-------------------------------------------------------
 #Open Export Directory
@@ -543,10 +510,13 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 					row.prop(act, "export_path")
 
 				row = layout.row()
-				if act.export_target_engine == 'UNITY':
-					row.operator("object.multi_fbx_export", text="Export FBX to Unity")
-				else:
-					row.operator("object.multi_fbx_export", text="Export FBX to Unreal")
+				if act.export_format == 'FBX':
+					if act.export_target_engine == 'UNITY':
+						row.operator("object.multi_fbx_export", text="Export FBX to Unity")
+					else:
+						row.operator("object.multi_fbx_export", text="Export FBX to Unreal")
+				if act.export_format == 'OBJ':
+					row.operator("object.multi_fbx_export", text="Export OBJ")
 
 				if len(act.export_dir) > 0:
 					row = layout.row()

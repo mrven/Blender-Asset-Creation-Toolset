@@ -2,6 +2,7 @@ import bpy
 import math
 
 from bpy.props import StringProperty
+from collections import defaultdict
 
 
 #-------------------------------------------------------
@@ -71,6 +72,22 @@ class Calc_Normals(bpy.types.Operator):
 
 #-------------------------------------------------------
 #Obj Name to Data Name
+
+def objNameToDataName():
+
+    obj_dict = defaultdict(list)
+
+    for obj in bpy.context.selected_objects:
+        if obj.type != 'EMPTY':
+            obj_dict[obj.data].append(obj)
+
+    for mesh, objects in obj_dict.items():
+        for enum, object_mesh in enumerate(objects):
+            if enum == 0:  # Skip instances
+                object_mesh.data.name = object_mesh.name  # Rename Data
+            else:
+                break
+
 class Obj_Name_To_Mesh_Name(bpy.types.Operator):
 	"""Obj Name to Data Name"""
 	bl_idname = "object.objname_to_meshname"
@@ -78,14 +95,62 @@ class Obj_Name_To_Mesh_Name(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	def execute(self, context):
-		current_selected_obj = bpy.context.selected_objects
-		
-		for x in current_selected_obj:
-			if x.type != 'EMPTY':
-				x.data.name = x.name
+		objNameToDataName()
 		return {'FINISHED'}
 
+#-------------------------------------------------------
+#Col Name to Obj Name
+class Col_Name_To_Obj_Name(bpy.types.Operator):
+	"""Col Name to Obj Name"""
+	bl_idname = "object.colname_to_objname"
+	bl_label = "Col Name to Obj Name"
+	bl_options = {'REGISTER', 'UNDO'}
 
+	def execute(self, context):
+		def matches(li1, li2):
+			matches_ = [i for i in li1 if i in li2]
+			return matches_
+
+		selected_obj = [i.name for i in bpy.context.selected_objects]
+		collect_dict = defaultdict(list)
+
+		for i in bpy.context.selected_objects:
+			collect_dict[i.users_collection].append(i)
+
+		for collect, _ in collect_dict.items():
+
+			objCountLen = len(str(len(collect[0].objects)))
+			if objCountLen == 1:
+				objCountLen = 2
+			addDigit = 0
+			curCollectObjList = [x.name for x in collect_dict[collect]]
+
+			intersect = matches(curCollectObjList, selected_obj)
+
+			for obj in intersect:
+				bpy_objects = bpy.data.objects[obj]
+				col_name = bpy_objects.users_collection[0].name + '_' + bpy_objects.type
+
+				zeros = "0" * (objCountLen + 1 - len(str(addDigit + 1)))
+				name = f'{col_name}_{zeros}{1 + addDigit}'
+				allObjList = [i.name for i in bpy.data.objects]
+				while True:
+					if name == obj:
+						break
+					elif name in allObjList:
+						addDigit += 1
+						zeros = "0" * (objCountLen + 1 - len(str(addDigit + 1)))
+						name = f'{col_name}_{zeros}{1 + addDigit}'
+
+						if addDigit > 5000:
+							break
+					else:
+						__obj = bpy.data.objects[obj]
+						__obj.name = name
+						break
+
+		objNameToDataName()
+		return {'FINISHED'}
 #-------------------------------------------------------
 #Merge Bones
 class Merge_Bones(bpy.types.Operator):
@@ -218,6 +283,10 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 		
 		if context.object is not None:
 			if context.mode == 'OBJECT':
+				
+				row = layout.row()	
+				row.operator("object.colname_to_objname", text="Col Name -> Obj Name")
+				
 				row = layout.row()	
 				row.operator("object.objname_to_meshname", text="Obj Name -> Data Name")
 
@@ -262,6 +331,7 @@ classes = (
 	Clear_Normals,
 	Calc_Normals,
 	Obj_Name_To_Mesh_Name,
+	Col_Name_To_Obj_Name,
 	Merge_Bones,
 	Weight_Paint_Brush_Invert,
 )	

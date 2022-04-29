@@ -147,6 +147,7 @@ class Col_Name_To_Obj_Name(bpy.types.Operator):
 					else:
 						__obj = bpy.data.objects[obj]
 						__obj.name = name
+						addDigit = 0
 						break
 
 		objNameToDataName()

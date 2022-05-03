@@ -107,48 +107,47 @@ class Col_Name_To_Obj_Name(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
-		def matches(li1, li2):
-			matches_ = [i for i in li1 if i in li2]
-			return matches_
-
-		selected_obj = [i.name for i in bpy.context.selected_objects]
 		collect_dict = defaultdict(list)
 
 		for i in bpy.context.selected_objects:
 			collect_dict[i.users_collection].append(i)
 
-		for collect, _ in collect_dict.items():
-
+		for collect, bpy_obj in collect_dict.items():
 			objCountLen = len(str(len(collect[0].objects)))
 			if objCountLen == 1:
 				objCountLen = 2
-			addDigit = 0
-			curCollectObjList = [x.name for x in collect_dict[collect]]
+				
+			obj_types = {x.type for x in bpy_obj} # Subdiv collections by object types
+			
+			for object_type in obj_types:
+				addDigit = 0
+				curCollectObjList = [x.name for x in collect_dict[collect] 
+				if x.type == object_type 
+				and x in bpy.context.selected_objects] # Get list by selected obj and obj types in current collection
 
-			intersect = matches(curCollectObjList, selected_obj)
+				col_name = collect[0].name + '_' + object_type
+				
+				allObjList = [i.name for i in bpy.data.objects 
+				if i.type == object_type 
+				and col_name in i.name] # List for skip rename and overwrite name
 
-			for obj in intersect:
-				bpy_objects = bpy.data.objects[obj]
-				col_name = bpy_objects.users_collection[0].name + '_' + bpy_objects.type
-
-				zeros = "0" * (objCountLen + 1 - len(str(addDigit + 1)))
-				name = f'{col_name}_{zeros}{1 + addDigit}'
-				allObjList = [i.name for i in bpy.data.objects]
-				while True:
-					if name == obj:
-						break
-					elif name in allObjList:
-						addDigit += 1
-						zeros = "0" * (objCountLen + 1 - len(str(addDigit + 1)))
-						name = f'{col_name}_{zeros}{1 + addDigit}'
-
-						if addDigit > 5000:
+				for obj in curCollectObjList:
+					zeros = "0" * (objCountLen + 1 - len(str(addDigit + 1)))
+					name = f'{col_name}_{zeros}{1 + addDigit}'
+					
+					while True:
+						if name == obj:
+							allObjList.append(name)
 							break
-					else:
-						__obj = bpy.data.objects[obj]
-						__obj.name = name
-						addDigit = 0
-						break
+						elif name in allObjList:
+							addDigit += 1
+							zeros = "0" * (objCountLen + 1 - len(str(addDigit + 1)))
+							name = f'{col_name}_{zeros}{1 + addDigit}'
+						else:
+							__obj = bpy.data.objects[obj]
+							__obj.name = name
+							allObjList.append(name)
+							break
 
 		objNameToDataName()
 		return {'FINISHED'}

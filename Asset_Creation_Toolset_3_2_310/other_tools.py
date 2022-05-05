@@ -123,7 +123,7 @@ class Col_Name_To_Obj_Name(bpy.types.Operator):
 				addDigit = 0
 				curCollectObjList = [x.name for x in collect_dict[collect] 
 				if x.type == object_type 
-				and x in bpy.context.selected_objects] # Get list by selected obj and obj types in current collection
+				and x.select_get()] # Get list by selected obj and obj types in current collection
 
 				col_name = collect[0].name + '_' + object_type
 				

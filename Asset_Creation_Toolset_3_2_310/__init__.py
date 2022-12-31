@@ -1,3 +1,6 @@
+import sys
+import importlib
+
 bl_info = {
 	"name": "Asset Creation Toolset",
 	"description": "Toolset for easy create assets for Unity 3D/3D Stocks/etc.",
@@ -17,10 +20,6 @@ modules_full_names = {}
 for current_module_name in modules_names:
 	modules_full_names[current_module_name] = ('{}.{}'.format(__name__, current_module_name))
 
-import sys
-import importlib
-
-
 for current_module_full_name in modules_full_names.values():
 	if current_module_full_name in sys.modules:
 		importlib.reload(sys.modules[current_module_full_name])
@@ -28,11 +27,13 @@ for current_module_full_name in modules_full_names.values():
 		globals()[current_module_full_name] = importlib.import_module(current_module_full_name)
 		setattr(globals()[current_module_full_name], 'modulesNames', modules_full_names)
 
+
 def register():
 	for current_module_name in modules_full_names.values():
 		if current_module_name in sys.modules:
 			if hasattr(sys.modules[current_module_name], 'register'):
 				sys.modules[current_module_name].register()
+
 
 def unregister():
 	for current_module_name in modules_full_names.values():

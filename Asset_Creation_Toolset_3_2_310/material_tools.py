@@ -5,8 +5,8 @@ import os
 import subprocess
 from . import utils
 
-#-------------------------------------------------------
-#Palette Texture Creator
+
+# Palette texture creator
 class Palette_Create(bpy.types.Operator):
 	"""Palette Texture Creator"""
 	bl_idname = "object.palette_creator"
@@ -475,8 +475,7 @@ class Palette_Create(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-#-------------------------------------------------------
-#Open Save Directory
+# Open save directory
 class Open_Save_Dir(bpy.types.Operator):
 	"""Open Save Directory in OS"""
 	bl_idname = "object.open_save_dir"
@@ -504,8 +503,7 @@ class Open_Save_Dir(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-#-------------------------------------------------------
-#Assign Materials in MultiEdit
+# Assign materials in multiEdit
 class Assign_Multiedit_Materials(bpy.types.Operator):
 	"""Assign Materials for some objects in MultiEdit Mode"""
 	bl_idname = "object.assign_multiedit_materials"
@@ -561,8 +559,7 @@ class Assign_Multiedit_Materials(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-#-------------------------------------------------------
-#Clear Vertex Colors
+# Clear vertex colors
 class Clear_Vertex_Colors(bpy.types.Operator):
 	"""Clear Vertex Colors"""
 	bl_idname = "object.clear_vc"
@@ -589,8 +586,7 @@ class Clear_Vertex_Colors(bpy.types.Operator):
 		return {'FINISHED'} 			
 
 
-#-------------------------------------------------------
-#Material Color to Viewport Color
+# Material color to viewport color
 class Material_To_Viewport(bpy.types.Operator):
 	"""Material Color to Viewport Color"""
 	bl_idname = "object.material_to_viewport"
@@ -621,8 +617,7 @@ class Material_To_Viewport(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-#-------------------------------------------------------
-#Random Material Viewport Color
+# Random material viewport color
 class Random_Viewport_Color(bpy.types.Operator):
 	"""Random Material Viewport Color"""
 	bl_idname = "object.random_viewport_color"
@@ -658,8 +653,7 @@ class Random_Viewport_Color(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-#-------------------------------------------------------
-#Clear Viewport Color
+# Clear viewport color
 class Clear_Viewport_Color(bpy.types.Operator):
 	"""Clear Viewport Color"""
 	bl_idname = "object.clear_viewport_color"
@@ -692,8 +686,7 @@ class Clear_Viewport_Color(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-#-------------------------------------------------------
-#Delete Unused Materials
+# Delete unused materials
 class Delete_Unused_Materials(bpy.types.Operator):
 	"""Delete from Objects Unused Materials and Slots"""
 	bl_idname = "object.delete_unused_materials"
@@ -721,8 +714,7 @@ class Delete_Unused_Materials(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-#-------------------------------------------------------
-#Select Texture In UV Editor From Active Material
+# Select texture in UV Editor from active material
 class Texture_From_Active_Material(bpy.types.Operator):
 	"""Select Texture In UV Editor From Active Material"""
 	bl_idname = "object.texture_from_material"
@@ -738,8 +730,7 @@ class Texture_From_Active_Material(bpy.types.Operator):
 		return {'FINISHED'}		
 
 
-#-------------------------------------------------------
-#Menu for Select Texture In UV Editor From Active Material
+# Menu for select texture In UV Editor from active material
 class Select_Texture_Menu(bpy.types.Menu):
 	bl_idname = "OBJECT_MT_select_texture_menu"
 	bl_label = "Select Texture"
@@ -782,8 +773,8 @@ class Select_Texture_Menu(bpy.types.Menu):
 		for texture in texture_list:
 			layout.operator("object.texture_from_material", text=texture).texture_name=texture
 
-#-------------------------------------------------------
-#Call Menu for Select Texture In UV Editor From Active Material
+
+# Call menu for select texture In UV Editor from active material
 class Call_Select_Texture_Menu_View3D(bpy.types.Operator):
 	"""Select Texture In UV Editor From Active Material"""
 	bl_idname = "view3d.call_select_texture_menu"
@@ -795,8 +786,8 @@ class Call_Select_Texture_Menu_View3D(bpy.types.Operator):
 		
 		return {'FINISHED'}	
 
-#-------------------------------------------------------
-#Call Menu for Select Texture In UV Editor From Active Material
+
+#  Call menu for select texture in UV Editor from active material
 class Call_Select_Texture_Menu_Image_Editor(bpy.types.Operator):
 	"""Select Texture In UV Editor From Active Material"""
 	bl_idname = "image.call_select_texture_menu"
@@ -809,8 +800,7 @@ class Call_Select_Texture_Menu_Image_Editor(bpy.types.Operator):
 		return {'FINISHED'}	
 
 
-#-------------------------------------------------------
-#Material Tools UI Panel in View 3D
+# Material tools UI panel in 3D View
 class VIEW3D_PT_Material_Tools_Panel(bpy.types.Panel):
 	bl_label = "Material/Texture Tools"
 	bl_space_type = "VIEW_3D"
@@ -863,8 +853,7 @@ class VIEW3D_PT_Material_Tools_Panel(bpy.types.Panel):
 			row.operator("view3d.call_select_texture_menu", text="Open Texture in UV Editor")
 
 
-#-------------------------------------------------------
-#Material Tools UI Panel in UV Editor
+# Material tools UI panel in UV Editor
 class UV_PT_Material_UV_Tools_Panel(bpy.types.Panel):
 	bl_label = "Material/Texture Tools"
 	bl_space_type = 'IMAGE_EDITOR'
@@ -885,8 +874,7 @@ class UV_PT_Material_UV_Tools_Panel(bpy.types.Panel):
 			row.operator("image.call_select_texture_menu", text="Open Texture in UV Editor")
 
 
-#-------------------------------------------------------
-#Material Assign UI Panel
+# Material assign UI panel
 def Material_Menu_Panel(self, context):
 	preferences = bpy.context.preferences.addons[__package__].preferences
 	if context.object is not None and preferences.material_properties_enable:

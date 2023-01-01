@@ -4,8 +4,7 @@ import math
 from bpy.props import StringProperty
 
 
-#-------------------------------------------------------
-#Clear Custom Split Normals
+# Clear custom split normals
 class Clear_Normals(bpy.types.Operator):
 	"""Clear Custom Split Normals"""
 	bl_idname = "object.clear_normals"
@@ -22,6 +21,7 @@ class Clear_Normals(bpy.types.Operator):
 			if x.type == 'MESH':
 				bpy.context.view_layer.objects.active = x
 				bpy.ops.mesh.customdata_custom_splitnormals_clear()
+				# Enable Auto Smooth with angle 180 degrees
 				bpy.context.object.data.auto_smooth_angle = math.pi
 				bpy.context.object.data.use_auto_smooth = True
 				
@@ -32,8 +32,8 @@ class Clear_Normals(bpy.types.Operator):
 		bpy.context.view_layer.objects.active = active_obj					
 		return {'FINISHED'}		
 		
-#-------------------------------------------------------
-#Recalculate Normals
+
+# Recalculate normals
 class Calc_Normals(bpy.types.Operator):
 	"""Recalculate Normals"""
 	bl_idname = "object.calc_normals"
@@ -42,19 +42,19 @@ class Calc_Normals(bpy.types.Operator):
 
 	def execute(self, context):
 		act = bpy.context.scene.act
-		
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
 		
 		for x in selected_obj:
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
+
 			if x.type == 'MESH':
 				bpy.context.view_layer.objects.active = x
-				bpy.ops.object.mode_set(mode = 'EDIT')
+				bpy.ops.object.mode_set(mode='EDIT')
 				bpy.ops.mesh.reveal()
 				bpy.ops.mesh.select_all(action='SELECT')
-				if act.calc_normals_en == False:
+				if not act.calc_normals_en:
 					bpy.ops.mesh.flip_normals()
 				else:
 					bpy.ops.mesh.normals_make_consistent(inside=act.normals_inside)
@@ -69,8 +69,7 @@ class Calc_Normals(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-#-------------------------------------------------------
-#Obj Name to Data Name
+# Object name to data name
 class Obj_Name_To_Mesh_Name(bpy.types.Operator):
 	"""Obj Name to Data Name"""
 	bl_idname = "object.objname_to_meshname"
@@ -86,8 +85,7 @@ class Obj_Name_To_Mesh_Name(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-#-------------------------------------------------------
-#Merge Bones
+# Merge bones
 class Merge_Bones(bpy.types.Operator):
 	"""Merge Selected Bones to Active"""
 	bl_idname = "object.merge_bones"
@@ -97,7 +95,7 @@ class Merge_Bones(bpy.types.Operator):
 	def execute(self, context):
 		act = bpy.context.scene.act
 
-		#BUG!! Active Bone not updating if switch MODE frome POSE to EDIT
+		# TODO: BUG!! Active Bone not updating if switch MODE from POSE to EDIT
 		bpy.ops.object.mode_set(mode='OBJECT')
 		bpy.ops.object.mode_set(mode='EDIT')
 
@@ -108,21 +106,20 @@ class Merge_Bones(bpy.types.Operator):
 
 		bpy.ops.object.mode_set(mode='OBJECT')
 
-		#Collect Selected Bones, but Not Active
+		# Collect selected bones, but not active
 		for bone in armature.data.bones:
-			if bone.select == True:
-				if bone.name != active_bone_name:
-					selected_bones_name.append(bone.name)
+			if bone.select and bone.name != active_bone_name:
+				selected_bones_name.append(bone.name)
 
-		#Find Mesh Deformed with this Armature
+		# Find mesh deformed with this armature
 		for m in bpy.context.scene.objects:
 			if m.type == 'MESH':
-				if (len(m.modifiers) > 0):
+				if len(m.modifiers) > 0:
 					for n in m.modifiers:
 						if n.type == 'ARMATURE' and n.object.name_full == armature.name_full:
 							parent_mesh = m
 
-		if parent_mesh == None:
+		if parent_mesh is None:
 			self.report({'INFO'}, 'Armature has no mesh')
 			bpy.ops.object.mode_set(mode='EDIT')
 			return {'CANCELLED'}
@@ -131,6 +128,7 @@ class Merge_Bones(bpy.types.Operator):
 		parent_mesh.select_set(True)
 		bpy.context.view_layer.objects.active = parent_mesh
 
+		# Transfer weights from selected bones to active with modifier and clean up vertex groups
 		if len(selected_bones_name) > 0:
 			for b_name in selected_bones_name:
 				try:
@@ -139,14 +137,11 @@ class Merge_Bones(bpy.types.Operator):
 					continue
 
 				bpy.ops.object.modifier_add(type='VERTEX_WEIGHT_MIX')
-						
 				parent_mesh.modifiers['VertexWeightMix'].vertex_group_a = active_bone_name
 				parent_mesh.modifiers['VertexWeightMix'].vertex_group_b = b_name
 				parent_mesh.modifiers['VertexWeightMix'].mix_mode = 'ADD'
 				parent_mesh.modifiers['VertexWeightMix'].mix_set = 'ALL'
-				
 				bpy.ops.object.modifier_apply(apply_as='DATA', modifier="VertexWeightMix")
-
 				bpy.ops.object.vertex_group_remove()
 
 		bpy.ops.object.select_all(action='DESELECT')
@@ -156,16 +151,20 @@ class Merge_Bones(bpy.types.Operator):
 		bpy.ops.armature.select_all(action='DESELECT')
 		bpy.ops.object.mode_set(mode='OBJECT')
 
+		# Delete selected bones
 		for need_delete in selected_bones_name:
 			try:
 				armature.data.bones[need_delete].select = True
 			except:
 				continue
+
 			bpy.ops.object.mode_set(mode='EDIT')
+
 			if act.merge_bones_method == 'DELETE':
 				bpy.ops.armature.delete()
 			elif act.merge_bones_method == 'DISSOLVE':
 				bpy.ops.armature.dissolve()
+
 			bpy.ops.object.mode_set(mode='OBJECT')
 
 		armature.data.bones[active_bone_name].select = True
@@ -174,8 +173,7 @@ class Merge_Bones(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-#-------------------------------------------------------
-#Weight Paint Brush Mode Invert
+# Weight paint brush mode invert
 class Weight_Paint_Brush_Invert(bpy.types.Operator):
 	"""Weight Paint Brush Substract Mode"""
 	bl_idname = "paint.weigth_paint_brush_invert"
@@ -184,6 +182,7 @@ class Weight_Paint_Brush_Invert(bpy.types.Operator):
 	
 	def execute(self, context):
 		current_brush = bpy.context.scene.tool_settings.weight_paint.brush
+
 		if current_brush.blend == 'ADD':
 			current_brush.blend = 'SUB'
 		elif current_brush.blend == 'SUB':
@@ -191,11 +190,11 @@ class Weight_Paint_Brush_Invert(bpy.types.Operator):
 		else:
 			weight = bpy.context.scene.tool_settings.unified_paint_settings.weight
 			bpy.context.scene.tool_settings.unified_paint_settings.weight = 1 - weight
+
 		return {'FINISHED'}
 
 
-#-------------------------------------------------------
-#Panels
+# Panels
 class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 	bl_label = "Other Tools"
 	bl_space_type = "VIEW_3D"
@@ -205,7 +204,8 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 	@classmethod
 	def poll(self, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is not None and (context.object.mode == 'OBJECT' or context.mode == 'EDIT_ARMATURE' or context.mode == 'PAINT_WEIGHT')) and preferences.other_enable
+		return (context.object is not None and (context.object.mode == 'OBJECT' or context.mode == 'EDIT_ARMATURE' or context.mode == 'PAINT_WEIGHT')) \
+			and preferences.other_enable
 
 	def draw(self, context):
 		act = bpy.context.scene.act
@@ -236,7 +236,6 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 						row.prop(act, "normals_inside", text="Inside", icon="CHECKBOX_DEHLT")
 				else:
 					row.prop(act, "calc_normals_en", text="Recalc Normals", icon="CHECKBOX_DEHLT")
-				
 
 			if context.mode == 'EDIT_ARMATURE':
 				row = layout.row()

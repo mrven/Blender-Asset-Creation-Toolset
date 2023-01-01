@@ -432,10 +432,11 @@ class Palette_Create(bpy.types.Operator):
 				bpy.context.area.type = 'IMAGE_EDITOR'
 				bpy.ops.uv.cursor_set(location=(r_mat_x, r_mat_y))
 				bpy.context.space_data.pivot_point = 'CURSOR'
-				bpy.ops.transform.resize(value=(0, 0, 1), orient_type ='GLOBAL', orient_matrix_type='GLOBAL',
-											mirror=False, use_proportional_edit=False,
-											proportional_edit_falloff='SMOOTH', proportional_size=1,
-											use_proportional_connected=False, use_proportional_projected=False)
+				bpy.ops.transform.resize(
+					value=(0, 0, 1), orient_type ='GLOBAL', orient_matrix_type='GLOBAL',
+					mirror=False, use_proportional_edit=False,
+					proportional_edit_falloff='SMOOTH', proportional_size=1,
+					use_proportional_connected=False, use_proportional_projected=False)
 
 			bpy.ops.object.mode_set(mode='OBJECT')
 
@@ -450,21 +451,26 @@ class Palette_Create(bpy.types.Operator):
 		# Save Palette Images
 		current_image = bpy.context.area.spaces[0].image
 		bpy.context.area.spaces[0].image = bpy.data.images[albedo_texture_name]
-		bpy.ops.image.save_as(save_as_render=False, filepath=str(path + albedo_texture_name + '.png'),
-							  	relative_path=True, show_multiview=False, use_multiview=False)
+		bpy.ops.image.save_as(
+			save_as_render=False, filepath=str(path + albedo_texture_name + '.png'),
+			relative_path=True, show_multiview=False, use_multiview=False)
 		if pbr_mode:
 			bpy.context.area.spaces[0].image = bpy.data.images[roughness_texture_name]
-			bpy.ops.image.save_as(save_as_render=False, filepath=str(path + roughness_texture_name + '.png'),
-								  	relative_path=True, show_multiview=False, use_multiview=False)
+			bpy.ops.image.save_as(
+				save_as_render=False, filepath=str(path + roughness_texture_name + '.png'),
+				relative_path=True, show_multiview=False, use_multiview=False)
 			bpy.context.area.spaces[0].image = bpy.data.images[metallic_texture_name]
-			bpy.ops.image.save_as(save_as_render=False, filepath=str(path + metallic_texture_name + '.png'),
-								  	relative_path=True, show_multiview=False, use_multiview=False)
+			bpy.ops.image.save_as(
+				save_as_render=False, filepath=str(path + metallic_texture_name + '.png'),
+				relative_path=True, show_multiview=False, use_multiview=False)
 			bpy.context.area.spaces[0].image = bpy.data.images[opacity_texture_name]
-			bpy.ops.image.save_as(save_as_render=False, filepath=str(path + opacity_texture_name + '.png'),
-								  	relative_path=True, show_multiview=False, use_multiview=False)
+			bpy.ops.image.save_as(
+				save_as_render=False, filepath=str(path + opacity_texture_name + '.png'),
+				relative_path=True, show_multiview=False, use_multiview=False)
 			bpy.context.area.spaces[0].image = bpy.data.images[emission_texture_name]
-			bpy.ops.image.save_as(save_as_render=False, filepath=str(path + emission_texture_name + '.png'),
-								  	relative_path=True, show_multiview=False, use_multiview=False)
+			bpy.ops.image.save_as(
+				save_as_render=False, filepath=str(path + emission_texture_name + '.png'),
+				relative_path=True, show_multiview=False, use_multiview=False)
 		bpy.context.area.spaces[0].image = current_image
 
 		# Save textures export dir
@@ -509,7 +515,7 @@ class Palette_Create(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-# Open save directory
+# Open textures export directory
 class Open_Save_Dir(bpy.types.Operator):
 	"""Open Save Directory in OS"""
 	bl_idname = "object.open_save_dir"
@@ -519,8 +525,9 @@ class Open_Save_Dir(bpy.types.Operator):
 	def execute(self, context):
 		act = bpy.context.scene.act
 
+		# Try open export directory in OS
 		if not os.path.exists(os.path.realpath(bpy.path.abspath(act.save_path))):
-			act.save_dir = "";
+			act.save_dir = ""
 			self.report({'INFO'}, 'Directory not exist')
 
 			return {'CANCELLED'}
@@ -545,15 +552,15 @@ class Assign_Multiedit_Materials(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	def execute(self, context):
-		act = bpy.context.scene.act
-		
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
-
 		active_mat = bpy.context.active_object.active_material.name_full
 
-		bpy.ops.object.mode_set(mode = 'OBJECT')
+		bpy.ops.object.mode_set(mode='OBJECT')
 
+		# Added active material to all selected objects
+		# If these objects don't have slot with this material
+		# But have selected polygons
 		for x in selected_obj:
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
@@ -562,33 +569,34 @@ class Assign_Multiedit_Materials(bpy.types.Operator):
 				append_mat = True
 				mat_index = 0		
 				for m in range(0, len(x.data.materials)):
-					if not x.data.materials[m] == None:
+					if not x.data.materials[m] is None:
 						if x.data.materials[m].name_full == active_mat:
 							append_mat = False
 
 				selected_poly = False
 				for p in x.data.polygons:
-					if p.select == True:
+					if p.select:
 						selected_poly = True
 
 				if append_mat and selected_poly:
 					x.data.materials.append(bpy.data.materials[active_mat])
 				for n in range(0, len(x.data.materials)):
-					if not x.data.materials[n] == None:
+					if not x.data.materials[n] is None:
 						if x.data.materials[n].name_full == active_mat:
 							mat_index = n
 
-				bpy.ops.object.mode_set(mode = 'EDIT')
+				# Set active material for current object and assign to selected polygons
+				bpy.ops.object.mode_set(mode='EDIT')
 				bpy.context.active_object.active_material_index = mat_index
 				bpy.ops.object.material_slot_assign()
-				bpy.ops.object.mode_set(mode = 'OBJECT')
+				bpy.ops.object.mode_set(mode='OBJECT')
 
 		# Select again objects
 		for j in selected_obj:
 			j.select_set(True)
 		
 		bpy.context.view_layer.objects.active = active_obj
-		bpy.ops.object.mode_set(mode = 'EDIT')
+		bpy.ops.object.mode_set(mode='EDIT')
 
 		return {'FINISHED'}
 
@@ -635,7 +643,7 @@ class Material_To_Viewport(bpy.types.Operator):
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
 			bpy.context.view_layer.objects.active = x
-			if x.type in ['MESH','CURVE','SURFACE','META','FONT']:
+			if x.type in ['MESH', 'CURVE', 'SURFACE', 'META', 'FONT']:
 				for mat in x.data.materials:
 					try:
 						mat.diffuse_color = mat.node_tree.nodes['Principled BSDF'].inputs[0].default_value
@@ -666,7 +674,8 @@ class Random_Viewport_Color(bpy.types.Operator):
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
 			bpy.context.view_layer.objects.active = x
-			if x.type in ['MESH','CURVE','SURFACE','META','FONT']:
+
+			if x.type in ['MESH', 'CURVE', 'SURFACE', 'META', 'FONT']:
 				for mat in x.data.materials:
 					random_hue = random.randrange(0, 10, 1)/10
 					random_value = random.randrange(2, 10, 1)/10
@@ -702,7 +711,8 @@ class Clear_Viewport_Color(bpy.types.Operator):
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
 			bpy.context.view_layer.objects.active = x
-			if x.type in ['MESH','CURVE','SURFACE','META','FONT']:
+
+			if x.type in ['MESH', 'CURVE', 'SURFACE', 'META', 'FONT']:
 				for mat in x.data.materials:
 					color = colorsys.hsv_to_rgb(0, 0, 0.906)
 					color4 = (color[0], color[1], color[2], 1)
@@ -731,12 +741,13 @@ class Delete_Unused_Materials(bpy.types.Operator):
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
 
-		#Delete Unused Materials
+		# Delete Unused Materials
 		for x in selected_obj:
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
 			bpy.context.view_layer.objects.active = x
-			if x.type in ['MESH','CURVE','SURFACE','META','FONT']:
+
+			if x.type in ['MESH', 'CURVE', 'SURFACE', 'META', 'FONT']:
 				bpy.ops.object.material_slot_remove_unused()
 			
 		# Select again objects
@@ -748,7 +759,7 @@ class Delete_Unused_Materials(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-# Select texture in UV Editor from active material
+# Select texture in UV Editor from active material (See Select_Texture_Menu)
 class Texture_From_Active_Material(bpy.types.Operator):
 	"""Select Texture In UV Editor From Active Material"""
 	bl_idname = "object.texture_from_material"
@@ -773,16 +784,19 @@ class Select_Texture_Menu(bpy.types.Menu):
 		layout = self.layout
 		texture_list = []
 
+		# If now window has Image Editor area
 		has_opened_image_editor = False
 		for area in bpy.context.screen.areas:
 			if area.type == "IMAGE_EDITOR":
 				has_opened_image_editor = True
 
 		if has_opened_image_editor:
+			# If active object is mesh and has material slots
 			if bpy.context.active_object.type == 'MESH':
 				if len(bpy.context.active_object.data.materials) > 0:
 					has_textures = False
-					
+
+					# Collect all textures from active material to list
 					for node in bpy.context.active_object.active_material.node_tree.nodes:
 						if node.type == 'TEX_IMAGE':
 							texture_name = node.image.name_full
@@ -805,14 +819,14 @@ class Select_Texture_Menu(bpy.types.Menu):
 			layout.label(text="Opened UV Editor not found")
 
 		for texture in texture_list:
-			layout.operator("object.texture_from_material", text=texture).texture_name=texture
+			layout.operator("object.texture_from_material", text=texture).texture_name = texture
 
 
 # Call menu for select texture In UV Editor from active material
 class Call_Select_Texture_Menu_View3D(bpy.types.Operator):
 	"""Select Texture In UV Editor From Active Material"""
 	bl_idname = "view3d.call_select_texture_menu"
-	bl_label = "Select Texture In UV Editor From Active Material"
+	bl_label = "Select Texture In 3D View From Active Material"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):

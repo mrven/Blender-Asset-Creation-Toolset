@@ -16,16 +16,17 @@ class Palette_Create(bpy.types.Operator):
 	def execute(self, context):
 		act = bpy.context.scene.act
 		act.export_dir = ""
-
+		path = ""
+		palette_back_color = (0.5, 0.5, 0.5, 1)
+		# Bake PBR Palette Texture Set (Albedo, Roughness, Metallic, Opacity, Emission) or only Albedo
 		pbr_mode = act.pbr_workflow
 
-		#check saved blend file
+		# Check blend file is saved and get export folder path
 		if len(bpy.data.filepath) == 0 and not act.custom_save_path:
 			self.report({'INFO'}, 'Blend file is not saved. Try use Custom Save Path')
 			return {'CANCELLED'}
 
-		if len(bpy.data.filepath) > 0 or act.custom_save_path:	
-
+		if len(bpy.data.filepath) > 0 or act.custom_save_path:
 			if len(bpy.data.filepath) > 0:
 				path = bpy.path.abspath('//Textures/')
 			
@@ -40,15 +41,15 @@ class Palette_Create(bpy.types.Operator):
 				else:
 					path = os.path.realpath(bpy.path.abspath(act.save_path)) + '/'
 		
-			#Create export folder
+			# Create export folder
 			if not os.path.exists(path):
 				os.makedirs(path)
 
-		#Check Render Engine
+		# Check Render Engine (Save current and switch to Cycles render engine)
 		current_engine = bpy.context.scene.render.engine
 		bpy.context.scene.render.engine = 'CYCLES'
 
-		#check opened image editor window
+		# Check opened UV Editor window
 		ie_areas = []
 		flag_exist_area = False
 		for area in range(len(bpy.context.screen.areas)):
@@ -56,71 +57,76 @@ class Palette_Create(bpy.types.Operator):
 				ie_areas.append(area)
 				flag_exist_area = True
 
+		# Switch UV Editors to Image Editors
 		for ie_area in ie_areas:
 			bpy.context.screen.areas[ie_area].ui_type = 'IMAGE_EDITOR'
 
-		# get selected MESH objects and get active object name
+		# Get selected MESH objects and get active object's name
 		start_active_obj = bpy.context.active_object
 		start_selected_obj = bpy.context.selected_objects
 		current_objects = []
+
 		for selected_mesh in bpy.context.selected_objects:
 			if selected_mesh.type == 'MESH' and len(selected_mesh.data.materials) > 0:
 				current_objects.append(selected_mesh)
-				# remove empty material slots
+				# Remove empty material slots
 				for q in reversed(range(len(selected_mesh.data.materials))):
-					if selected_mesh.data.materials[q] == None:
+					if selected_mesh.data.materials[q] is None:
 						bpy.context.object.active_material_index = q
-						# unlink empty slots
-						selected_mesh.data.materials.pop(index = q)
+						# Unlink empty slots
+						selected_mesh.data.materials.pop(index=q)
 						
 		add_name_palette = bpy.context.active_object.name
 
-		# set tool setting for uv editor
+		# Set tool setting for UV Editor
 		bpy.context.scene.tool_settings.use_uv_select_sync = False
 		bpy.context.scene.tool_settings.uv_select_mode = 'FACE'
 
-		# get materials from selected objects
+		# Get materials from selected objects
 		me = []
 		for x in current_objects:
 			me += x.data.materials
 
-		# check exist material Palette_background
+		# Check exist material Palette_background
 		flag_exist_mat = False
 		for a in range(len(bpy.data.materials)):
 			if bpy.data.materials[a].name == 'Palette_background':
 				flag_exist_mat = True
 				palette_back_color = bpy.data.materials[a]
 
-		# create or not palette background material
-		if flag_exist_mat == False:
+		# Create palette background material
+		if not flag_exist_mat:
 			palette_back_color = bpy.data.materials.new('Palette_background')
 			palette_back_color.diffuse_color = 0.8, 0.8, 0.8, 1.0
 
-		# check exist palette plane
+		# Check exist palette plane (for baking)
 		flag_exist_obj = False
 		for o in range(len(bpy.data.objects)):
 			if bpy.data.objects[o].name == ('Palette_' + add_name_palette):
 				flag_exist_obj = True
 
-		if flag_exist_obj == True:
+		# Delete plane
+		if flag_exist_obj:
 			bpy.ops.object.select_all(action='DESELECT')
 			bpy.data.objects['Palette_' + add_name_palette].select = True
 			bpy.ops.object.delete()
 
-		bpy.ops.mesh.primitive_plane_add(location = (0, 0, 0))
+		# Create new plane
+		bpy.ops.mesh.primitive_plane_add(location=(0, 0, 0))
 		pln = bpy.context.object
 		pln.name = 'Palette_' + add_name_palette
 
 		# Add palette background material to palette plane
 		pln.data.materials.append(palette_back_color)
 
+		# Names for textures
 		albedo_texture_name = 'Palette_' + add_name_palette + '_Albedo'
 		roughness_texture_name = 'Palette_' + add_name_palette + '_Roughness'
 		metallic_texture_name = 'Palette_' + add_name_palette + '_Metallic'
 		opacity_texture_name = 'Palette_' + add_name_palette + '_Opacity'
 		emission_texture_name = 'Palette_' + add_name_palette + '_Emission'
 
-		# Add materials to palette plane
+		# Add materials to palette plane (only unique)
 		mat_offset = len(me)
 		i = 0
 		for i in range(mat_offset):
@@ -133,14 +139,16 @@ class Palette_Create(bpy.types.Operator):
 				if palette_mat[j] == me[i]:
 					flag_non = True
 					
-			if flag_non == False:
+			if not flag_non:
 				pln.data.materials.append(me[i])
 
-		# compute number of subdivide palette plane from number of materials
+		# Compute number of subdivide palette plane from number of materials
 		palette_mat = pln.data.materials
 		palette_mat_len = len(palette_mat)
+		# Number of materials without background material
 		palette_mat_wobg = palette_mat_len - 1
 		number_of_subdiv = 0
+
 		if palette_mat_wobg > 1 and palette_mat_wobg <= 4:
 			number_of_subdiv = 1
 			
@@ -152,15 +160,15 @@ class Palette_Create(bpy.types.Operator):
 
 		if palette_mat_wobg > 64 and palette_mat_wobg <= 256:
 			number_of_subdiv = 4
-			
-		# subdivide palette plane
-		bpy.ops.object.mode_set(mode = 'EDIT')
+
+		# Subdivide palette plane
+		bpy.ops.object.mode_set(mode='EDIT')
 		bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
-		n = 0
+
 		for n in range(number_of_subdiv):
 			bpy.ops.mesh.subdivide(smoothness=0)
 
-		# create texture and unwrap
+		# Create texture and unwrap
 		bpy.ops.mesh.select_all(action='SELECT')
 
 		# Check exist albedo texture image
@@ -168,13 +176,14 @@ class Palette_Create(bpy.types.Operator):
 		for t in range(len(bpy.data.images)):
 			if bpy.data.images[t].name == albedo_texture_name:
 				flag_exist_texture_albedo = True
-				
-		# create or not albedo texture
-		if flag_exist_texture_albedo == False:
-			bpy.ops.image.new( name=albedo_texture_name, width = 32, height = 32)
 
+		# Create or not albedo texture
+		if not flag_exist_texture_albedo:
+			bpy.ops.image.new(name=albedo_texture_name, width=32, height=32)
+
+		# Check exist of additional textures (if PBR workflow)
 		if pbr_mode:
-			# Roughness baking Texture
+			# Roughness baking texture
 			# Check exist roughness texture image
 			flag_exist_texture_roughness = False
 			for t in range(len(bpy.data.images)):
@@ -182,80 +191,81 @@ class Palette_Create(bpy.types.Operator):
 					flag_exist_texture_roughness = True
 
 			# create or not roughness texture
-			if flag_exist_texture_roughness == False:
+			if not flag_exist_texture_roughness:
 				bpy.ops.image.new(name=roughness_texture_name, width=32, height=32)
 				bpy.data.images[roughness_texture_name].colorspace_settings.name = 'Linear'
 
-			# Metallic baking Texture
+			# Metallic baking texture
 			# Check exist metallic texture image
 			flag_exist_texture_metallic = False
 			for t in range(len(bpy.data.images)):
 				if bpy.data.images[t].name == metallic_texture_name:
 					flag_exist_texture_metallic = True
 
-			# create or not metallic texture
-			if flag_exist_texture_metallic == False:
+			# Create or not metallic texture
+			if not flag_exist_texture_metallic:
 				bpy.ops.image.new(name=metallic_texture_name, width=32, height=32)
 				bpy.data.images[metallic_texture_name].colorspace_settings.name = 'Linear'
 
-			# Opacity baking Texture
+			# Opacity baking texture
 			# Check exist opacity texture image
 			flag_exist_texture_opacity = False
 			for t in range(len(bpy.data.images)):
 				if bpy.data.images[t].name == opacity_texture_name:
 					flag_exist_texture_opacity = True
 
-			# create or not opacity texture
-			if flag_exist_texture_opacity == False:
+			# Create or not opacity texture
+			if not flag_exist_texture_opacity:
 				bpy.ops.image.new(name=opacity_texture_name, width=32, height=32)
 				bpy.data.images[opacity_texture_name].colorspace_settings.name = 'Linear'
 
-			# Emission baking Texture
+			# Emission baking texture
 			# Check exist emission texture image
 			flag_exist_texture_emission = False
 			for t in range(len(bpy.data.images)):
 				if bpy.data.images[t].name == emission_texture_name:
 					flag_exist_texture_emission = True
 
-			# create or not emission texture
-			if flag_exist_texture_emission == False:
+			# Create or not emission texture
+			if not flag_exist_texture_emission:
 				bpy.ops.image.new(name=emission_texture_name, width=32, height=32)
 
-		# set materials to plane's polygons
-		bpy.ops.object.mode_set(mode = 'OBJECT')
+		# Set materials to plane's polygons (one material to one quad polygon)
+		bpy.ops.object.mode_set(mode='OBJECT')
 		ob = bpy.context.object
 
 		for poly in ob.data.polygons:   
 			if (poly.index + 1) < palette_mat_len:
 				poly.material_index = poly.index + 1
 
-		#BAKING ALBEDO!!!!!
-		#ob - plane with materials (source)
-
-		#create another plane (destination for baking)
-		bpy.ops.mesh.primitive_plane_add(location = (0, 0, 0))
+		# Baking Albedo
+		# ob is plane with materials (source)
+		# Create another plane (destination for baking)
+		bpy.ops.mesh.primitive_plane_add(location=(0, 0, 0))
 		bake_plane = bpy.context.object
 		bake_plane.name = 'Palette_Bake_Plane'
+		bpy.ops.object.mode_set(mode='OBJECT')
 
-		bpy.ops.object.mode_set(mode = 'OBJECT')
-
-		# check exist material for Baking
+		# Check exist material for baking
 		for material in bpy.data.materials:
 			if material.name == 'Palette_Bake':
 				bpy.data.materials.remove(material)
-				
+
+		# Remove old material and create new
 		palette_bake_mat = bpy.data.materials.new('Palette_Bake')
 
-		#Setup material for baking
+		# Setup material's nodes for baking
 		bake_plane.data.materials.append(palette_bake_mat)
 		palette_bake_mat.use_nodes = True
 		nodes = palette_bake_mat.node_tree.nodes
 		tex_node = nodes.new('ShaderNodeTexImage')
-		tex_node.location = (-500,0)
+		tex_node.location = (-500, 0)
 		tex_node.image = bpy.data.images[albedo_texture_name]
 
+		# Save metallic value for each material
+		# And set metallic to zero for all materials on the plane
 		materials_metallic = []
-		#Set metallic to zero for all materials on the plane
+
 		for mat in palette_mat:
 			try:
 				materials_metallic.append(mat.node_tree.nodes['Principled BSDF'].inputs['Metallic'].default_value)
@@ -264,8 +274,10 @@ class Palette_Create(bpy.types.Operator):
 				materials_metallic.append(0)
 				continue
 
+		materials_roughness = []
+
+		# Also save roughness value for each material on the plane
 		if pbr_mode:
-			materials_roughness = []
 			for mat in palette_mat:
 				try:
 					materials_roughness.append(mat.node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value)
@@ -273,7 +285,7 @@ class Palette_Create(bpy.types.Operator):
 					materials_roughness.append(1)
 					continue
 
-		#Bake Action
+		# Bake Albedo
 		ob.select_set(True)
 		bpy.context.scene.cycles.bake_type = 'DIFFUSE'
 		bpy.context.scene.render.bake.use_pass_direct = False
@@ -289,6 +301,9 @@ class Palette_Create(bpy.types.Operator):
 			bpy.ops.object.bake(type='ROUGHNESS')
 
 			# Bake Metallic
+			# Replace Roughness values to Metallic values
+			# Because Blender do not bake metallic  channel
+			# And Bake Roughness (but this is Metallic)
 			tex_node.image = bpy.data.images[metallic_texture_name]
 
 			for index in range(palette_mat_len):
@@ -300,6 +315,8 @@ class Palette_Create(bpy.types.Operator):
 			bpy.ops.object.bake(type='ROUGHNESS')
 
 			# Bake Opacity
+			# Also copy Alpha channel to Roughness
+			# And Bake Roughness (but this is Opacity)
 			tex_node.image = bpy.data.images[opacity_texture_name]
 
 			for index in range(palette_mat_len):
@@ -316,7 +333,7 @@ class Palette_Create(bpy.types.Operator):
 			bpy.context.scene.cycles.bake_type = 'EMIT'
 			bpy.ops.object.bake(type='EMIT')
 
-		#Revet Materials Metallic and Roughness
+		# Revert materials Metallic and Roughness values
 		for index in range(palette_mat_len):
 			try:
 				palette_mat[index].node_tree.nodes['Principled BSDF'].inputs['Metallic'].default_value = materials_metallic[index]
@@ -324,7 +341,7 @@ class Palette_Create(bpy.types.Operator):
 			except:
 				continue
 
-		#Delete Bake Plane
+		# Delete Bake Plane
 		bpy.ops.object.select_all(action='DESELECT')
 		bake_plane.select_set(True)
 		bpy.ops.object.delete()
@@ -332,144 +349,161 @@ class Palette_Create(bpy.types.Operator):
 		bpy.context.view_layer.objects.active = ob
 
 		# Create collection materials with (mat_name, uv_x_mat, uv_y_mat)
+		# This is UV coordinates for baked materials
 		mat_coll_array = []
 		collect_uv_mat = 1
 		current_area = bpy.context.area.type
 
 		for collect_uv_mat in range(palette_mat_len - 1):
-			# select polygon
-			bpy.ops.object.mode_set(mode = 'EDIT')
+			# Select polygon on plane with materials
+			bpy.ops.object.mode_set(mode='EDIT')
 			bpy.ops.mesh.reveal()
 			bpy.ops.mesh.select_all(action='DESELECT')
-			bpy.ops.object.mode_set(mode = 'OBJECT')
+			bpy.ops.object.mode_set(mode='OBJECT')
 			ob.data.polygons[collect_uv_mat].select = True
-			bpy.ops.object.mode_set(mode = 'EDIT')
+			bpy.ops.object.mode_set(mode='EDIT')
 
-			# get mat_name
+			# get material name and index from selected quad polygon
 			mat_index = ob.data.polygons[collect_uv_mat].material_index
 			mat_name = ob.data.materials[mat_index].name
 
+			# Switch active area to Image Editor
 			bpy.context.area.type = 'IMAGE_EDITOR'
-			
-			if bpy.context.area.spaces[0].image != None:
+
+			# If Image Editor has Render Result, Clean it
+			if bpy.context.area.spaces[0].image is not None:
 				if bpy.context.area.spaces[0].image.name == 'Render Result':
 					bpy.context.area.spaces[0].image = None
 
+			# Switch Image Editor to UV Editor
 			if bpy.context.space_data.mode != 'UV':
 				bpy.context.space_data.mode = 'UV'
-			
+
+			# Select current polygon in UV Editor and place cursor to center of this polygon
 			bpy.ops.uv.select_all(action='SELECT')
 			bpy.ops.uv.snap_cursor(target='SELECTED')
 
-			# get coord center poly
+			# Get coordinates of center of polygon
 			x_loc = bpy.context.area.spaces[0].cursor_location[0]
 			y_loc = bpy.context.area.spaces[0].cursor_location[1]
+
+			# And save these coordinates as material's UV coordinates
 			mat_coll_list = [mat_name, x_loc, y_loc]
 			mat_coll_array.append(mat_coll_list)
 			
-		bpy.ops.object.mode_set(mode = 'OBJECT')
+		bpy.ops.object.mode_set(mode='OBJECT')
 
+		# Switch active area to 3D View
 		bpy.context.area.type = 'VIEW_3D'
 
-		for r in current_objects:   
+		# Create UV and transform it for using one palette instead of many colored materials
+		for r in current_objects:
 			bpy.ops.object.select_all(action='DESELECT')
 			r.select_set(True)
-			# unwrap selected objects and add palette texture
+			# Smart unwrap selected objects and add palette texture
 			bpy.context.view_layer.objects.active = r	
-			bpy.ops.object.mode_set(mode = 'EDIT')
+			bpy.ops.object.mode_set(mode='EDIT')
 			bpy.ops.mesh.reveal()
 			bpy.ops.mesh.select_all(action='SELECT')
 			bpy.ops.uv.smart_project(angle_limit=89, island_margin=0.01)
-			
 			bpy.ops.mesh.select_all(action='DESELECT')
-			# select poly with 1 material 
+
+			# Select polygons with 1 material
 			r_mats = r.data.materials
 			r_mats_len = len(r_mats)
-			r_mat_index = 0
 
 			for r_mat_index in range(r_mats_len):
 				bpy.ops.mesh.select_all(action='DESELECT')
 				bpy.context.object.active_material_index = r_mat_index
 				r_mat_name = bpy.context.object.data.materials[r_mat_index].name
 				bpy.ops.object.material_slot_select()
-				bpy.ops.uv.select_all(action = 'SELECT')
+				bpy.ops.uv.select_all(action='SELECT')
 				
-				# get XY material on UV
-				h = 0
+				# get UV coordinates for material from collection
 				r_mat_x = 0
 				r_mat_y = 0
-				for h in range (len(mat_coll_array)):
-					if (r_mat_name == mat_coll_array[h][0]):
+
+				for h in range(len(mat_coll_array)):
+					if r_mat_name == mat_coll_array[h][0]:
 						r_mat_x = mat_coll_array[h][1]
 						r_mat_y = mat_coll_array[h][2]
 				
-				# scale uv to color on palette texture
+				# Scale object UV (for polygons with current material) to same material on palette texture
 				bpy.context.area.type = 'IMAGE_EDITOR'
-				bpy.ops.uv.cursor_set(location = (r_mat_x, r_mat_y))
+				bpy.ops.uv.cursor_set(location=(r_mat_x, r_mat_y))
 				bpy.context.space_data.pivot_point = 'CURSOR'
-				bpy.ops.transform.resize(value=(0, 0, 1), orient_type ='GLOBAL', orient_matrix_type='GLOBAL', \
-						 mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1, \
-						 					use_proportional_connected=False, use_proportional_projected=False)
-						  
-			bpy.ops.object.mode_set(mode = 'OBJECT')
+				bpy.ops.transform.resize(value=(0, 0, 1), orient_type ='GLOBAL', orient_matrix_type='GLOBAL',
+											mirror=False, use_proportional_edit=False,
+											proportional_edit_falloff='SMOOTH', proportional_size=1,
+											use_proportional_connected=False, use_proportional_projected=False)
+
+			bpy.ops.object.mode_set(mode='OBJECT')
 
 		# Delete Palette Plane
 		bpy.ops.object.select_all(action='DESELECT')
 		ob.select_set(True)
 		bpy.ops.object.delete()
 
-
+		# Switch active area to UV Editor
 		bpy.context.area.type = 'IMAGE_EDITOR'
 
-		#Save Palette Images
+		# Save Palette Images
 		current_image = bpy.context.area.spaces[0].image
 		bpy.context.area.spaces[0].image = bpy.data.images[albedo_texture_name]
-		bpy.ops.image.save_as(save_as_render=False, filepath=str(path + albedo_texture_name + '.png'), relative_path=True, show_multiview=False, use_multiview=False)
+		bpy.ops.image.save_as(save_as_render=False, filepath=str(path + albedo_texture_name + '.png'),
+							  	relative_path=True, show_multiview=False, use_multiview=False)
 		if pbr_mode:
 			bpy.context.area.spaces[0].image = bpy.data.images[roughness_texture_name]
-			bpy.ops.image.save_as(save_as_render=False, filepath=str(path + roughness_texture_name + '.png'), relative_path=True, show_multiview=False, use_multiview=False)
+			bpy.ops.image.save_as(save_as_render=False, filepath=str(path + roughness_texture_name + '.png'),
+								  	relative_path=True, show_multiview=False, use_multiview=False)
 			bpy.context.area.spaces[0].image = bpy.data.images[metallic_texture_name]
-			bpy.ops.image.save_as(save_as_render=False, filepath=str(path + metallic_texture_name + '.png'), relative_path=True, show_multiview=False, use_multiview=False)
+			bpy.ops.image.save_as(save_as_render=False, filepath=str(path + metallic_texture_name + '.png'),
+								  	relative_path=True, show_multiview=False, use_multiview=False)
 			bpy.context.area.spaces[0].image = bpy.data.images[opacity_texture_name]
-			bpy.ops.image.save_as(save_as_render=False, filepath=str(path + opacity_texture_name + '.png'), relative_path=True, show_multiview=False, use_multiview=False)
+			bpy.ops.image.save_as(save_as_render=False, filepath=str(path + opacity_texture_name + '.png'),
+								  	relative_path=True, show_multiview=False, use_multiview=False)
 			bpy.context.area.spaces[0].image = bpy.data.images[emission_texture_name]
-			bpy.ops.image.save_as(save_as_render=False, filepath=str(path + emission_texture_name + '.png'), relative_path=True, show_multiview=False, use_multiview=False)
+			bpy.ops.image.save_as(save_as_render=False, filepath=str(path + emission_texture_name + '.png'),
+								  	relative_path=True, show_multiview=False, use_multiview=False)
 		bpy.context.area.spaces[0].image = current_image
 
-		#save saving dir
+		# Save textures export dir
 		act.save_dir = path
 
+		# Switch active area to 3D View
 		bpy.context.area.type = 'VIEW_3D'
 
 		# Select again objects
 		for j in start_selected_obj:
 			j.select_set(True)	
 
-		bpy.context.view_layer.objects.active = start_active_obj	
-			
+		# Restore objects selection and areas
+		bpy.context.view_layer.objects.active = start_active_obj
 		bpy.context.area.type = current_area
 
-		if flag_exist_area == True:
+		if flag_exist_area:
 			for ie_area in ie_areas:
 				bpy.context.screen.areas[ie_area].ui_type = 'UV'
 
+		# Rename bake material to atlas material and assign palette texture to this material
 		atlas_material_exist = False
 		for material in bpy.data.materials:
 			if material.name_full == 'Palette_' + add_name_palette:
 				atlas_material_exist = True
 		
 		if not atlas_material_exist:
-			#Connect Texture to Shader Base Color and rename
+			# Connect texture to shader base color and rename
 			palette_bake_mat.node_tree.links.new(tex_node.outputs['Color'], palette_bake_mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'])
 			palette_bake_mat.name = 'Palette_' + add_name_palette
 
-		#Delete Temp Materials
+		# Delete temp materials
 		bpy.data.materials.remove(bpy.data.materials['Palette_background'])
 
 		for material in bpy.data.materials:
 			if material.name == 'Palette_Bake':
 				bpy.data.materials.remove(material)
 
+		# Restore render engine
 		bpy.context.scene.render.engine = current_engine
 
 		return {'FINISHED'}

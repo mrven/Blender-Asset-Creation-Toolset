@@ -73,7 +73,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 			saved_cursor_loc = bpy.context.scene.cursor.location.copy()
 			current_pivot_point = bpy.context.scene.tool_settings.transform_pivot_point
 
-			# Name for FBX is a active object name (by default)
+			# Name for FBX is active object name (by default)
 			name = bpy.context.active_object.name
 
 			# Filtering selected objects. Exclude all not meshes, empties, armatures, curves and text
@@ -183,21 +183,21 @@ class Multi_FBX_Export(bpy.types.Operator):
 								not act.apply_rot_rotated and not child_rotated) or not act.fbx_export_mode == 'PARENT':
 							bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
 							bpy.ops.transform.rotate(value=(math.pi * -90 / 180), orient_axis='X',
-													 orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
-													 orient_type='GLOBAL', constraint_axis=(True, False, False),
-													 orient_matrix_type='GLOBAL', mirror=False,
-													 use_proportional_edit=False, proportional_edit_falloff='SMOOTH',
-													 proportional_size=1)
+														orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
+														orient_type='GLOBAL', constraint_axis=(True, False, False),
+														orient_matrix_type='GLOBAL', mirror=False,
+														use_proportional_edit=False, proportional_edit_falloff='SMOOTH',
+														proportional_size=1)
 							bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
 							bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
 							bpy.ops.object.select_all(action='DESELECT')
 							x.select_set(True)
 							bpy.ops.transform.rotate(value=(math.pi * 90 / 180), orient_axis='X',
-													 orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
-													 orient_type='GLOBAL', constraint_axis=(True, False, False),
-													 orient_matrix_type='GLOBAL', mirror=False,
-													 use_proportional_edit=False, proportional_edit_falloff='SMOOTH',
-													 proportional_size=1)
+														orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
+														orient_type='GLOBAL', constraint_axis=(True, False, False),
+														orient_matrix_type='GLOBAL', mirror=False,
+														use_proportional_edit=False, proportional_edit_falloff='SMOOTH',
+														proportional_size=1)
 
 			bpy.ops.object.select_all(action='DESELECT')
 
@@ -422,9 +422,9 @@ class Import_FBX_OBJ(bpy.types.Operator, ImportHelper):
 			if extension == "fbx" or extension == "FBX":
 				if act.import_custom_options:
 					bpy.ops.import_scene.fbx(filepath=filepath, use_custom_normals=act.import_normals,
-											 use_anim=act.import_animation,
-											 automatic_bone_orientation=act.import_automatic_bone_orientation,
-											 ignore_leaf_bones=act.import_ignore_leaf_bones)
+												use_anim=act.import_animation,
+												automatic_bone_orientation=act.import_automatic_bone_orientation,
+												ignore_leaf_bones=act.import_ignore_leaf_bones)
 				else:
 					bpy.ops.import_scene.fbx(filepath=filepath)
 

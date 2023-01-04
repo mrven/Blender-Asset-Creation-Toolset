@@ -72,8 +72,6 @@ class Align_Min(bpy.types.Operator):
 						difference = saved_origin_loc[1] - min_co
 					if self.align_type == 'Z':
 						difference = saved_origin_loc[2] - min_co
-					else:
-						difference = (0.0, 0.0, 0.0)
 					
 					bpy.ops.mesh.reveal()
 					bpy.ops.mesh.select_all(action='SELECT')
@@ -175,9 +173,7 @@ class Align_Max(bpy.types.Operator):
 						difference = saved_origin_loc[1] - max_co
 					if self.align_type == 'Z':
 						difference = saved_origin_loc[2] - max_co
-					else:
-						difference = (0.0, 0.0, 0.0)
-					
+
 					bpy.ops.mesh.reveal()
 					bpy.ops.mesh.select_all(action='SELECT')
 					if self.align_type == 'X':

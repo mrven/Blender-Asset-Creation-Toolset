@@ -259,7 +259,7 @@ class Palette_Create(bpy.types.Operator):
 		palette_bake_mat.use_nodes = True
 		nodes = palette_bake_mat.node_tree.nodes
 		tex_node = nodes.new('ShaderNodeTexImage')
-		tex_node.location = (-500, 0)
+		tex_node.location = (-500, 500)
 		tex_node.image = bpy.data.images[albedo_texture_name]
 
 		# Save metallic value for each material
@@ -491,16 +491,65 @@ class Palette_Create(bpy.types.Operator):
 			for ie_area in ie_areas:
 				bpy.context.screen.areas[ie_area].ui_type = 'UV'
 
-		# Rename bake material to atlas material and assign palette texture to this material
-		atlas_material_exist = False
+		# Check palette atlas material exist and remove
 		for material in bpy.data.materials:
 			if material.name_full == 'Palette_' + add_name_palette:
-				atlas_material_exist = True
-		
-		if not atlas_material_exist:
-			# Connect texture to shader base color and rename
-			palette_bake_mat.node_tree.links.new(tex_node.outputs['Color'], palette_bake_mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'])
-			palette_bake_mat.name = 'Palette_' + add_name_palette
+				bpy.data.materials.remove(material)
+
+		# Create palette atlas material and setup nodes for all baked textures
+		palette_mat = bpy.data.materials.new('Palette_' + add_name_palette)
+		palette_mat.use_nodes = True
+		palette_node_tree = palette_mat.node_tree
+		palette_nodes = palette_node_tree.nodes
+		# Albedo
+		albedo_tex_node = palette_nodes.new('ShaderNodeTexImage')
+		albedo_tex_node.location = (-500, 500)
+		albedo_tex_node.image = bpy.data.images[albedo_texture_name]
+		bpy.data.images[albedo_texture_name].colorspace_settings.name = 'sRGB'
+		palette_node_tree.links.new(
+			albedo_tex_node.outputs['Color'],
+			palette_node_tree.nodes['Principled BSDF'].inputs['Base Color'])
+
+		if act.pbr_workflow:
+			# Metallic
+			metallic_tex_node = palette_nodes.new('ShaderNodeTexImage')
+			metallic_tex_node.location = (-800, 250)
+			metallic_tex_node.image = bpy.data.images[metallic_texture_name]
+			bpy.data.images[metallic_texture_name].colorspace_settings.name = 'Linear'
+			palette_node_tree.links.new(
+				metallic_tex_node.outputs['Color'],
+				palette_node_tree.nodes['Principled BSDF'].inputs['Metallic'])
+
+			# Roughness
+			roughness_tex_node = palette_nodes.new('ShaderNodeTexImage')
+			roughness_tex_node.location = (-500, 0)
+			roughness_tex_node.image = bpy.data.images[roughness_texture_name]
+			bpy.data.images[roughness_texture_name].colorspace_settings.name = 'Linear'
+			palette_node_tree.links.new(
+				roughness_tex_node.outputs['Color'],
+				palette_node_tree.nodes['Principled BSDF'].inputs['Roughness'])
+
+			# Emission
+			emission_tex_node = palette_nodes.new('ShaderNodeTexImage')
+			emission_tex_node.location = (-800, -350)
+			emission_tex_node.image = bpy.data.images[emission_texture_name]
+			bpy.data.images[emission_texture_name].colorspace_settings.name = 'sRGB'
+			palette_node_tree.links.new(
+				emission_tex_node.outputs['Color'],
+				palette_node_tree.nodes['Principled BSDF'].inputs['Emission'])
+
+			# Opacity
+			opacity_tex_node = palette_nodes.new('ShaderNodeTexImage')
+			opacity_tex_node.location = (-500, -500)
+			opacity_tex_node.image = bpy.data.images[opacity_texture_name]
+			bpy.data.images[opacity_texture_name].colorspace_settings.name = 'Linear'
+			palette_node_tree.links.new(
+				opacity_tex_node.outputs['Color'],
+				palette_node_tree.nodes['Principled BSDF'].inputs['Alpha'])
+
+			# Alpha Clip
+			palette_mat.blend_method = 'CLIP'
+			palette_mat.shadow_method = 'CLIP'
 
 		# Delete temp materials
 		bpy.data.materials.remove(bpy.data.materials['Palette_background'])
@@ -617,9 +666,8 @@ class Clear_Vertex_Colors(bpy.types.Operator):
 			x.select_set(True)
 			bpy.context.view_layer.objects.active = x
 			if x.type == 'MESH':
-				for y in x.data.vertex_colors:
-					bpy.ops.mesh.vertex_color_remove()
-				bpy.ops.mesh.vertex_color_remove()
+				for color_attribute in reversed(x.data.color_attributes):
+					bpy.ops.geometry.color_attribute_remove()
 				
 		for x in current_selected_obj:
 			x.select_set(True)

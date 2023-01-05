@@ -141,7 +141,7 @@ class Merge_Bones(bpy.types.Operator):
 				parent_mesh.modifiers['VertexWeightMix'].vertex_group_b = b_name
 				parent_mesh.modifiers['VertexWeightMix'].mix_mode = 'ADD'
 				parent_mesh.modifiers['VertexWeightMix'].mix_set = 'ALL'
-				bpy.ops.object.modifier_apply(apply_as='DATA', modifier="VertexWeightMix")
+				bpy.ops.object.modifier_apply(modifier="VertexWeightMix")
 				bpy.ops.object.vertex_group_remove()
 
 		bpy.ops.object.select_all(action='DESELECT')

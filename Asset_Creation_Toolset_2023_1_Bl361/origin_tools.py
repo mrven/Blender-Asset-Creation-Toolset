@@ -1,7 +1,7 @@
 import bpy
 
 from . import utils
-
+from datetime import datetime
 
 # Align origin to min
 class Align_Min(bpy.types.Operator):
@@ -12,6 +12,7 @@ class Align_Min(bpy.types.Operator):
 	align_type: bpy.props.StringProperty()
 	
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 
 		# Save selected objects and current position of 3D Cursor
@@ -102,6 +103,7 @@ class Align_Min(bpy.types.Operator):
 			
 		bpy.context.view_layer.objects.active = current_active_obj
 
+		utils.Print_Execution_Time("Align Origin to Min", start_time)
 		return {'FINISHED'}
 
 
@@ -114,6 +116,7 @@ class Align_Max(bpy.types.Operator):
 	align_type: bpy.props.StringProperty()
 	
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 
 		# Save selected objects and current position of 3D Cursor
@@ -203,6 +206,7 @@ class Align_Max(bpy.types.Operator):
 			
 		bpy.context.view_layer.objects.active = current_active_obj
 
+		utils.Print_Execution_Time("Align Origin to Max", start_time)
 		return {'FINISHED'}
 
 
@@ -215,6 +219,7 @@ class Align_Mid(bpy.types.Operator):
 	align_type: bpy.props.StringProperty()
 
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 
 		# Save selected objects and current position of 3D Cursor
@@ -306,6 +311,7 @@ class Align_Mid(bpy.types.Operator):
 
 		bpy.context.view_layer.objects.active = current_active_obj
 
+		utils.Print_Execution_Time("Align Origin to Middle", start_time)
 		return {'FINISHED'}
 
 
@@ -318,6 +324,7 @@ class Align_Cur(bpy.types.Operator):
 	align_type: bpy.props.StringProperty()
 	
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 
 		# Save selected objects and current position of 3D Cursor
@@ -375,7 +382,8 @@ class Align_Cur(bpy.types.Operator):
 			j.select_set(True)
 
 		bpy.context.view_layer.objects.active = current_active_obj
-		
+
+		utils.Print_Execution_Time("Align Origin to Cursor", start_time)
 		return {'FINISHED'}
 
 
@@ -388,6 +396,7 @@ class Align_Co(bpy.types.Operator):
 	align_type: bpy.props.StringProperty()
 
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 		wrong_align_co = False
 		align_coordinate = 0
@@ -454,7 +463,8 @@ class Align_Co(bpy.types.Operator):
 				j.select_set(True)
 
 			bpy.context.view_layer.objects.active = current_active_obj
-			
+
+		utils.Print_Execution_Time("Align Origin to Coordinate", start_time)
 		return {'FINISHED'}
 
 
@@ -466,6 +476,7 @@ class Set_Origin_To_Select(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	def execute(self, context):
+		start_time = datetime.now()
 		saved_cursor_loc = bpy.context.scene.cursor.location.copy()
 		bpy.ops.view3d.snap_cursor_to_selected()
 		bpy.ops.object.mode_set(mode='OBJECT')
@@ -474,7 +485,8 @@ class Set_Origin_To_Select(bpy.types.Operator):
 		# Reset 3D Cursor position  
 		bpy.context.scene.cursor.location = saved_cursor_loc
 		bpy.ops.object.mode_set(mode='EDIT')
-		
+
+		utils.Print_Execution_Time("Set Origin to Selection", start_time)
 		return {'FINISHED'} 	
 
 

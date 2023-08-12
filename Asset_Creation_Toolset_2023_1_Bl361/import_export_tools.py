@@ -4,7 +4,7 @@ import subprocess
 import math
 from bpy_extras.io_utils import ImportHelper
 from . import utils
-
+from datetime import datetime
 
 # FBX and OBJ export
 class Multi_FBX_Export(bpy.types.Operator):
@@ -14,6 +14,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 		act.export_dir = ""
 
@@ -259,7 +260,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 					name = act.custom_fbx_name
 
 				# Export FBX/OBJ
-				utils.export_model(path, name)
+				utils.Export_Model(path, name)
 
 			# Individual Export
 			if act.fbx_export_mode == 'INDIVIDUAL':
@@ -285,7 +286,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 					name = x.name
 
 					# Export FBX/OBJ
-					utils.export_model(path, name)
+					utils.Export_Model(path, name)
 
 					# Restore object location
 					if act.apply_loc:
@@ -327,7 +328,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 					# Select Parent and his children
 					bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
 					# Export FBX/OBJ
-					utils.export_model(path, name)
+					utils.Export_Model(path, name)
 					bpy.ops.object.select_all(action='DESELECT')
 					x.select_set(True)
 
@@ -359,7 +360,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 							x.select_set(True)
 
 					# Export FBX/OBJ
-					utils.export_model(path, c)
+					utils.Export_Model(path, c)
 
 				bpy.ops.object.select_all(action='DESELECT')
 
@@ -395,6 +396,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 			# Save export dir path for option "Open export dir"
 			act.export_dir = path
 
+		utils.Print_Execution_Time("FBX/OBJ Export", start_time)
 		return {'FINISHED'}
 
 
@@ -406,6 +408,7 @@ class Open_Export_Dir(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 
 		if not os.path.exists(os.path.realpath(bpy.path.abspath(act.export_path))):
@@ -424,6 +427,7 @@ class Open_Export_Dir(bpy.types.Operator):
 			self.report({'INFO'}, 'Export FBX\'s before')
 			return {'FINISHED'}
 
+		utils.Print_Execution_Time("Open Export Directory", start_time)
 		return {'FINISHED'}
 
 
@@ -437,6 +441,7 @@ class Import_FBX_OBJ(bpy.types.Operator, ImportHelper):
 	directory: bpy.props.StringProperty(subtype="DIR_PATH")
 
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 
 		# Import selected files from inspector
@@ -463,6 +468,7 @@ class Import_FBX_OBJ(bpy.types.Operator, ImportHelper):
 				else:
 					bpy.ops.import_scene.obj(filepath=filepath)
 
+		utils.Print_Execution_Time("Import FBX/OBJ", start_time)
 		return {'FINISHED'}
 
 

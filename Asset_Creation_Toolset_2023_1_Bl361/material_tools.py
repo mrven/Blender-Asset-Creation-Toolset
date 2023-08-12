@@ -4,7 +4,7 @@ import colorsys
 import os
 import subprocess
 from . import utils
-
+from datetime import datetime
 
 # Palette texture creator
 class Palette_Create(bpy.types.Operator):
@@ -14,6 +14,7 @@ class Palette_Create(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 		act.export_dir = ""
 		path = ""
@@ -561,6 +562,7 @@ class Palette_Create(bpy.types.Operator):
 		# Restore render engine
 		bpy.context.scene.render.engine = current_engine
 
+		utils.Print_Execution_Time("Create Palette Texture", start_time)
 		return {'FINISHED'}
 
 
@@ -572,6 +574,7 @@ class Open_Save_Dir(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 
 		# Try open export directory in OS
@@ -590,6 +593,7 @@ class Open_Save_Dir(bpy.types.Operator):
 			self.report({'INFO'}, 'Create Palette\'s before')
 			return {'FINISHED'}
 
+		utils.Print_Execution_Time("Open Textures Export Directory", start_time)
 		return {'FINISHED'}
 
 
@@ -601,6 +605,7 @@ class Assign_Multiedit_Materials(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	def execute(self, context):
+		start_time = datetime.now()
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
 		active_mat = bpy.context.active_object.active_material.name_full
@@ -647,6 +652,7 @@ class Assign_Multiedit_Materials(bpy.types.Operator):
 		bpy.context.view_layer.objects.active = active_obj
 		bpy.ops.object.mode_set(mode='EDIT')
 
+		utils.Print_Execution_Time("Assign Material in Multi-Edit Mode", start_time)
 		return {'FINISHED'}
 
 
@@ -658,6 +664,7 @@ class Clear_Vertex_Colors(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	def execute(self, context):
+		start_time = datetime.now()
 		current_selected_obj = bpy.context.selected_objects
 		current_active_obj = bpy.context.active_object
 		
@@ -673,6 +680,7 @@ class Clear_Vertex_Colors(bpy.types.Operator):
 			x.select_set(True)
 		bpy.context.view_layer.objects.active = current_active_obj
 
+		utils.Print_Execution_Time("Clear Vertex Colors", start_time)
 		return {'FINISHED'} 			
 
 
@@ -684,6 +692,7 @@ class Material_To_Viewport(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		start_time = datetime.now()
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
 
@@ -704,6 +713,7 @@ class Material_To_Viewport(bpy.types.Operator):
 		
 		bpy.context.view_layer.objects.active = active_obj
 
+		utils.Print_Execution_Time("Material Color to Viewport", start_time)
 		return {'FINISHED'}
 
 
@@ -715,6 +725,7 @@ class Random_Viewport_Color(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		start_time = datetime.now()
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
 
@@ -741,6 +752,7 @@ class Random_Viewport_Color(bpy.types.Operator):
 		
 		bpy.context.view_layer.objects.active = active_obj
 
+		utils.Print_Execution_Time("Random Color to Viewport", start_time)
 		return {'FINISHED'}
 
 
@@ -752,6 +764,7 @@ class Clear_Viewport_Color(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		start_time = datetime.now()
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
 
@@ -775,6 +788,7 @@ class Clear_Viewport_Color(bpy.types.Operator):
 		
 		bpy.context.view_layer.objects.active = active_obj
 
+		utils.Print_Execution_Time("Clear Viewport Color", start_time)
 		return {'FINISHED'}
 
 
@@ -786,6 +800,7 @@ class Delete_Unused_Materials(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	def execute(self, context):
+		start_time = datetime.now()
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
 
@@ -804,6 +819,7 @@ class Delete_Unused_Materials(bpy.types.Operator):
 		
 		bpy.context.view_layer.objects.active = active_obj
 
+		utils.Print_Execution_Time("Delete Unused Materials", start_time)
 		return {'FINISHED'}
 
 
@@ -816,10 +832,12 @@ class Texture_From_Active_Material(bpy.types.Operator):
 	texture_name: bpy.props.StringProperty()
 
 	def execute(self, context):
+		start_time = datetime.now()
 		for area in bpy.context.screen.areas:
 			if area.type == "IMAGE_EDITOR":
 				area.spaces[0].image = bpy.data.images[self.texture_name]
-		
+
+		utils.Print_Execution_Time("Select Texture in UV Editor", start_time)
 		return {'FINISHED'}		
 
 

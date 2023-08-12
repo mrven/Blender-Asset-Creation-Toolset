@@ -1,5 +1,6 @@
 import bpy
-
+from . import utils
+from datetime import datetime
 
 # UV remover
 class Clear_UV(bpy.types.Operator):
@@ -9,6 +10,7 @@ class Clear_UV(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		start_time = datetime.now()
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
 		for x in selected_obj:
@@ -25,6 +27,7 @@ class Clear_UV(bpy.types.Operator):
 
 		bpy.context.view_layer.objects.active = active_obj
 
+		utils.Print_Execution_Time("Clear UV", start_time)
 		return {'FINISHED'}
 
 
@@ -36,6 +39,7 @@ class Rename_UV(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 		selected_obj = bpy.context.selected_objects
 		uv_index = act.uv_index_rename
@@ -46,6 +50,8 @@ class Rename_UV(bpy.types.Operator):
 				if len(x.data.uv_layers) > 0:
 					if uv_index < len(x.data.uv_layers):
 						x.data.uv_layers[uv_index].name = uv_name
+
+		utils.Print_Execution_Time("Rename UV", start_time)
 		return {'FINISHED'}
 
 
@@ -57,6 +63,7 @@ class Add_UV(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
@@ -76,6 +83,7 @@ class Add_UV(bpy.types.Operator):
 
 		bpy.context.view_layer.objects.active = active_obj
 
+		utils.Print_Execution_Time("Add UV", start_time)
 		return {'FINISHED'}
 
 
@@ -87,6 +95,7 @@ class Remove_UV(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
@@ -108,6 +117,7 @@ class Remove_UV(bpy.types.Operator):
 
 		bpy.context.view_layer.objects.active = active_obj
 
+		utils.Print_Execution_Time("Remove UV", start_time)
 		return {'FINISHED'}
 
 
@@ -119,6 +129,7 @@ class Select_UV(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 		selected_obj = bpy.context.selected_objects
 		uv_index = act.uv_index_rename
@@ -130,6 +141,7 @@ class Select_UV(bpy.types.Operator):
 						x.data.uv_layers[uv_index].active_render = True
 						x.data.uv_layers[uv_index].active = True
 
+		utils.Print_Execution_Time("Select UV", start_time)
 		return {'FINISHED'}
 
 
@@ -142,6 +154,7 @@ class UV_Mover(bpy.types.Operator):
 	move_command: bpy.props.StringProperty()
 
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 
 		start_pivot_mode = bpy.context.space_data.pivot_point
@@ -189,6 +202,7 @@ class UV_Mover(bpy.types.Operator):
 
 		bpy.context.space_data.pivot_point = start_pivot_mode
 
+		utils.Print_Execution_Time("UV Mover", start_time)
 		return {'FINISHED'}
 
 

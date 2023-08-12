@@ -254,6 +254,11 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		('DISSOLVE', 'Dissolve', ''))
 	merge_bones_method: EnumProperty(name="", items=merge_bones_method_items)
 
+	# Debug Property
+	debug: BoolProperty(
+		name="Enable Debug Mode",
+		description="Enable Debug Mode",
+		default=False)
 
 classes = (
 	ACT_Addon_Props,

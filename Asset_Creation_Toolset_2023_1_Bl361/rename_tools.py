@@ -1,7 +1,7 @@
 import bpy
 
 from . import utils
-
+from datetime import datetime
 
 # Numbering
 class Numbering(bpy.types.Operator):
@@ -11,6 +11,7 @@ class Numbering(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 		selected_obj = bpy.context.selected_objects
 		objects_list = []
@@ -95,6 +96,7 @@ class Numbering(bpy.types.Operator):
 			else:
 				bpy.data.objects[objects_list[y][0]].name = ob_name + '_' + num_str
 
+		utils.Print_Execution_Time("Numbering", start_time)
 		return {'FINISHED'}
 
 
@@ -108,11 +110,13 @@ class Rename_Bones(bpy.types.Operator):
 	Value: bpy.props.StringProperty()
 
 	def execute(self, context):
+		start_time = datetime.now()
 		selected_bones = bpy.context.selected_bones
 
 		for x in selected_bones:
 			x.name = x.name + self.Value
 
+		utils.Print_Execution_Time("Rename Bones", start_time)
 		return {'FINISHED'}
 
 

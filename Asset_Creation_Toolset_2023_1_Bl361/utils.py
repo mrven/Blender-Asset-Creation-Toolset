@@ -1,6 +1,6 @@
 import bpy
 import bmesh
-
+from datetime import datetime
 
 # Find min and max vertex coordinates
 def Find_Min_Max_Verts(obj, coord_index, min_or_max):
@@ -54,7 +54,7 @@ def Get_Version():
 
 
 # Export Model
-def export_model(path, name):
+def Export_Model(path, name):
 	act = bpy.context.scene.act
 	if act.export_custom_options:
 		if act.export_format == 'FBX':
@@ -108,3 +108,15 @@ def export_model(path, name):
 				use_materials=True, use_triangles=act.triangulate_before_export,
 				group_by_object=True, group_by_material=True, keep_vertex_order=True,
 				global_scale=1, path_mode='AUTO', axis_forward='-Z', axis_up='Y')
+
+
+# Execution Time
+def Print_Execution_Time(function_name, start_time):
+	act = bpy.context.scene.act
+
+	if act.debug:
+		finish_time = datetime.now()
+		execution_time = finish_time - start_time
+		seconds = (execution_time.total_seconds())
+		milliseconds = round(seconds * 1000)
+		print(function_name + " finished in " + str(seconds) + "s (" + str(milliseconds) + "ms)")

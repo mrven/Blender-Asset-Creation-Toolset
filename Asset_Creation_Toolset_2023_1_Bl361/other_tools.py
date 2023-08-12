@@ -3,6 +3,8 @@ import math
 
 from bpy.props import StringProperty
 from collections import defaultdict
+from . import utils
+from datetime import datetime
 
 # Clear custom split normals
 class Clear_Normals(bpy.types.Operator):
@@ -12,6 +14,7 @@ class Clear_Normals(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		start_time = datetime.now()
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
 		
@@ -29,7 +32,9 @@ class Clear_Normals(bpy.types.Operator):
 		for j in selected_obj:
 			j.select_set(True)
 		
-		bpy.context.view_layer.objects.active = active_obj					
+		bpy.context.view_layer.objects.active = active_obj
+
+		utils.Print_Execution_Time("Clear Custom Normals", start_time)
 		return {'FINISHED'}		
 		
 
@@ -41,6 +46,7 @@ class Calc_Normals(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
@@ -66,12 +72,13 @@ class Calc_Normals(bpy.types.Operator):
 			j.select_set(True)
 		
 		bpy.context.view_layer.objects.active = active_obj
+
+		utils.Print_Execution_Time("Calculate Normals", start_time)
 		return {'FINISHED'}
 
 
 # Object name to data name
 def objNameToDataName():
-
     obj_dict = defaultdict(list)
 
     for obj in bpy.context.selected_objects:
@@ -92,7 +99,10 @@ class Obj_Name_To_Mesh_Name(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	def execute(self, context):
+		start_time = datetime.now()
 		objNameToDataName()
+
+		utils.Print_Execution_Time("Object Name to Mesh Name", start_time)
 		return {'FINISHED'}
 
 
@@ -104,6 +114,7 @@ class Col_Name_To_Obj_Name(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		start_time = datetime.now()
 		collect_dict = defaultdict(list)
 
 		for i in bpy.context.selected_objects:
@@ -147,6 +158,8 @@ class Col_Name_To_Obj_Name(bpy.types.Operator):
 							break
 
 		objNameToDataName()
+
+		utils.Print_Execution_Time("Collection Name to Object Name", start_time)
 		return {'FINISHED'}
 
 
@@ -158,6 +171,7 @@ class Merge_Bones(bpy.types.Operator):
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
+		start_time = datetime.now()
 		act = bpy.context.scene.act
 
 		# TODO: BUG!! Active Bone not updating if switch MODE from POSE to EDIT
@@ -235,6 +249,7 @@ class Merge_Bones(bpy.types.Operator):
 		armature.data.bones[active_bone_name].select = True
 		bpy.ops.object.mode_set(mode='EDIT')
 
+		utils.Print_Execution_Time("Merge Bones", start_time)
 		return {'FINISHED'}
 
 

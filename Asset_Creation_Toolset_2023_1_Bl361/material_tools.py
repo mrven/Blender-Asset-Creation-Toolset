@@ -82,6 +82,9 @@ class Palette_Create(bpy.types.Operator):
 						
 		add_name_palette = bpy.context.active_object.name
 
+		# Replace invalid chars
+		add_name_palette = utils.Prefilter_Export_Name(add_name_palette)
+
 		# Set tool setting for UV Editor
 		bpy.context.scene.tool_settings.use_uv_select_sync = False
 		bpy.context.scene.tool_settings.uv_select_mode = 'FACE'

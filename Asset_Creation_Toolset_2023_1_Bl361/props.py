@@ -259,6 +259,24 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		('DISSOLVE', 'Dissolve', ''))
 	merge_bones_method: EnumProperty(name="", items=merge_bones_method_items)
 
+	# Add Collection name to objects name or Replace
+	col_to_obj_name_method_items = (
+		('ADD', 'Add', 'Add Collection name to current object name'),
+		('REPLACE', 'Replace', 'Replace current object name to {Collection}_{Type}_{Num}'))
+	col_to_obj_name_method: EnumProperty(name="", items=col_to_obj_name_method_items)
+
+	# Where Place the collection name
+	col_name_position_items = (
+		('START', 'To Start', 'Add Collection name to beginning of object name'),
+		('END', 'To End', 'Add Collection name to end of object name'))
+	col_name_position: EnumProperty(name="", items=col_name_position_items)
+
+	# Style of type's spelling (Mesh or MESH)
+	col_name_type_style_items = (
+		('DEFAULT', 'Default', 'Example: Collection_Mesh_001'),
+		('CAPITAL', 'CAPITAL', 'Example: Collection_MESH_001'))
+	col_name_type_style: EnumProperty(name="", items=col_name_type_style_items)
+
 	# Debug Property
 	debug: BoolProperty(
 		name="Enable Debug Mode",

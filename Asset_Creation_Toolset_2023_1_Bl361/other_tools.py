@@ -116,6 +116,7 @@ class Col_Name_To_Obj_Name(bpy.types.Operator):
 
 	def execute(self, context):
 		start_time = datetime.now()
+		act = bpy.context.scene.act
 		collect_dict = defaultdict(list)
 
 		for i in bpy.context.selected_objects:
@@ -134,28 +135,41 @@ class Col_Name_To_Obj_Name(bpy.types.Operator):
 				# Get list by selected obj and obj types in current collection
 				cur_collect_obj_list = [x.name for x in collect_dict[collect] if x.type == object_type and x.select_get()]
 
-				col_name = collect[0].name + '_' + object_type
+				if act.col_to_obj_name_method == 'ADD':
+					col_name = collect[0].name
+				else:
+					if act.col_name_type_style == 'CAPITAL':
+						col_name = collect[0].name + '_' + object_type
+					else:
+						col_name = collect[0].name + '_' + object_type.title()
 
 				# List for skip rename and overwrite name
 				all_obj_list = [i.name for i in bpy.data.objects if i.type == object_type and col_name in i.name]
 
 				for obj in cur_collect_obj_list:
-					zeros = "0" * (obj_count_len + 1 - len(str(add_digit + 1)))
-					name = f'{col_name}_{zeros}{1 + add_digit}'
+					if act.col_to_obj_name_method == 'REPLACE':
+						zeros = "0" * (obj_count_len + 1 - len(str(add_digit + 1)))
+						name = f'{col_name}_{zeros}{1 + add_digit}'
 
-					while True:
-						if name == obj:
-							all_obj_list.append(name)
-							break
-						elif name in all_obj_list:
-							add_digit += 1
-							zeros = "0" * (obj_count_len + 1 - len(str(add_digit + 1)))
-							name = f'{col_name}_{zeros}{1 + add_digit}'
+						while True:
+							if name == obj:
+								all_obj_list.append(name)
+								break
+							elif name in all_obj_list:
+								add_digit += 1
+								zeros = "0" * (obj_count_len + 1 - len(str(add_digit + 1)))
+								name = f'{col_name}_{zeros}{1 + add_digit}'
+							else:
+								current_obj = bpy.data.objects[obj]
+								current_obj.name = name
+								all_obj_list.append(name)
+								break
+					else:
+						current_obj = bpy.data.objects[obj]
+						if act.col_name_position == 'START':
+							current_obj.name = col_name + '_' + current_obj.name
 						else:
-							current_obj = bpy.data.objects[obj]
-							current_obj.name = name
-							all_obj_list.append(name)
-							break
+							current_obj.name = current_obj.name + '_' + col_name
 
 		Obj_Name_To_Data_Name()
 
@@ -301,7 +315,19 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 				row = layout.row()	
 				row.operator("object.objname_to_meshname", text="Obj Name -> Data Name")
 
-				row = layout.row()
+				box = layout.box()
+				row = box.row(align=True)
+				row.label(text=" Method")
+				row.prop(act, "col_to_obj_name_method", expand=False)
+				if act.col_to_obj_name_method == 'ADD':
+					row = box.row(align=True)
+					row.label(text=" Place ")
+					row.prop(act, "col_name_position", expand=False)
+				else:
+					row = box.row(align=True)
+					row.label(text=" Style of Type ")
+					row.prop(act, "col_name_type_style", expand=False)
+				row = box.row()
 				row.operator("object.colname_to_objname", text="Collection Name -> Obj Name")
 
 				row = layout.row()

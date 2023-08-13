@@ -89,10 +89,11 @@ class Multi_FBX_Export(bpy.types.Operator):
 			bpy.ops.object.duplicate()
 			exp_objects = bpy.context.selected_objects
 
-# ===========================================================================================================
 			if act.export_target_engine != 'UNITY2023':
 				bpy.ops.object.make_single_user(type='SELECTED_OBJECTS', object=True, obdata=True)
-# ===========================================================================================================
+			else:
+				if act.fbx_export_mode == 'ALL' and act.export_combine_meshes:
+					bpy.ops.object.make_single_user(type='SELECTED_OBJECTS', object=True, obdata=True)
 
 			# Convert all non-mesh objects to mesh (except empties)
 			for obj in exp_objects:
@@ -106,7 +107,6 @@ class Multi_FBX_Export(bpy.types.Operator):
 						if not (modifier.show_viewport and modifier.show_render):
 							obj.modifiers.remove(modifier)
 
-#===========================================================================================================
 				# Apply modifiers (except Armature)
 				if act.export_target_engine != 'UNITY2023':
 					if obj.type == 'MESH':
@@ -119,8 +119,8 @@ class Multi_FBX_Export(bpy.types.Operator):
 					elif obj.type != 'EMPTY':
 						bpy.ops.object.convert(target='MESH')
 				else:
-					# Pocessing only objects without linked data
-					if (obj.type == 'MESH' and obj.data.users < 2):
+					# Pocessing only objects without linked data or for all of enabled option combine meshes
+					if ((obj.type == 'MESH' and obj.data.users < 2) or (act.fbx_export_mode == 'ALL' and act.export_combine_meshes)):
 						for modifier in obj.modifiers:
 							if modifier.type != 'ARMATURE':
 								try:
@@ -129,7 +129,6 @@ class Multi_FBX_Export(bpy.types.Operator):
 									bpy.ops.object.modifier_remove(modifier=modifier.name)
 					elif obj.type != 'EMPTY':
 						bpy.ops.object.convert(target='MESH')
-# ===========================================================================================================
 
 			# Delete _ex.001 suffix from object names.
 			# Mesh name and armature name is object name
@@ -164,7 +163,6 @@ class Multi_FBX_Export(bpy.types.Operator):
 			for obj in exp_objects:
 				obj.select_set(True)
 
-# ===========================================================================================================
 			if act.export_target_engine != 'UNITY2023':
 				# Apply scale
 				bpy.ops.object.transform_apply(location=False, rotation=False, scale=act.apply_scale)
@@ -213,7 +211,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 									orient_matrix_type='GLOBAL', mirror=False,
 									use_proportional_edit=False, proportional_edit_falloff='SMOOTH',
 									proportional_size=1)
-# ===========================================================================================================
+
 			# Apply Scale and Rotation for UNITY2023 Export
 			# Pocessing only objects without linked data
 			else:
@@ -225,7 +223,6 @@ class Multi_FBX_Export(bpy.types.Operator):
 						x.select_set(True)
 				bpy.ops.object.transform_apply(location=False, rotation=act.apply_rot, scale=act.apply_scale)
 				bpy.context.view_layer.objects.active = current_active
-# ===========================================================================================================
 
 			bpy.ops.object.select_all(action='DESELECT')
 
@@ -233,6 +230,12 @@ class Multi_FBX_Export(bpy.types.Operator):
 			for x in exp_objects:
 				if x.type == 'MESH' or x.type == 'EMPTY' or x.type == 'ARMATURE':
 					x.select_set(True)
+
+			# Store duplicated data for cleanUp
+			duplicated_data = []
+			for obj in exp_objects:
+				if obj.type == 'MESH':
+					duplicated_data.append(obj.data.name)
 
 			# Export all as one fbx
 			if act.fbx_export_mode == 'ALL':
@@ -369,8 +372,12 @@ class Multi_FBX_Export(bpy.types.Operator):
 			for obj in exp_objects:
 				obj.select_set(True)
 
-			# Delete duplicates
+			# Delete duplicates and cleanup
 			bpy.ops.object.delete()
+			duplicated_data = list(dict.fromkeys(duplicated_data))
+
+			for data_name in duplicated_data:
+				bpy.data.meshes.remove(bpy.data.meshes[data_name])
 
 			# Select again original objects and set active object
 			bpy.ops.object.select_all(action='DESELECT')

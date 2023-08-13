@@ -78,7 +78,7 @@ class Calc_Normals(bpy.types.Operator):
 
 
 # Object name to data name
-def objNameToDataName():
+def Obj_Name_To_Data_Name():
     obj_dict = defaultdict(list)
 
     for obj in bpy.context.selected_objects:
@@ -87,8 +87,9 @@ def objNameToDataName():
 
     for mesh, objects in obj_dict.items():
         for enum, object_mesh in enumerate(objects):
-            if enum == 0:  # Skip instances
-                object_mesh.data.name = object_mesh.name  # Rename Data
+			# Skip instances
+            if enum == 0:
+                object_mesh.data.name = object_mesh.name
             else:
                 break
 
@@ -100,7 +101,7 @@ class Obj_Name_To_Mesh_Name(bpy.types.Operator):
 	
 	def execute(self, context):
 		start_time = datetime.now()
-		objNameToDataName()
+		Obj_Name_To_Data_Name()
 
 		utils.Print_Execution_Time("Object Name to Mesh Name", start_time)
 		return {'FINISHED'}
@@ -121,43 +122,42 @@ class Col_Name_To_Obj_Name(bpy.types.Operator):
 			collect_dict[i.users_collection].append(i)
 
 		for collect, bpy_obj in collect_dict.items():
-			objCountLen = len(str(len(collect[0].objects)))
-			if objCountLen == 1:
-				objCountLen = 2
+			obj_count_len = len(str(len(collect[0].objects)))
+			if obj_count_len == 1:
+				obj_count_len = 2
 
-			obj_types = {x.type for x in bpy_obj}  # Subdiv collections by object types
+			# Subdiv collections by object types
+			obj_types = {x.type for x in bpy_obj}
 
 			for object_type in obj_types:
-				addDigit = 0
-				curCollectObjList = [x.name for x in collect_dict[collect]
-									 if x.type == object_type
-									 and x.select_get()]  # Get list by selected obj and obj types in current collection
+				add_digit = 0
+				# Get list by selected obj and obj types in current collection
+				cur_collect_obj_list = [x.name for x in collect_dict[collect] if x.type == object_type and x.select_get()]
 
 				col_name = collect[0].name + '_' + object_type
 
-				allObjList = [i.name for i in bpy.data.objects
-							  if i.type == object_type
-							  and col_name in i.name]  # List for skip rename and overwrite name
+				# List for skip rename and overwrite name
+				all_obj_list = [i.name for i in bpy.data.objects if i.type == object_type and col_name in i.name]
 
-				for obj in curCollectObjList:
-					zeros = "0" * (objCountLen + 1 - len(str(addDigit + 1)))
-					name = f'{col_name}_{zeros}{1 + addDigit}'
+				for obj in cur_collect_obj_list:
+					zeros = "0" * (obj_count_len + 1 - len(str(add_digit + 1)))
+					name = f'{col_name}_{zeros}{1 + add_digit}'
 
 					while True:
 						if name == obj:
-							allObjList.append(name)
+							all_obj_list.append(name)
 							break
-						elif name in allObjList:
-							addDigit += 1
-							zeros = "0" * (objCountLen + 1 - len(str(addDigit + 1)))
-							name = f'{col_name}_{zeros}{1 + addDigit}'
+						elif name in all_obj_list:
+							add_digit += 1
+							zeros = "0" * (obj_count_len + 1 - len(str(add_digit + 1)))
+							name = f'{col_name}_{zeros}{1 + add_digit}'
 						else:
-							__obj = bpy.data.objects[obj]
-							__obj.name = name
-							allObjList.append(name)
+							current_obj = bpy.data.objects[obj]
+							current_obj.name = name
+							all_obj_list.append(name)
 							break
 
-		objNameToDataName()
+		Obj_Name_To_Data_Name()
 
 		utils.Print_Execution_Time("Collection Name to Object Name", start_time)
 		return {'FINISHED'}

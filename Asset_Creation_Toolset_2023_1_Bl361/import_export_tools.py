@@ -262,6 +262,9 @@ class Multi_FBX_Export(bpy.types.Operator):
 				if act.set_custom_fbx_name:
 					name = act.custom_fbx_name
 
+				# Replace invalid chars
+				name = utils.Prefilter_Export_Name(name)
+
 				# Export FBX/OBJ
 				utils.Export_Model(path, name)
 
@@ -287,6 +290,9 @@ class Multi_FBX_Export(bpy.types.Operator):
 						bpy.ops.view3d.snap_cursor_to_center()
 						bpy.context.scene.tool_settings.transform_pivot_point = 'CURSOR'
 					name = x.name
+
+					# Replace invalid chars
+					name = utils.Prefilter_Export_Name(name)
 
 					# Export FBX/OBJ
 					utils.Export_Model(path, name)
@@ -330,6 +336,10 @@ class Multi_FBX_Export(bpy.types.Operator):
 					name = x.name
 					# Select Parent and his children
 					bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
+
+					# Replace invalid chars
+					name = utils.Prefilter_Export_Name(name)
+
 					# Export FBX/OBJ
 					utils.Export_Model(path, name)
 					bpy.ops.object.select_all(action='DESELECT')
@@ -362,8 +372,11 @@ class Multi_FBX_Export(bpy.types.Operator):
 						if x.users_collection[0].name == c:
 							x.select_set(True)
 
+					# Replace invalid chars
+					name = utils.Prefilter_Export_Name(c)
+
 					# Export FBX/OBJ
-					utils.Export_Model(path, c)
+					utils.Export_Model(path, name)
 
 				bpy.ops.object.select_all(action='DESELECT')
 

@@ -1,6 +1,7 @@
 import bpy
 import bmesh
 from datetime import datetime
+import re
 
 # Find min and max vertex coordinates
 def Find_Min_Max_Verts(obj, coord_index, min_or_max):
@@ -52,6 +53,12 @@ def Get_Version():
 
 	return result
 
+
+# Prefilter Export Name
+def Prefilter_Export_Name(name):
+	result = re.sub("[#%&{}\<>*?/'\":`|]","_",name)
+
+	return result
 
 # Export Model
 def Export_Model(path, name):

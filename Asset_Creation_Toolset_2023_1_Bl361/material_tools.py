@@ -22,6 +22,9 @@ class Palette_Create(bpy.types.Operator):
 		# Bake PBR Palette Texture Set (Albedo, Roughness, Metallic, Opacity, Emission) or only Albedo
 		pbr_mode = act.pbr_workflow
 
+		# Store temporary data for cleanUp
+		temp_meshes = []
+
 		# Check blend file is saved and get export folder path
 		if len(bpy.data.filepath) == 0 and not act.custom_save_path:
 			self.report({'INFO'}, 'Blend file is not saved. Try use Custom Save Path')
@@ -116,6 +119,8 @@ class Palette_Create(bpy.types.Operator):
 		bpy.ops.mesh.primitive_plane_add(location=(0, 0, 0))
 		pln = bpy.context.object
 		pln.name = 'Palette_' + add_name_palette
+
+		temp_meshes.append(pln.data.name)
 
 		# Add palette background material to palette plane
 		pln.data.materials.append(palette_back_color)
@@ -245,6 +250,7 @@ class Palette_Create(bpy.types.Operator):
 		bpy.ops.mesh.primitive_plane_add(location=(0, 0, 0))
 		bake_plane = bpy.context.object
 		bake_plane.name = 'Palette_Bake_Plane'
+		temp_meshes.append(bake_plane.data.name)
 		bpy.ops.object.mode_set(mode='OBJECT')
 
 		# Check exist material for baking
@@ -552,8 +558,11 @@ class Palette_Create(bpy.types.Operator):
 			palette_mat.blend_method = 'CLIP'
 			palette_mat.shadow_method = 'CLIP'
 
-		# Delete temp materials
+		# Delete temp materials and cleanup
 		bpy.data.materials.remove(bpy.data.materials['Palette_background'])
+
+		for mesh_name in temp_meshes:
+			bpy.data.meshes.remove(bpy.data.meshes[mesh_name])
 
 		for material in bpy.data.materials:
 			if material.name == 'Palette_Bake':

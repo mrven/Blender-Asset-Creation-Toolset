@@ -608,6 +608,10 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 						row.label(text=" Tangent Space")
 						row.prop(act, "export_tangent_space", text="")
 
+						row = box.row(align=True)
+						row.label(text=" Add Leaf Bones")
+						row.prop(act, "export_add_leaf_bones", text="")
+
 					if act.export_format == 'OBJ':
 						row = box.row(align=True)
 						row.label(text=" Separate By Mats")

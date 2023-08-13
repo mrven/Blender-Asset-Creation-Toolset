@@ -53,12 +53,20 @@ def Get_Version():
 
 	return result
 
+# Message Box
+def Show_Message_Box(message = "", title = "Message Box", icon = 'INFO'):
+    def draw(self, context):
+        self.layout.label(text=message)
+
+    bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
+
 
 # Prefilter Export Name
 def Prefilter_Export_Name(name):
 	result = re.sub("[#%&{}\<>*?/'\":`|]","_",name)
 
 	return result
+
 
 # Export Model
 def Export_Model(path, name):

@@ -17,6 +17,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 		start_time = datetime.now()
 		act = bpy.context.scene.act
 		act.export_dir = ""
+		incorrect_names = []
 
 		# Check custom name
 		if act.fbx_export_mode == 'ALL':
@@ -260,10 +261,15 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 				# Set custom fbx/obj name (Optional)
 				if act.set_custom_fbx_name:
-					name = act.custom_fbx_name
+					prefilter_name = act.custom_fbx_name
+				else:
+					prefilter_name = name
 
 				# Replace invalid chars
-				name = utils.Prefilter_Export_Name(name)
+				name = utils.Prefilter_Export_Name(prefilter_name)
+
+				if name != prefilter_name:
+					incorrect_names.append(prefilter_name)
 
 				# Export FBX/OBJ
 				utils.Export_Model(path, name)
@@ -289,10 +295,13 @@ class Multi_FBX_Export(bpy.types.Operator):
 					else:
 						bpy.ops.view3d.snap_cursor_to_center()
 						bpy.context.scene.tool_settings.transform_pivot_point = 'CURSOR'
-					name = x.name
+					prefilter_name = x.name
 
 					# Replace invalid chars
-					name = utils.Prefilter_Export_Name(name)
+					name = utils.Prefilter_Export_Name(prefilter_name)
+
+					if name != prefilter_name:
+						incorrect_names.append(prefilter_name)
 
 					# Export FBX/OBJ
 					utils.Export_Model(path, name)
@@ -333,12 +342,15 @@ class Multi_FBX_Export(bpy.types.Operator):
 						bpy.context.scene.tool_settings.transform_pivot_point = 'CURSOR'
 
 					# Name is name of parent
-					name = x.name
+					prefilter_name = x.name
 					# Select Parent and his children
 					bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
 
 					# Replace invalid chars
-					name = utils.Prefilter_Export_Name(name)
+					name = utils.Prefilter_Export_Name(prefilter_name)
+
+					if name != prefilter_name:
+						incorrect_names.append(prefilter_name)
 
 					# Export FBX/OBJ
 					utils.Export_Model(path, name)
@@ -374,6 +386,9 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 					# Replace invalid chars
 					name = utils.Prefilter_Export_Name(c)
+
+					if name != c:
+						incorrect_names.append(c)
 
 					# Export FBX/OBJ
 					utils.Export_Model(path, name)
@@ -415,6 +430,10 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 			# Save export dir path for option "Open export dir"
 			act.export_dir = path
+
+		# Show message about incorrect names
+		if len(incorrect_names) > 0:
+			utils.Show_Message_Box("Object(s) has invalid characters in name. Some chars in export name have been replaced", "Invalid Export Names")
 
 		utils.Print_Execution_Time("FBX/OBJ Export", start_time)
 		return {'FINISHED'}

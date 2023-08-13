@@ -18,10 +18,10 @@ class Palette_Create(bpy.types.Operator):
 		act = bpy.context.scene.act
 		act.export_dir = ""
 		path = ""
+		incorrect_names = []
 		palette_back_color = (0.5, 0.5, 0.5, 1)
 		# Bake PBR Palette Texture Set (Albedo, Roughness, Metallic, Opacity, Emission) or only Albedo
 		pbr_mode = act.pbr_workflow
-
 		# Store temporary data for cleanUp
 		temp_meshes = []
 
@@ -80,10 +80,13 @@ class Palette_Create(bpy.types.Operator):
 						# Unlink empty slots
 						selected_mesh.data.materials.pop(index=q)
 						
-		add_name_palette = bpy.context.active_object.name
+		prefilter_add_name_palette = bpy.context.active_object.name
 
 		# Replace invalid chars
-		add_name_palette = utils.Prefilter_Export_Name(add_name_palette)
+		add_name_palette = utils.Prefilter_Export_Name(prefilter_add_name_palette)
+
+		if add_name_palette != prefilter_add_name_palette:
+			incorrect_names.append(prefilter_add_name_palette)
 
 		# Set tool setting for UV Editor
 		bpy.context.scene.tool_settings.use_uv_select_sync = False
@@ -575,6 +578,11 @@ class Palette_Create(bpy.types.Operator):
 		bpy.context.scene.render.engine = current_engine
 
 		utils.Print_Execution_Time("Create Palette Texture", start_time)
+
+		# Show message about incorrect names
+		if len(incorrect_names) > 0:
+			utils.Show_Message_Box("Psllete name has invalid characters. Some chars have been replaced", "Invalid Palette Name")
+
 		return {'FINISHED'}
 
 

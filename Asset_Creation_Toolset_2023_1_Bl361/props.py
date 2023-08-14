@@ -151,6 +151,12 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		description="Add Leaf Bones",
 		default=False)
 
+	# Export Linear/sRGB color space for VC
+	export_vc_color_space_items = (
+		('LINEAR', 'Linear', ''),
+		('SRGB', 'sRGB', ''))
+	export_vc_color_space: EnumProperty(name="", items=export_vc_color_space_items)
+
 	# Custom Import Options
 	import_custom_options: BoolProperty(
 		name="Custom Import Options",

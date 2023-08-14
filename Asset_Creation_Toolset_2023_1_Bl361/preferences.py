@@ -222,72 +222,48 @@ class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 		row.label(text='Visibility and Category for Panels:')
 		
 		box = layout.box()
-		row = box.row()
+		row = box.row(align=True)
 		row.prop(self, 'origin_enable')
 		if self.origin_enable:
-			row = box.row(align=True)
-			row.label(text='    Origin Panel Category:')
-			row.prop(self, 'origin_panel_category', text="")
+			row.prop(self, 'origin_panel_category', text="Panel")
 
-		box = layout.box()
-		row = box.row()
+		row = box.row(align=True)
 		row.prop(self, 'renaming_enable')
 		if self.renaming_enable:
-			row = box.row(align=True)
-			row.label(text='    Renaming Panel Category:')
-			row.prop(self, 'rename_panel_category', text="")
+			row.prop(self, 'rename_panel_category', text="Panel")
 
-		box = layout.box()
-		row = box.row()
+		row = box.row(align=True)
 		row.prop(self, 'uv_view3d_enable')
 		if self.uv_view3d_enable:
-			row = box.row(align=True)
-			row.label(text='    UV (3D View) Panel Category:')
-			row.prop(self, 'view3d_uv_panel_category', text="")
+			row.prop(self, 'view3d_uv_panel_category', text="Panel")
 		
-		box = layout.box()
-		row = box.row()
+		row = box.row(align=True)
 		row.prop(self, 'uv_uv_enable')
 		if self.uv_uv_enable:
-			row = box.row(align=True)
-			row.label(text='    UV (UV Editor) Panel Category:')
-			row.prop(self, 'uv_uv_category', text="")
+			row.prop(self, 'uv_uv_category', text="Panel")
 
-		box = layout.box()
-		row = box.row()
+		row = box.row(align=True)
 		row.prop(self, 'export_import_enable')
 		if self.export_import_enable:
-			row = box.row(align=True)
-			row.label(text='    Import/Export Panel Category:')
-			row.prop(self, 'export_import_panel_category', text="")
+			row.prop(self, 'export_import_panel_category', text="Panel")
 		
-		box = layout.box()
-		row = box.row()
+		row = box.row(align=True)
 		row.prop(self, 'material_enable')
 		if self.material_enable:
-			row = box.row(align=True)
-			row.label(text='    Material (3D View) Panel Category:')
-			row.prop(self, 'material_panel_category', text="")
+			row.prop(self, 'material_panel_category', text="Panel")
 		
-		box = layout.box()
-		row = box.row()
+		row = box.row(align=True)
 		row.prop(self, 'uv_material_enable')
 		if self.uv_material_enable:
-			row = box.row(align=True)
-			row.label(text='    Material/Texture (Image Editor) Panel Category:')
-			row.prop(self, 'uv_material_panel_category', text="")
+			row.prop(self, 'uv_material_panel_category', text="Panel")
 		
-		box = layout.box()
 		row = box.row()
-		row.prop(self, 'material_properties_enable')		
+		row.prop(self, 'material_properties_enable')
 		
-		box = layout.box()
-		row = box.row()
+		row = box.row(align=True)
 		row.prop(self, 'other_enable')
 		if self.other_enable:
-			row = box.row(align=True)
-			row.label(text='    Other Panel Category:')
-			row.prop(self, 'other_panel_category', text="")
+			row.prop(self, 'other_panel_category', text="Panel")
 
 
 classes = (

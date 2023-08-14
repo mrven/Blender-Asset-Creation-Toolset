@@ -79,22 +79,22 @@ def Export_Model(path, name):
 					apply_scale_options='FBX_SCALE_ALL',
 					use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing,
 					use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space,
-					add_leaf_bones=act.export_add_leaf_bones)
+					add_leaf_bones=act.export_add_leaf_bones, colors_type=act.export_vc_color_space)
 			elif act.export_target_engine == 'UNREAL':
 				bpy.ops.export_scene.fbx(
 					filepath=str(path + name + '.fbx'), use_selection=True,
 					apply_scale_options='FBX_SCALE_NONE',
 					use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing,
 					use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space,
-					add_leaf_bones=act.export_add_leaf_bones)
+					add_leaf_bones=act.export_add_leaf_bones, colors_type=act.export_vc_color_space)
 			elif act.export_target_engine == 'UNITY2023':
 				bpy.ops.export_scene.fbx(
 					filepath=str(path + name + '.fbx'), use_selection=True,
 					apply_scale_options='FBX_SCALE_NONE',
 					use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing,
 					use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space,
-					global_scale=0.01, colors_type='LINEAR', axis_forward='Y', axis_up='Z',
-					add_leaf_bones=act.export_add_leaf_bones)
+					global_scale=0.01, axis_forward='Y', axis_up='Z', add_leaf_bones=act.export_add_leaf_bones,
+					colors_type=act.export_vc_color_space)
 
 		if act.export_format == 'OBJ':
 			bpy.ops.export_scene.obj(
@@ -110,12 +110,12 @@ def Export_Model(path, name):
 			if act.export_target_engine == 'UNITY':
 				bpy.ops.export_scene.fbx(
 					filepath=str(path + name + '.fbx'), use_selection=True,
-					apply_scale_options='FBX_SCALE_ALL', add_leaf_bones=False)
+					apply_scale_options='FBX_SCALE_ALL', add_leaf_bones=False, colors_type='LINEAR')
 			elif act.export_target_engine == 'UNREAL':
 				bpy.ops.export_scene.fbx(
 					filepath=str(path + name + '.fbx'), use_selection=True,
 					apply_scale_options='FBX_SCALE_NONE', mesh_smooth_type='FACE', use_tspace=True,
-					add_leaf_bones=False)
+					add_leaf_bones=False, colors_type='LINEAR')
 			elif act.export_target_engine == 'UNITY2023':
 				bpy.ops.export_scene.fbx(
 					filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options='FBX_SCALE_NONE',

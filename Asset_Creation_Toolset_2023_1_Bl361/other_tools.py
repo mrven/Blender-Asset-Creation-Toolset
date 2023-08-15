@@ -196,6 +196,7 @@ class Merge_Bones(bpy.types.Operator):
 		active_bone_name = armature.data.bones.active.name
 		selected_bones_name = []
 		parent_mesh = None
+		meshes = []
 
 		bpy.ops.object.mode_set(mode='OBJECT')
 
@@ -204,36 +205,60 @@ class Merge_Bones(bpy.types.Operator):
 			if bone.select and bone.name != active_bone_name:
 				selected_bones_name.append(bone.name)
 
+		# Cancel if select only one bone
+		if len(selected_bones_name) == 0:
+			self.report({'INFO'}, 'Select more than one bone')
+			bpy.ops.object.mode_set(mode='EDIT')
+			return {'CANCELLED'}
+
 		# Find mesh deformed with this armature
 		for m in bpy.context.scene.objects:
 			if m.type == 'MESH':
 				if len(m.modifiers) > 0:
 					for n in m.modifiers:
 						if n.type == 'ARMATURE' and n.object.name_full == armature.name_full:
-							parent_mesh = m
+							meshes.append(m)
 
-		if parent_mesh is None:
+		if len(meshes) == 0:
 			self.report({'INFO'}, 'Armature has no mesh')
 			bpy.ops.object.mode_set(mode='EDIT')
 			return {'CANCELLED'}
 
-		bpy.ops.object.select_all(action='DESELECT')
-		parent_mesh.select_set(True)
-		bpy.context.view_layer.objects.active = parent_mesh
+		for mesh in meshes:
+			bpy.ops.object.select_all(action='DESELECT')
+			mesh.select_set(True)
+			bpy.context.view_layer.objects.active = mesh
 
-		# Transfer weights from selected bones to active with modifier and clean up vertex groups
-		if len(selected_bones_name) > 0:
-			for b_name in selected_bones_name:
-				try:
-					parent_mesh.vertex_groups.active_index = parent_mesh.vertex_groups[b_name].index
-				except:
+			# Check mesh has needed vertex groups
+			has_active_bone_group = False
+			for group in mesh.vertex_groups:
+				if group.name == active_bone_name:
+					has_active_bone_group = True
+
+			# Transfer weights from selected bones to active with modifier and clean up vertex groups
+			for bone_name in selected_bones_name:
+				# Check mesh has needed vertex groups
+				has_dissolve_bone_group = False
+				for group in mesh.vertex_groups:
+					if group.name == bone_name:
+						has_dissolve_bone_group = True
+
+				if not has_dissolve_bone_group:
 					continue
 
+				# Case if mesh has group for dissolve bone, but do not have group for active
+				# Add group for active bone
+				if not has_active_bone_group:
+					bpy.ops.object.vertex_group_add()
+					mesh.vertex_groups.active.name = active_bone_name
+
+				mesh.vertex_groups.active_index = mesh.vertex_groups[bone_name].index
+
 				bpy.ops.object.modifier_add(type='VERTEX_WEIGHT_MIX')
-				parent_mesh.modifiers['VertexWeightMix'].vertex_group_a = active_bone_name
-				parent_mesh.modifiers['VertexWeightMix'].vertex_group_b = b_name
-				parent_mesh.modifiers['VertexWeightMix'].mix_mode = 'ADD'
-				parent_mesh.modifiers['VertexWeightMix'].mix_set = 'ALL'
+				mesh.modifiers['VertexWeightMix'].vertex_group_a = active_bone_name
+				mesh.modifiers['VertexWeightMix'].vertex_group_b = bone_name
+				mesh.modifiers['VertexWeightMix'].mix_mode = 'ADD'
+				mesh.modifiers['VertexWeightMix'].mix_set = 'ALL'
 				bpy.ops.object.modifier_apply(modifier="VertexWeightMix")
 				bpy.ops.object.vertex_group_remove()
 
@@ -245,9 +270,9 @@ class Merge_Bones(bpy.types.Operator):
 		bpy.ops.object.mode_set(mode='OBJECT')
 
 		# Delete selected bones
-		for need_delete in selected_bones_name:
+		for bone_name in selected_bones_name:
 			try:
-				armature.data.bones[need_delete].select = True
+				armature.data.bones[bone_name].select = True
 			except:
 				continue
 
@@ -260,7 +285,8 @@ class Merge_Bones(bpy.types.Operator):
 
 			bpy.ops.object.mode_set(mode='OBJECT')
 
-		armature.data.bones[active_bone_name].select = True
+		if act.merge_bones_method == 'DELETE':
+			armature.data.bones[active_bone_name].select = True
 		bpy.ops.object.mode_set(mode='EDIT')
 
 		utils.Print_Execution_Time("Merge Bones", start_time)

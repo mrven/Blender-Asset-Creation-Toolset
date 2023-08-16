@@ -121,7 +121,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 						bpy.ops.object.convert(target='MESH')
 				else:
 					# Pocessing only objects without linked data or for all of enabled option combine meshes
-					if ((obj.type == 'MESH' and obj.data.users < 2) or (act.fbx_export_mode == 'ALL' and act.export_combine_meshes)):
+					if ((obj.type == 'MESH' and obj.data.users < 2) or (act.fbx_export_mode != 'INDIVIDUAL' and act.export_combine_meshes)):
 						for modifier in obj.modifiers:
 							if modifier.type != 'ARMATURE':
 								try:
@@ -320,16 +320,77 @@ class Multi_FBX_Export(bpy.types.Operator):
 					if x.parent is None:
 						x.select_set(True)
 
-				parent_obj = bpy.context.selected_objects
-				bpy.ops.object.select_all(action='DESELECT')
+				parent_objs = bpy.context.selected_objects
+				combined_meshes = []
 
-				for x in parent_obj:
+				for x in parent_objs:
+					bpy.ops.object.select_all(action='DESELECT')
+					bpy.context.view_layer.objects.active = x
+					x.select_set(True)
+					# Combine All Meshes (Optional)
+					if act.export_combine_meshes:
+						# If parent object is mesh
+						# combine all children to parent object
+						if x.type == 'MESH':
+							bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
+							bpy.ops.object.join()
+
+							# CleanUp Empties without Children
+							selected_objects_for_cleanup = bpy.context.selected_objects
+							bpy.ops.object.select_all(action='DESELECT')
+							for obj in selected_objects_for_cleanup:
+								if obj.type == "EMPTY" and len(obj.children) == 0:
+									obj.select_set(True)
+							bpy.ops.object.delete()
+
+						# If  parent is not Mesh
+						else:
+							current_active = bpy.context.view_layer.objects.active
+							parent_loc = current_active.location.copy()
+							parent_name = current_active.name
+
+							# Select all children
+							bpy.ops.object.select_grouped(extend=False, type='CHILDREN_RECURSIVE')
+							group_selected_objects = bpy.context.selected_objects
+
+							# Combine all child meshes to first in list
+							for obj in group_selected_objects:
+								if obj.type == 'MESH':
+									bpy.context.view_layer.objects.active = obj
+							bpy.ops.object.join()
+
+							bpy.context.view_layer.objects.active.name = parent_name + '_Mesh'
+
+							# Parent Combined mesh back
+							current_active.select_set(True)
+							bpy.context.view_layer.objects.active = current_active
+							bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
+
+							selected_objects_for_cleanup = bpy.context.selected_objects
+
+							# Move Origin to Parent
+							bpy.context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
+							bpy.context.scene.cursor.location = parent_loc
+							bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
+
+							# CleanUp Empties without Children
+							bpy.ops.object.select_all(action='DESELECT')
+							for obj in selected_objects_for_cleanup:
+								if obj.type == "EMPTY" and len(obj.children) == 0:
+									obj.select_set(True)
+							bpy.ops.object.delete()
+
+							bpy.context.view_layer.objects.active = current_active
+
+					current_parent = bpy.context.view_layer.objects.active
+
 					object_loc = (0.0, 0.0, 0.0)
 					bpy.context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
 					# Select only current object
 					bpy.ops.object.select_all(action='DESELECT')
-					x.select_set(True)
-					bpy.context.view_layer.objects.active = x
+
+					current_parent.select_set(True)
+					bpy.context.view_layer.objects.active = current_parent
 
 					if act.apply_loc:
 						# Copy object location
@@ -342,7 +403,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 						bpy.context.scene.tool_settings.transform_pivot_point = 'CURSOR'
 
 					# Name is name of parent
-					prefilter_name = x.name
+					prefilter_name = current_parent.name
 					# Select Parent and his children
 					bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
 
@@ -352,15 +413,23 @@ class Multi_FBX_Export(bpy.types.Operator):
 					if name != prefilter_name:
 						incorrect_names.append(prefilter_name)
 
+					# Store objects after combine for future cleanup
+					if act.export_combine_meshes:
+						for obj in bpy.context.selected_objects:
+							combined_meshes.append(obj)
+
 					# Export FBX/OBJ
 					utils.Export_Model(path, name)
 					bpy.ops.object.select_all(action='DESELECT')
-					x.select_set(True)
+					current_parent.select_set(True)
 
 					# Restore object location
 					if act.apply_loc:
 						bpy.context.scene.cursor.location = object_loc
 						bpy.ops.view3d.snap_selected_to_cursor(use_offset=True)
+
+			if act.export_combine_meshes:
+				exp_objects = combined_meshes
 
 			# Export by collection
 			if act.fbx_export_mode == 'COLLECTION':
@@ -575,7 +644,7 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 					row = layout.row()
 					row.prop(act, "delete_mats_before_export", text="Delete All Materials")
 
-					if act.fbx_export_mode == 'ALL':
+					if act.fbx_export_mode != 'INDIVIDUAL':
 						row = layout.row()
 						row.prop(act, "export_combine_meshes", text="Combine All Meshes")
 

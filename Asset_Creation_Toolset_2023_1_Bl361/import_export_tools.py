@@ -93,7 +93,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 			if act.export_target_engine != 'UNITY2023':
 				bpy.ops.object.make_single_user(type='SELECTED_OBJECTS', object=True, obdata=True)
 			else:
-				if act.fbx_export_mode == 'ALL' and act.export_combine_meshes:
+				if act.export_combine_meshes:
 					bpy.ops.object.make_single_user(type='SELECTED_OBJECTS', object=True, obdata=True)
 
 			# Convert all non-mesh objects to mesh (except empties)
@@ -311,6 +311,8 @@ class Multi_FBX_Export(bpy.types.Operator):
 						bpy.context.scene.cursor.location = object_loc
 						bpy.ops.view3d.snap_selected_to_cursor(use_offset=True)
 
+			combined_meshes = []
+
 			# Export by parents
 			if act.fbx_export_mode == 'PARENT':
 				bpy.ops.object.select_all(action='DESELECT')
@@ -321,7 +323,6 @@ class Multi_FBX_Export(bpy.types.Operator):
 						x.select_set(True)
 
 				parent_objs = bpy.context.selected_objects
-				combined_meshes = []
 
 				for x in parent_objs:
 					bpy.ops.object.select_all(action='DESELECT')
@@ -337,11 +338,9 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 							# CleanUp Empties without Children
 							selected_objects_for_cleanup = bpy.context.selected_objects
-							bpy.ops.object.select_all(action='DESELECT')
 							for obj in selected_objects_for_cleanup:
 								if obj.type == "EMPTY" and len(obj.children) == 0:
-									obj.select_set(True)
-							bpy.ops.object.delete()
+									bpy.data.objects.remove(obj, do_unlink=True)
 
 						# If  parent is not Mesh
 						else:
@@ -374,11 +373,9 @@ class Multi_FBX_Export(bpy.types.Operator):
 							bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
 
 							# CleanUp Empties without Children
-							bpy.ops.object.select_all(action='DESELECT')
 							for obj in selected_objects_for_cleanup:
 								if obj.type == "EMPTY" and len(obj.children) == 0:
-									obj.select_set(True)
-							bpy.ops.object.delete()
+									bpy.data.objects.remove(obj, do_unlink=True)
 
 							bpy.context.view_layer.objects.active = current_active
 
@@ -428,13 +425,12 @@ class Multi_FBX_Export(bpy.types.Operator):
 						bpy.context.scene.cursor.location = object_loc
 						bpy.ops.view3d.snap_selected_to_cursor(use_offset=True)
 
-			if act.export_combine_meshes:
-				exp_objects = combined_meshes
-
 			# Export by collection
 			if act.fbx_export_mode == 'COLLECTION':
 				used_collections = []
-
+				origin_loc = (0.0, 0.0, 0.0)
+				bpy.context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
+				obj_col_dict = {}
 				# Collect used collections for selected objects
 				for x in exp_objects:
 					collection_in_list = False
@@ -446,12 +442,35 @@ class Multi_FBX_Export(bpy.types.Operator):
 					if collection_in_list is False:
 						used_collections.append(x.users_collection[0].name)
 
+					obj_col_dict[x.name] = x.users_collection[0].name
+
 				# Select objects by collection and export
 				for c in used_collections:
 					bpy.ops.object.select_all(action='DESELECT')
-					for x in exp_objects:
-						if x.users_collection[0].name == c:
-							x.select_set(True)
+
+					# Select Objects in Collection
+					set_active_mesh = False
+					for obj_name, col_name in obj_col_dict.items():
+						if col_name == c:
+							bpy.data.objects[obj_name].select_set(True)
+							if bpy.data.objects[obj_name].type == 'MESH' and not set_active_mesh:
+								bpy.context.view_layer.objects.active = bpy.data.objects[obj_name]
+								if act.export_combine_meshes:
+									bpy.data.objects[obj_name].name = c
+								set_active_mesh = True
+
+					if act.export_combine_meshes and set_active_mesh:
+						bpy.ops.object.join()
+
+						# Move Origin to Parent
+						bpy.context.scene.cursor.location = origin_loc
+						bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
+
+						# CleanUp Empties without Children
+						selected_objects_for_cleanup = bpy.context.selected_objects
+						for obj in selected_objects_for_cleanup:
+							if obj.type == "EMPTY" and len(obj.children) == 0:
+								bpy.data.objects.remove(obj, do_unlink=True)
 
 					# Replace invalid chars
 					name = utils.Prefilter_Export_Name(c)
@@ -459,10 +478,18 @@ class Multi_FBX_Export(bpy.types.Operator):
 					if name != c:
 						incorrect_names.append(c)
 
+					# Store objects after combine for future cleanup
+					if act.export_combine_meshes:
+						for obj in bpy.context.selected_objects:
+							combined_meshes.append(obj)
+
 					# Export FBX/OBJ
 					utils.Export_Model(path, name)
 
 				bpy.ops.object.select_all(action='DESELECT')
+
+			if act.export_combine_meshes and (act.fbx_export_mode == 'PARENT' or act.fbx_export_mode == 'COLLECTION'):
+				exp_objects = combined_meshes
 
 			bpy.ops.object.select_all(action='DESELECT')
 
@@ -471,7 +498,6 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 			# Delete duplicates and cleanup
 			bpy.ops.object.delete()
-			duplicated_data = list(dict.fromkeys(duplicated_data))
 
 			for data_name in duplicated_data:
 				bpy.data.meshes.remove(bpy.data.meshes[data_name])

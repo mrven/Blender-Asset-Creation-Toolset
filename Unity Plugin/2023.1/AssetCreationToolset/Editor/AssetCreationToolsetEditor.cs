@@ -27,7 +27,7 @@ public class AssetCreationToolsetEditor : Editor
     private static void FixModelsTransforms()
     {
         var selected = Selection.objects;
-
+        
         foreach (Object obj in selected)
         {
             string assetPath = AssetDatabase.GetAssetPath(obj);
@@ -39,6 +39,7 @@ public class AssetCreationToolsetEditor : Editor
                 
                 modelImporter.globalScale = 100f;
                 modelImporter.bakeAxisConversion = true;
+                EditorUtility.SetDirty(modelImporter);
                 modelImporter.SaveAndReimport();
             }
         }
@@ -47,12 +48,12 @@ public class AssetCreationToolsetEditor : Editor
 
 public class ACTModelsPostprocessor : AssetPostprocessor
 {
-    void OnPostprocessModel(GameObject g)
+    void OnPreprocessModel()
     {
-        Apply(g);
+        Apply();
     }
 
-    void Apply(GameObject g)
+    void Apply()
     {
         bool postprocessEnabled = EditorPrefs.GetBool(AssetCreationToolsetEditor.Prefs.PostProcessorEnabled);
         int applyIfContains = EditorPrefs.GetInt(AssetCreationToolsetEditor.Prefs.ApplyIfContains);
@@ -60,12 +61,13 @@ public class ACTModelsPostprocessor : AssetPostprocessor
         
         if (postprocessEnabled && assetPath.ToLower().Contains(".fbx"))
         {
-            if (applyIfContains == 0 || (applyIfContains > 0 && g.name.Contains(triggerString)))
+            var splittedPath = assetPath.Split('/');
+            
+            if (applyIfContains == 0 || (applyIfContains > 0 && splittedPath[^1].Contains(triggerString)))
             {
                     ModelImporter modelImporter = (ModelImporter)assetImporter;
                     modelImporter.globalScale = 100f;
                     modelImporter.bakeAxisConversion = true;
-                    modelImporter.SaveAndReimport();
             }
         }
     }

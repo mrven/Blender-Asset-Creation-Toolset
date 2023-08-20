@@ -4,10 +4,11 @@
 
 **[English README](/README.md)**
 
-**Asset Creation Toolset** аддон для Blender, который содержит в себе набор инструментов, помогающих при создании низкополигональных ассетов для Blender 2.79 и 2.8 (и выше).
+**Asset Creation Toolset** аддон для Blender, который содержит в себе набор инструментов, помогающих при создании низкополигональных ассетов для Blender 2.79, 2.8 и 3.0 (и выше).
 
 ***Скачать последнюю версию:***
 
+* ***[(2023.1) Blender 3.6 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2023_1_Bl361.zip)*** & ***[ACT Unity Editor Скрипт](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Unity_Plugin/Releases/ACT_2023_1_Unity_Plugin.unitypackage)***
 * ***[(3.3) Blender 3.4 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_3_341.zip)***
 * ***[(3.2) Blender 3.1 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_2_310.zip)***
 * ***[(3.1.5) Blender 2.90 - 3.0](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_5_290.zip)***
@@ -18,6 +19,53 @@
 * ***[Gumroad (Свободная цена)](https://gumroad.com/l/hPXIh)***
 
 ***[Смотреть обзор всех функций (плейлист Youtube)](https://www.youtube.com/playlist?list=PLmXnsUZu0CRr_UOQp3TapOVyEqbzZ0MkL)***
+
+## Новое в версии Asset Creation Toolset 2023
+### Новый алгоритм экспорта в Unity (Исправленная ориентация моделей, поддержка Linked Objects, Поддержка анимации)
+Теперь у ACT два разных алгоритма для экспорта FBXs в Unity: ***"Unity"*** и ***"Unity (Legacy)"***.\
+![Target_Engine](/images/pngs/2023/01_Target.png)
+
+#### Профиль экспорта "Unity"
+Этот профиль поддерживает объекты с Linked Data, более точная работа с ригами, анимациями, углами и осями. ***Но этот профиль требует дополнительных манипуляций с моделями при импорте в Unity.*** Вы должны установить в параметрах импорта модели "Scale Factor" в 100 и включить опцию "Bake Axis Conversion".\
+![Import_Settings](/images/pngs/2023/02_Import_Settings.png)
+
+Для автоматизации этих шагов я сделал ***Unity Editor скрипт*** и с помощью него можно установить эти параметры следующими способами:
+1. Выбрать модели -> RMB -> ACT/Fix Models Transform.
+![Fix_Transforms](/images/pngs/2023/03_Fix_Transforms.png)
+2. Открыть окно ACT Settings (Window -> ACT -> Settings) и включить Models Postprocessor. Постпроцессор будет автоматически устанавливать параметры для любой импортируемой модели (или для моделей, которые содержат заданную строку или символ).
+![ACT_Settings_1](/images/pngs/2023/04_ACT_Settings_1.png)\
+![ACT_Settings_2](/images/pngs/2023/05_ACT_Settings_2.png)\
+![ACT_Settings_3](/images/pngs/2023/06_ACT_Settings_3.png)\
+Unity editor ACT скрипт поставляется вместе с ACT Blender add-on.
+
+#### Профиль экспорта "Unity"
+Но вы до сих пор можете использовать предыдущий алгоритм экспорта: Этот алгоритм не требует дополнительных манипуляций в Unity, а также этот алгоритм позволяет сохранить обратную совместимость с уже существующими моделями.\
+![Old_Algorithm](/images/pngs/2023/07_Old_Algorithm.png)
+
+### Добавлена функция "Origin to Middle Point" от @mokalux
+Новая опция для Align Origin: Перемещает Origin в среднюю точку между Min и Max значениями по выбранной оси. Спасибо @mokalux за имплементацию!\
+![Align_Middle](/images/pngs/2023/08_Align_Middle.png)
+
+### Добавлена функция "Collection Name -> Obj Name" от @Oxicid
+Переносит имя коллекции в имя объекта. Вы можете использовать разные пути для этого:
+1. Добавлени имени коллекции перед или после текущего имени объекта. Например, ***"CollectionName_ObjectName"*** или ***"ObjectName_CollectionName"***
+2. Замена имени объекта на "Collection Name + Type + Numbering", Например, ***"CollectionName_Mesh_001"*** или ***"CollectionName_MESH_001"***. Спасибо @Oxicid за имплементацию!\
+![Col_To_Name](/images/pngs/2023/09_Col_To_Name.png)
+
+### Добавлена замена специальных символов на "\_" в имени модели при экспорте ([#%&{}<>\*?/'":`|])
+Указанные специальные символы будут заменены только в имени файла, но не в именах объектов. Это очень полезно, если вы используете специальные символы в именах объектов.
+
+### Добавлена опция "Combine All Meshes" При эспроте FBX/OBJ по родителям и коллекциям
+Опция ***"Combine All Meshes"*** теперь работает не только для экспорта "All->One FBX".
+
+### Добавлена Custom Export FBX опция "Add Leaf Bones". По-умолчанию теперь опция "Add Leaf Bones" отключена.
+![Leaf_Bones](/images/pngs/2023/10_Leaf_Bones.png)
+
+### Добавлена Custom Export FBX опция "VC color space". По-умолчанию VC color space теперь Linear.
+Вы можете выбрать ***"Linear"*** или ***"sRGB"*** color space для vertex color. Я выбрал linear как дефолтное, потому что vertex color обычно используется как маска, а не как цветовая информация.\
+![VC_Color_Space](/images/pngs/2023/11_VC_Color_Space.png)
+
+## Функции
 
 #### Origin Align Tool
 Выравнивание Origin Point объекта. Позволяет выровнять Origin по заданной оси по максимальной/минимальной точки объекта, 3D-курсору или заданной координате.

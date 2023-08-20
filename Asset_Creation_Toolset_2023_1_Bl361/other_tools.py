@@ -107,7 +107,7 @@ class Obj_Name_To_Mesh_Name(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-# Col Name to Obj Name
+# Collection Name to Object Name
 class Col_Name_To_Obj_Name(bpy.types.Operator):
 	"""Col Name to Obj Name"""
 	bl_idname = "object.colname_to_objname"

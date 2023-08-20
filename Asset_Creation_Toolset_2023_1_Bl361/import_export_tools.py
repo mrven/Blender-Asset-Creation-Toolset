@@ -500,7 +500,10 @@ class Multi_FBX_Export(bpy.types.Operator):
 			bpy.ops.object.delete()
 
 			for data_name in duplicated_data:
-				bpy.data.meshes.remove(bpy.data.meshes[data_name])
+				try:
+					bpy.data.meshes.remove(bpy.data.meshes[data_name])
+				except:
+					continue
 
 			# Select again original objects and set active object
 			bpy.ops.object.select_all(action='DESELECT')

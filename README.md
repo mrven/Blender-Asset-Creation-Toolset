@@ -23,7 +23,7 @@ If you want to support me you can buy this addon:
 
 ## New in Asset Creation Toolset 2023
 ### New Export Algorithm for Unity (Fix Flip orientation, Linked Objects Support, Animation Support)
-Now ACT has two different algorithms for export FBXs to Unity: ***"Unity"*** and ***"Unity (Legacy)"***.
+Now ACT has two different algorithms for export FBXs to Unity: ***"Unity"*** and ***"Unity (Legacy)"***.\
 ![Target_Engine](/images/pngs/2023/01_Target.png)
 
 #### "Unity" Export Profile
@@ -34,23 +34,23 @@ For automatization this steps I created ***Unity Editor Script*** and you can us
 1. Select Models -> RMB -> ACT/Fix Models Transform.
 ![Fix_Transforms](/images/pngs/2023/03_Fix_Transforms.png)
 2. Open ACT Settings Window (Window -> ACT -> Settings) and enable Models Postprocessor. It automatically set import settings for each model (or for models whose names contain the specified string or character).
-![ACT_Settings_1](/images/pngs/2023/04_ACT_Settings_1.png)
-![ACT_Settings_2](/images/pngs/2023/05_ACT_Settings_2.png)
-![ACT_Settings_3](/images/pngs/2023/06_ACT_Settings_3.png)
+![ACT_Settings_1](/images/pngs/2023/04_ACT_Settings_1.png)\
+![ACT_Settings_2](/images/pngs/2023/05_ACT_Settings_2.png)\
+![ACT_Settings_3](/images/pngs/2023/06_ACT_Settings_3.png)\
 The Unity editor ACT script is distributed with the ACT Blender add-on.
 
 #### "Unity" Export Profile
-But you can also use previous algorithm: This algorithm doesn't require additional actions in Unity and this Export Profile provide back-compatibility with already existing models.
+But you can also use previous algorithm: This algorithm doesn't require additional actions in Unity and this Export Profile provide back-compatibility with already existing models.\
 ![Old_Algorithm](/images/pngs/2023/07_Old_Algorithm.png)
 
 ### Added feature "Origin to Middle Point" from @mokalux
-New option for Align Origin: Move Origin to middle point between Min and Max Value. Thanks @mokalux for implementation!
+New option for Align Origin: Move Origin to middle point between Min and Max Value. Thanks @mokalux for implementation!\
 ![Align_Middle](/images/pngs/2023/08_Align_Middle.png)
 
 ### Added feature "Collection Name -> Obj Name" from @Oxicid
 Transfer Collection Name to Object Name. You can use dirrernt ways for that:
 1. Added Collection name before or after current object name. For example, ***"CollectionName_ObjectName"*** or ***"ObjectName_CollectionName"***
-2. Replace Object Name to "Collection Name + Type + Numbering", For example ***"CollectionName_Mesh_001"*** or ***"CollectionName_MESH_001"***. Thanks @Oxicid for implementation!
+2. Replace Object Name to "Collection Name + Type + Numbering", For example ***"CollectionName_Mesh_001"*** or ***"CollectionName_MESH_001"***. Thanks @Oxicid for implementation!\
 ![Col_To_Name](/images/pngs/2023/09_Col_To_Name.png)
 
 ### Added Replacing of invalid characters to "\_" in export's name ([#%&{}<>\*?/'":`|])
@@ -63,7 +63,7 @@ Invalid characters will replaced only in file name, not in object names. It very
 ![Leaf_Bones](/images/pngs/2023/10_Leaf_Bones.png)
 
 ### Added Custom Export FBX Option "VC color space". By default VC color space is Linear now.
-You can choose between ***"Linear"*** and ***"sRGB"*** color space for vertex color. I chose linear as default value because vertex color usually used for masking, but not as color information.
+You can choose between ***"Linear"*** and ***"sRGB"*** color space for vertex color. I chose linear as default value because vertex color usually used for masking, but not as color information.\
 ![VC_Color_Space](/images/pngs/2023/11_VC_Color_Space.png)
 
 ## Features

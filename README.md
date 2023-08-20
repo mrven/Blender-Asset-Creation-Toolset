@@ -4,10 +4,11 @@
 
 **[Russian README](/README_ru.md)**
 
-**Asset Creation Toolset** is Many Tools for Game Asset Creation (Batch Import/Export FBXs, Origin Aligment Tool, Renaming, Low-Poly Art workflow tools, etc.) for Blender 2.79 and 2.8 (and higher).
+**Asset Creation Toolset** is Many Tools for Game Asset Creation (Batch Import/Export FBXs, Origin Aligment Tool, Renaming, Low-Poly Art workflow tools, etc.) for Blender 2.79, 2.8 and 3.0 (and higher).
 
 ***Download latest version:***
 
+* ***[(2023.1) Blender 3.6 and higher](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2023_1_Bl361.zip)*** ***[ACT Unity Editor Script](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Unity_Plugin/Releases/ACT_2023_1_Unity_Plugin.unitypackage)***
 * ***[(3.3) Blender 3.4 and higher](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_3_341.zip)***
 * ***[(3.2) Blender 3.1 and higher](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_2_310.zip)***
 * ***[(3.1.5) Blender 2.90 - 3.0](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_5_290.zip)***
@@ -20,7 +21,52 @@ If you want to support me you can buy this addon:
 
 ***[Watch Features Overview (Youtube Playlist)](https://www.youtube.com/playlist?list=PLmXnsUZu0CRr_UOQp3TapOVyEqbzZ0MkL)***
 
+## New in Asset Creation Toolset 2023
+### New Export Algorithm for Unity (Fix Flip orientation, Linked Objects Support, Animation Support)
+Now ACT has two different algorithms for export FBXs to Unity: ***"Unity"*** and ***"Unity (Legacy)"***.
+![Target_Engine](/images/pngs/2023/01_Target.png)
 
+#### "Unity" Export Profile
+This profile supports Objects with Linked Data, more acurate for rigs, animations, angles and axis. ***But this export profile requires additional steps with models in Unity.*** You have to set in model import settings "Scale Factor" to 100 and check in option "Bake Axis Conversion". 
+![Import_Settings](/images/pngs/2023/02_Import_Settings.png)
+
+For automatization this steps I created ***Unity Editor Script*** and you can use this different ways:
+1. Select Models -> RMB -> ACT/Fix Models Transform.
+![Fix_Transforms](/images/pngs/2023/03_Fix_Transforms.png)
+2. Open ACT Settings Window (Window -> ACT -> Settings) and enable Models Postprocessor. It automatically set import settings for each model (or for models whose names contain the specified string or character).
+![ACT_Settings_1](/images/pngs/2023/04_ACT_Settings_1.png)
+![ACT_Settings_2](/images/pngs/2023/05_ACT_Settings_2.png)
+![ACT_Settings_3](/images/pngs/2023/06_ACT_Settings_3.png)
+The Unity editor ACT script is distributed with the ACT Blender add-on.
+
+#### "Unity" Export Profile
+But you can also use previous algorithm: This algorithm doesn't require additional actions in Unity and this Export Profile provide back-compatibility with already existing models.
+![Old_Algorithm](/images/pngs/2023/07_Old_Algorithm.png)
+
+### Added feature "Origin to Middle Point" from @mokalux
+New option for Align Origin: Move Origin to middle point between Min and Max Value. Thanks @mokalux for implementation!
+![Align_Middle](/images/pngs/2023/08_Align_Middle.png)
+
+### Added feature "Collection Name -> Obj Name" from @Oxicid
+Transfer Collection Name to Object Name. You can use dirrernt ways for that:
+1. Added Collection name before or after current object name. For example, ***"CollectionName_ObjectName"*** or ***"ObjectName_CollectionName"***
+2. Replace Object Name to "Collection Name + Type + Numbering", For example ***"CollectionName_Mesh_001"*** or ***"CollectionName_MESH_001"***. Thanks @Oxicid for implementation!
+![Col_To_Name](/images/pngs/2023/09_Col_To_Name.png)
+
+### Added Replacing of invalid characters to "\_" in export's name ([#%&{}<>\*?/'":`|])
+Invalid characters will replaced only in file name, not in object names. It very useful if you use special characters for naming.
+
+### Added Option "Combine All Meshes" for Export FBX/OBJ by parent/collection
+***"Combine All Meshes"*** option works now not only for "All->One FBX" Export.
+
+### Added Custom Export FBX Option "Add Leaf Bones". By default "Add Leaf Bones" option is disabled now.
+![Leaf_Bones](/images/pngs/2023/10_Leaf_Bones.png)
+
+### Added Custom Export FBX Option "VC color space". By default VC color space is Linear now.
+You can choose between ***"Linear"*** and ***"sRGB"*** color space for vertex color. I chose linear as default value because vertex color usually used for masking, but not as color information.
+![VC_Color_Space](/images/pngs/2023/11_VC_Color_Space.png)
+
+## Features
 
 #### Origin Align Tool
 Aligment Origin Point to:

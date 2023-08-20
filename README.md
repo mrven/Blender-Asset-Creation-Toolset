@@ -50,7 +50,7 @@ New option for Align Origin: Move Origin to middle point between Min and Max Val
 ### Added feature "Collection Name -> Obj Name" from @Oxicid
 Transfer Collection Name to Object Name. You can use dirrernt ways for that:
 1. Added Collection name before or after current object name. For example, ***"CollectionName_ObjectName"*** or ***"ObjectName_CollectionName"***
-2. Replace Object Name to "Collection Name + Type + Numbering", For example ***"CollectionName_Mesh_001"*** or ***"CollectionName_MESH_001"***. Thanks @Oxicid for implementation!\
+2. Replace Object Name to "Collection Name + Type + Numbering", For example, ***"CollectionName_Mesh_001"*** or ***"CollectionName_MESH_001"***. Thanks @Oxicid for implementation!\
 ![Col_To_Name](/images/pngs/2023/09_Col_To_Name.png)
 
 ### Added Replacing of invalid characters to "\_" in export's name ([#%&{}<>\*?/'":`|])

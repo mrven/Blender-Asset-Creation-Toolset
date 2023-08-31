@@ -147,7 +147,7 @@ def Print_Execution_Time(function_name, start_time):
 
 # Exclude unnecessary objects
 def selected_obj_with_unique_data(obj_type = 'MESH'):    
-    objs_with_instances = defaultdict(list)
+    objs_with_instances = collections.defaultdict(list)
 	
     for obj in bpy.context.selected_objects:        
         if obj.type == obj_type:

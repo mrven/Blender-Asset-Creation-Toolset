@@ -11,15 +11,14 @@ class Clear_UV(bpy.types.Operator):
 
 	def execute(self, context):
 		start_time = datetime.now()
-		selected_obj = bpy.context.selected_objects
+		selected_obj = utils.selected_obj_with_unique_data()
 		active_obj = bpy.context.active_object
 		for x in selected_obj:
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
 			bpy.context.view_layer.objects.active = x
-			if x.type == 'MESH':
-				for a in range(len(x.data.uv_layers)):
-					bpy.ops.mesh.uv_texture_remove()
+			for a in range(len(x.data.uv_layers)):
+				bpy.ops.mesh.uv_texture_remove()
 
 		# Select again objects
 		for j in selected_obj:
@@ -41,15 +40,14 @@ class Rename_UV(bpy.types.Operator):
 	def execute(self, context):
 		start_time = datetime.now()
 		act = bpy.context.scene.act
-		selected_obj = bpy.context.selected_objects
+		selected_obj = utils.selected_obj_with_unique_data()
 		uv_index = act.uv_index_rename
 		uv_name = act.uv_name_rename
 
 		for x in selected_obj:
-			if x.type == 'MESH':
-				if len(x.data.uv_layers) > 0:
-					if uv_index < len(x.data.uv_layers):
-						x.data.uv_layers[uv_index].name = uv_name
+			if len(x.data.uv_layers) > 0:
+				if uv_index < len(x.data.uv_layers):
+					x.data.uv_layers[uv_index].name = uv_name
 
 		utils.Print_Execution_Time("Rename UV", start_time)
 		return {'FINISHED'}
@@ -65,7 +63,7 @@ class Add_UV(bpy.types.Operator):
 	def execute(self, context):
 		start_time = datetime.now()
 		act = bpy.context.scene.act
-		selected_obj = bpy.context.selected_objects
+		selected_obj = utils.selected_obj_with_unique_data()
 		active_obj = bpy.context.active_object
 		uv_name = act.uv_name_add
 
@@ -73,9 +71,8 @@ class Add_UV(bpy.types.Operator):
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
 			bpy.context.view_layer.objects.active = x
-			if x.type == 'MESH':
-				bpy.ops.mesh.uv_texture_add()
-				x.data.uv_layers.active.name = uv_name
+			bpy.ops.mesh.uv_texture_add()
+			x.data.uv_layers.active.name = uv_name
 
 		# Select again objects
 		for j in selected_obj:
@@ -97,7 +94,7 @@ class Remove_UV(bpy.types.Operator):
 	def execute(self, context):
 		start_time = datetime.now()
 		act = bpy.context.scene.act
-		selected_obj = bpy.context.selected_objects
+		selected_obj = utils.selected_obj_with_unique_data()
 		active_obj = bpy.context.active_object
 		uv_index = act.uv_index_rename
 
@@ -105,11 +102,11 @@ class Remove_UV(bpy.types.Operator):
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
 			bpy.context.view_layer.objects.active = x
-			if x.type == 'MESH':
-				if len(x.data.uv_layers) > 0:
-					if uv_index < len(x.data.uv_layers):
-						x.data.uv_layers[uv_index].active = True
-						bpy.ops.mesh.uv_texture_remove()
+
+			if len(x.data.uv_layers) > 0:
+				if uv_index < len(x.data.uv_layers):
+					x.data.uv_layers[uv_index].active = True
+					bpy.ops.mesh.uv_texture_remove()
 
 		# Select again objects
 		for j in selected_obj:
@@ -131,15 +128,14 @@ class Select_UV(bpy.types.Operator):
 	def execute(self, context):
 		start_time = datetime.now()
 		act = bpy.context.scene.act
-		selected_obj = bpy.context.selected_objects
+		selected_obj = utils.selected_obj_with_unique_data()
 		uv_index = act.uv_index_rename
 
 		for x in selected_obj:
-			if x.type == 'MESH':
-				if len(x.data.uv_layers) > 0:
-					if uv_index < len(x.data.uv_layers):
-						x.data.uv_layers[uv_index].active_render = True
-						x.data.uv_layers[uv_index].active = True
+			if len(x.data.uv_layers) > 0:
+				if uv_index < len(x.data.uv_layers):
+					x.data.uv_layers[uv_index].active_render = True
+					x.data.uv_layers[uv_index].active = True
 
 		utils.Print_Execution_Time("Select UV", start_time)
 		return {'FINISHED'}

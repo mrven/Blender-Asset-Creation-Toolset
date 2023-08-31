@@ -11,6 +11,7 @@ class Clear_UV(bpy.types.Operator):
 
 	def execute(self, context):
 		start_time = datetime.now()
+		restore_selected = bpy.context.selected_objects[:]
 		selected_obj = utils.selected_obj_with_unique_data()
 		active_obj = bpy.context.active_object
 		for x in selected_obj:
@@ -21,7 +22,7 @@ class Clear_UV(bpy.types.Operator):
 				bpy.ops.mesh.uv_texture_remove()
 
 		# Select again objects
-		for j in selected_obj:
+		for j in restore_selected:
 			j.select_set(True)
 
 		bpy.context.view_layer.objects.active = active_obj
@@ -63,6 +64,7 @@ class Add_UV(bpy.types.Operator):
 	def execute(self, context):
 		start_time = datetime.now()
 		act = bpy.context.scene.act
+		restore_selected = bpy.context.selected_objects[:]
 		selected_obj = utils.selected_obj_with_unique_data()
 		active_obj = bpy.context.active_object
 		uv_name = act.uv_name_add
@@ -75,7 +77,7 @@ class Add_UV(bpy.types.Operator):
 			x.data.uv_layers.active.name = uv_name
 
 		# Select again objects
-		for j in selected_obj:
+		for j in restore_selected:
 			j.select_set(True)
 
 		bpy.context.view_layer.objects.active = active_obj
@@ -94,6 +96,7 @@ class Remove_UV(bpy.types.Operator):
 	def execute(self, context):
 		start_time = datetime.now()
 		act = bpy.context.scene.act
+		restore_selected = bpy.context.selected_objects[:]
 		selected_obj = utils.selected_obj_with_unique_data()
 		active_obj = bpy.context.active_object
 		uv_index = act.uv_index_rename
@@ -109,7 +112,7 @@ class Remove_UV(bpy.types.Operator):
 					bpy.ops.mesh.uv_texture_remove()
 
 		# Select again objects
-		for j in selected_obj:
+		for j in restore_selected:
 			j.select_set(True)
 
 		bpy.context.view_layer.objects.active = active_obj

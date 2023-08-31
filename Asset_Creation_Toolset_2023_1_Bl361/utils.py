@@ -1,7 +1,11 @@
+import re
+import collections
+
 import bpy
 import bmesh
+
 from datetime import datetime
-import re
+
 
 # Find min and max vertex coordinates
 def Find_Min_Max_Verts(obj, coord_index, min_or_max):
@@ -139,3 +143,13 @@ def Print_Execution_Time(function_name, start_time):
 		seconds = (execution_time.total_seconds())
 		milliseconds = round(seconds * 1000)
 		print(function_name + " finished in " + str(seconds) + "s (" + str(milliseconds) + "ms)")
+
+
+# Exclude unnecessary objects
+def selected_obj_with_unique_data(obj_type = 'MESH'):    
+    objs_with_instances = defaultdict(list)
+	
+    for obj in bpy.context.selected_objects:        
+        if obj.type == obj_type:
+            objs_with_instances[obj.data].append(obj)               
+    return [objs[0] for objs in objs_with_instances.values()]   

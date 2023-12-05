@@ -39,7 +39,7 @@ For automatization this steps I created ***Unity Editor Script*** and you can us
 ![ACT_Settings_3](/images/pngs/2023/06_ACT_Settings_3.png)\
 The Unity editor ACT script is distributed with the ACT Blender add-on.
 
-#### "Unity" Export Profile
+#### "Unity (Legacy)" Export Profile
 But you can also use previous algorithm: This algorithm doesn't require additional actions in Unity and this Export Profile provide back-compatibility with already existing models.\
 ![Old_Algorithm](/images/pngs/2023/07_Old_Algorithm.png)
 

@@ -205,7 +205,7 @@ class Palette_Create(bpy.types.Operator):
 			# create or not roughness texture
 			if not flag_exist_texture_roughness:
 				bpy.ops.image.new(name=roughness_texture_name, width=32, height=32)
-				bpy.data.images[roughness_texture_name].colorspace_settings.name = 'Linear'
+				bpy.data.images[roughness_texture_name].colorspace_settings.name = 'Non-Color'
 
 			# Metallic baking texture
 			# Check exist metallic texture image
@@ -217,7 +217,7 @@ class Palette_Create(bpy.types.Operator):
 			# Create or not metallic texture
 			if not flag_exist_texture_metallic:
 				bpy.ops.image.new(name=metallic_texture_name, width=32, height=32)
-				bpy.data.images[metallic_texture_name].colorspace_settings.name = 'Linear'
+				bpy.data.images[metallic_texture_name].colorspace_settings.name = 'Non-Color'
 
 			# Opacity baking texture
 			# Check exist opacity texture image
@@ -229,7 +229,7 @@ class Palette_Create(bpy.types.Operator):
 			# Create or not opacity texture
 			if not flag_exist_texture_opacity:
 				bpy.ops.image.new(name=opacity_texture_name, width=32, height=32)
-				bpy.data.images[opacity_texture_name].colorspace_settings.name = 'Linear'
+				bpy.data.images[opacity_texture_name].colorspace_settings.name = 'Non-Color'
 
 			# Emission baking texture
 			# Check exist emission texture image
@@ -528,7 +528,7 @@ class Palette_Create(bpy.types.Operator):
 			metallic_tex_node = palette_nodes.new('ShaderNodeTexImage')
 			metallic_tex_node.location = (-800, 250)
 			metallic_tex_node.image = bpy.data.images[metallic_texture_name]
-			bpy.data.images[metallic_texture_name].colorspace_settings.name = 'Linear'
+			bpy.data.images[metallic_texture_name].colorspace_settings.name = 'Non-Color'
 			palette_node_tree.links.new(
 				metallic_tex_node.outputs['Color'],
 				palette_node_tree.nodes['Principled BSDF'].inputs['Metallic'])
@@ -537,7 +537,7 @@ class Palette_Create(bpy.types.Operator):
 			roughness_tex_node = palette_nodes.new('ShaderNodeTexImage')
 			roughness_tex_node.location = (-500, 0)
 			roughness_tex_node.image = bpy.data.images[roughness_texture_name]
-			bpy.data.images[roughness_texture_name].colorspace_settings.name = 'Linear'
+			bpy.data.images[roughness_texture_name].colorspace_settings.name = 'Non-Color'
 			palette_node_tree.links.new(
 				roughness_tex_node.outputs['Color'],
 				palette_node_tree.nodes['Principled BSDF'].inputs['Roughness'])
@@ -549,13 +549,14 @@ class Palette_Create(bpy.types.Operator):
 			bpy.data.images[emission_texture_name].colorspace_settings.name = 'sRGB'
 			palette_node_tree.links.new(
 				emission_tex_node.outputs['Color'],
-				palette_node_tree.nodes['Principled BSDF'].inputs['Emission'])
+				palette_node_tree.nodes['Principled BSDF'].inputs['Emission Color'])
+			palette_node_tree.nodes['Principled BSDF'].inputs['Emission Strength'].default_value = 1
 
 			# Opacity
 			opacity_tex_node = palette_nodes.new('ShaderNodeTexImage')
 			opacity_tex_node.location = (-500, -500)
 			opacity_tex_node.image = bpy.data.images[opacity_texture_name]
-			bpy.data.images[opacity_texture_name].colorspace_settings.name = 'Linear'
+			bpy.data.images[opacity_texture_name].colorspace_settings.name = 'Non-Color'
 			palette_node_tree.links.new(
 				opacity_tex_node.outputs['Color'],
 				palette_node_tree.nodes['Principled BSDF'].inputs['Alpha'])

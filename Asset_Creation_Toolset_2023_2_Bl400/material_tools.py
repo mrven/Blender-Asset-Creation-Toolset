@@ -1044,8 +1044,16 @@ def register():
 
 
 def unregister():
-	bpy.types.CYCLES_PT_context_material.remove(Material_Menu_Panel)
-	bpy.types.EEVEE_MATERIAL_PT_context_material.remove(Material_Menu_Panel)
+	try:
+		bpy.types.CYCLES_PT_context_material.remove(Material_Menu_Panel)
+	except AttributeError as err:
+		print(err)
+
+	try:
+		bpy.types.EEVEE_MATERIAL_PT_context_material.remove(Material_Menu_Panel)
+	except AttributeError as err:
+		print(err)
 	
 	for cls in reversed(classes):
 		bpy.utils.unregister_class(cls)
+		

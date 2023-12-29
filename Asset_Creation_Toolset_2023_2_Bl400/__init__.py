@@ -7,8 +7,8 @@ bl_info = {
 	"author": "Ivan 'mrven' Vostrikov,  Felipe Torrents, mokalux, Oxicid",
 	"wiki_url": "https://gum.co/hPXIh",
 	"tracker_url": "https://github.com/mrven/Blender-Asset-Creation-Toolset/issues",
-	"version": (2023, 1),
-	"blender": (3, 6, 1),
+	"version": (2023, 2),
+	"blender": (4, 0, 0),
 	"location": "3D View > Toolbox > ACT",
 	"category": "Object",
 }

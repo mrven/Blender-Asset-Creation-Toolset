@@ -201,8 +201,9 @@ class Multi_FBX_Export(bpy.types.Operator):
 							x.select_set(True)
 
 							# X-rotation fix
-							if act.apply_rot_rotated or (
-									not act.apply_rot_rotated and not child_rotated) or not act.fbx_export_mode == 'PARENT':
+							if  act.export_format == 'FBX' and (act.apply_rot_rotated
+																or (not act.apply_rot_rotated and not child_rotated)
+																or not act.fbx_export_mode == 'PARENT'):
 								bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
 								bpy.ops.transform.rotate(
 									value=(math.pi * -90 / 180), orient_axis='X',

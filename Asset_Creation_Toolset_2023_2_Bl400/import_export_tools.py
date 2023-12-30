@@ -90,11 +90,11 @@ class Multi_FBX_Export(bpy.types.Operator):
 			bpy.ops.object.duplicate()
 			exp_objects = bpy.context.selected_objects
 
-			if act.export_target_engine != 'UNITY2023':
-				bpy.ops.object.make_single_user(type='SELECTED_OBJECTS', object=True, obdata=True)
-			else:
+			if act.export_target_engine == 'UNITY2023' and act.export_format == 'FBX':
 				if act.export_combine_meshes:
 					bpy.ops.object.make_single_user(type='SELECTED_OBJECTS', object=True, obdata=True)
+			else:
+				bpy.ops.object.make_single_user(type='SELECTED_OBJECTS', object=True, obdata=True)
 
 			# Convert all non-mesh objects to mesh (except empties)
 			for obj in exp_objects:
@@ -109,17 +109,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 							obj.modifiers.remove(modifier)
 
 				# Apply modifiers (except Armature)
-				if act.export_target_engine != 'UNITY2023':
-					if obj.type == 'MESH':
-						for modifier in obj.modifiers:
-							if modifier.type != 'ARMATURE':
-								try:
-									bpy.ops.object.modifier_apply(modifier=modifier.name)
-								except:
-									bpy.ops.object.modifier_remove(modifier=modifier.name)
-					elif obj.type != 'EMPTY':
-						bpy.ops.object.convert(target='MESH')
-				else:
+				if act.export_target_engine == 'UNITY2023' and act.export_format == 'FBX':
 					# Pocessing only objects without linked data or for all of enabled option combine meshes
 					if ((obj.type == 'MESH' and obj.data.users < 2) or (act.fbx_export_mode != 'INDIVIDUAL' and act.export_combine_meshes)):
 						for modifier in obj.modifiers:
@@ -130,7 +120,16 @@ class Multi_FBX_Export(bpy.types.Operator):
 									bpy.ops.object.modifier_remove(modifier=modifier.name)
 					elif obj.type != 'EMPTY':
 						bpy.ops.object.convert(target='MESH')
-
+				else:
+					if obj.type == 'MESH':
+						for modifier in obj.modifiers:
+							if modifier.type != 'ARMATURE':
+								try:
+									bpy.ops.object.modifier_apply(modifier=modifier.name)
+								except:
+									bpy.ops.object.modifier_remove(modifier=modifier.name)
+					elif obj.type != 'EMPTY':
+						bpy.ops.object.convert(target='MESH')
 			# Delete _ex.001 suffix from object names.
 			# Mesh name and armature name is object name
 			for obj in exp_objects:
@@ -164,7 +163,18 @@ class Multi_FBX_Export(bpy.types.Operator):
 			for obj in exp_objects:
 				obj.select_set(True)
 
-			if act.export_target_engine != 'UNITY2023':
+			# Apply Scale and Rotation for UNITY2023 Export
+			# Pocessing only objects without linked data
+			if act.export_target_engine == 'UNITY2023' and act.export_format == 'FBX':
+				current_active = bpy.context.view_layer.objects.active
+				bpy.ops.object.select_all(action='DESELECT')
+				for x in exp_objects:
+					if (x.type == 'MESH' and x.data.users < 2) or x.type != 'MESH':
+						bpy.context.view_layer.objects.active = x
+						x.select_set(True)
+				bpy.ops.object.transform_apply(location=False, rotation=act.apply_rot, scale=act.apply_scale)
+				bpy.context.view_layer.objects.active = current_active
+			else:
 				# Apply scale
 				bpy.ops.object.transform_apply(location=False, rotation=False, scale=act.apply_scale)
 				# Rotation Fix. Rotate X -90, Apply, Rotate X 90
@@ -212,18 +222,6 @@ class Multi_FBX_Export(bpy.types.Operator):
 									orient_matrix_type='GLOBAL', mirror=False,
 									use_proportional_edit=False, proportional_edit_falloff='SMOOTH',
 									proportional_size=1)
-
-			# Apply Scale and Rotation for UNITY2023 Export
-			# Pocessing only objects without linked data
-			else:
-				current_active = bpy.context.view_layer.objects.active
-				bpy.ops.object.select_all(action='DESELECT')
-				for x in exp_objects:
-					if (x.type == 'MESH' and x.data.users < 2) or x.type != 'MESH':
-						bpy.context.view_layer.objects.active = x
-						x.select_set(True)
-				bpy.ops.object.transform_apply(location=False, rotation=act.apply_rot, scale=act.apply_scale)
-				bpy.context.view_layer.objects.active = current_active
 
 			bpy.ops.object.select_all(action='DESELECT')
 
@@ -645,20 +643,22 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 					row.label(text="Target Engine:")
 					row.prop(act, "export_target_engine", expand=False)
 
+				if not (act.export_format == 'OBJ' and (act.fbx_export_mode == 'ALL' or act.fbx_export_mode == 'COLLECTION')):
 					# Apply Transforms
 					box = layout.box()
 					row = box.row()
 					row.label(text="Apply:")
 
 					row = box.row(align=True)
-					if act.apply_rot:
-						row.prop(act, "apply_rot", text="Rotation", icon="CHECKBOX_HLT")
-					else:
-						row.prop(act, "apply_rot", text="Rotation", icon="CHECKBOX_DEHLT")
-					if act.apply_scale:
-						row.prop(act, "apply_scale", text="Scale", icon="CHECKBOX_HLT")
-					else:
-						row.prop(act, "apply_scale", text="Scale", icon="CHECKBOX_DEHLT")
+					if act.export_format == 'FBX':
+						if act.apply_rot:
+							row.prop(act, "apply_rot", text="Rotation", icon="CHECKBOX_HLT")
+						else:
+							row.prop(act, "apply_rot", text="Rotation", icon="CHECKBOX_DEHLT")
+						if act.apply_scale:
+							row.prop(act, "apply_scale", text="Scale", icon="CHECKBOX_HLT")
+						else:
+							row.prop(act, "apply_scale", text="Scale", icon="CHECKBOX_DEHLT")
 
 					if act.fbx_export_mode == 'INDIVIDUAL' or act.fbx_export_mode == 'PARENT':
 						if act.apply_loc:
@@ -666,16 +666,17 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 						else:
 							row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_DEHLT")
 
-					if act.apply_rot and act.fbx_export_mode == 'PARENT' and act.export_target_engine != 'UNITY2023':
-						row = box.row()
-						row.prop(act, "apply_rot_rotated")
+					if act.export_format == 'FBX':
+						if act.apply_rot and act.fbx_export_mode == 'PARENT' and act.export_target_engine != 'UNITY2023':
+							row = box.row()
+							row.prop(act, "apply_rot_rotated")
 
+				row = layout.row()
+				row.prop(act, "delete_mats_before_export", text="Delete All Materials")
+
+				if act.fbx_export_mode != 'INDIVIDUAL':
 					row = layout.row()
-					row.prop(act, "delete_mats_before_export", text="Delete All Materials")
-
-					if act.fbx_export_mode != 'INDIVIDUAL':
-						row = layout.row()
-						row.prop(act, "export_combine_meshes", text="Combine All Meshes")
+					row.prop(act, "export_combine_meshes", text="Combine All Meshes")
 
 				row = layout.row()
 				row.prop(act, "triangulate_before_export", text="Triangulate Meshes")

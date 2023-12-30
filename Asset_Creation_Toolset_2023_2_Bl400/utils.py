@@ -101,14 +101,12 @@ def Export_Model(path, name):
 					colors_type=act.export_vc_color_space)
 
 		if act.export_format == 'OBJ':
-			bpy.ops.export_scene.obj(
-				filepath=str(path + name + '.obj'), use_selection=True, use_mesh_modifiers=True,
-				use_edges=True, use_smooth_groups=act.obj_export_smooth_groups,
-				use_normals=True, use_uvs=True, use_materials=True,
-				use_triangles=act.triangulate_before_export, group_by_object=True,
-				group_by_material=act.obj_separate_by_materials,
-				keep_vertex_order=True, global_scale=1, path_mode='AUTO',
-				axis_forward='-Z', axis_up='Y')
+			bpy.ops.wm.obj_export(
+				filepath=str(path + name + '.obj'), export_selected_objects=True, apply_modifiers=True,
+				export_smooth_groups=act.obj_export_smooth_groups, export_normals=True, export_uv=True,
+				export_materials=True, export_triangulated_mesh=act.triangulate_before_export,
+				export_object_groups=True, export_material_groups=act.obj_separate_by_materials,
+				global_scale=1, path_mode='AUTO', forward_axis='NEGATIVE_Z', up_axis='Y')
 	else:
 		if act.export_format == 'FBX':
 			if act.export_target_engine == 'UNITY':
@@ -125,12 +123,12 @@ def Export_Model(path, name):
 					filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options='FBX_SCALE_NONE',
 					global_scale=0.01, colors_type='LINEAR', axis_forward='Y', axis_up='Z', add_leaf_bones=False)
 		if act.export_format == 'OBJ':
-			bpy.ops.export_scene.obj(
-				filepath=str(path + name + '.obj'), use_selection=True, use_mesh_modifiers=True,
-				use_edges=True, use_smooth_groups=True, use_normals=True, use_uvs=True,
-				use_materials=True, use_triangles=act.triangulate_before_export,
-				group_by_object=True, group_by_material=True, keep_vertex_order=True,
-				global_scale=1, path_mode='AUTO', axis_forward='-Z', axis_up='Y')
+			bpy.ops.wm.obj_export(
+				filepath=str(path + name + '.obj'), export_selected_objects=True, apply_modifiers=True,
+				export_smooth_groups=True, export_normals=True, export_uv=True,
+				export_materials=True, export_triangulated_mesh=act.triangulate_before_export,
+				export_object_groups=True, export_material_groups=True,
+				global_scale=1, path_mode='AUTO', forward_axis='NEGATIVE_Z', up_axis='Y')
 
 
 # Execution Time

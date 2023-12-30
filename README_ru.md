@@ -4,11 +4,14 @@
 
 **[English README](/README.md)**
 
-**Asset Creation Toolset** аддон для Blender, который содержит в себе набор инструментов, помогающих при создании низкополигональных ассетов для Blender 2.79, 2.8 и 3.0 (и выше).
+**Asset Creation Toolset** аддон для Blender, который содержит в себе набор инструментов, помогающих при создании низкополигональных ассетов для Blender 2.79, 2.8-3.6, 4.0 (и выше).
 
 ***Скачать последнюю версию:***
 
-* ***[(2023.1) Blender 3.6 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2023_1_Bl361.zip)*** & ***[ACT Unity Editor Скрипт](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Unity_Plugin/Releases/ACT_2023_1_Unity_Plugin.unitypackage)***
+* ***[(2023.2) Blender 4.0 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2023_2_Bl400.zip)***
+* ***[(2023.1) Blender 3.6 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2023_1_Bl361.zip)***
+* ***[ACT Unity Editor Скрипт (для 2023.1 и выше)](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Unity_Plugin/Releases/ACT_2023_1_Unity_Plugin.unitypackage)***
+* -----------------------------------------------------
 * ***[(3.3) Blender 3.4 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_3_341.zip)***
 * ***[(3.2) Blender 3.1 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_2_310.zip)***
 * ***[(3.1.5) Blender 2.90 - 3.0](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_5_290.zip)***

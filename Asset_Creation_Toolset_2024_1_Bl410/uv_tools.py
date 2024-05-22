@@ -1,6 +1,7 @@
 import bpy
 from . import utils
 from datetime import datetime
+import math
 
 # UV remover
 class Clear_UV(bpy.types.Operator):
@@ -75,6 +76,17 @@ class Add_UV(bpy.types.Operator):
 			bpy.context.view_layer.objects.active = x
 			bpy.ops.mesh.uv_texture_add()
 			x.data.uv_layers.active.name = uv_name
+			if act.uv_packing_mode == 'SMART':
+				bpy.ops.object.mode_set(mode='EDIT')
+				angle = math.pi * act.uv_packing_smart_angle / 180
+				bpy.ops.uv.smart_project(angle_limit=angle, margin_method='SCALED', rotate_method='AXIS_ALIGNED_Y',
+										 island_margin=act.uv_packing_smart_margin, area_weight=0.0, correct_aspect=True, scale_to_bounds=False)
+				bpy.ops.object.mode_set(mode='OBJECT')
+			if act.uv_packing_mode == 'LIGHTMAP':
+				bpy.ops.object.mode_set(mode='EDIT')
+				bpy.ops.uv.lightmap_pack(PREF_CONTEXT='ALL_FACES', PREF_PACK_IN_ONE=False, PREF_NEW_UVLAYER=False,
+										 PREF_BOX_DIV=act.uv_packing_lightmap_quality, PREF_MARGIN_DIV=act.uv_packing_lightmap_margin)
+				bpy.ops.object.mode_set(mode='OBJECT')
 
 		# Select again objects
 		for j in restore_selected:
@@ -296,9 +308,23 @@ class VIEW3D_PT_UV_Tools_Panel(bpy.types.Panel):
 				row = box.row()
 				row.operator("object.uv_select", text="Set Active UV")
 
-				row = layout.row(align=True)
+				box = layout.box()
+				row = box.row(align=True)
 				row.prop(act, "uv_name_add")
 				row.operator("object.uv_add", text="Add UV")
+				row = box.row(align=True)
+				row.label(text="Packing:")
+				row.prop(act, "uv_packing_mode", expand=False)
+				if act.uv_packing_mode == 'SMART':
+					row = box.row()
+					row.prop(act, "uv_packing_smart_angle", text="Angle:")
+					row = box.row()
+					row.prop(act, "uv_packing_smart_margin", text="Margin:")
+				if act.uv_packing_mode == 'LIGHTMAP':
+					row = box.row()
+					row.prop(act, "uv_packing_lightmap_quality", text="Quality:")
+					row = box.row()
+					row.prop(act, "uv_packing_lightmap_margin", text="Margin:")
 
 				row = layout.row()
 				row.operator("object.uv_clear", text="Clear UV Maps")

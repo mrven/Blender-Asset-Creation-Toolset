@@ -146,6 +146,11 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		description="Combine Meshes before Export",
 		default=False)
 
+	export_only_deform_bones: BoolProperty(
+		name="Only Deform Bones",
+		description="Only Deform Bones",
+		default=False)
+
 	export_add_leaf_bones: BoolProperty(
 		name="Add Leaf Bones",
 		description="Add Leaf Bones",

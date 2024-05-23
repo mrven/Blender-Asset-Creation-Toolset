@@ -47,7 +47,8 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 
 	export_format_menu_items = (
 		('FBX', 'FBX', ''),
-		('OBJ', 'OBJ', ''))
+		('OBJ', 'OBJ', ''),
+		('GLTF', 'GLTF', ''))
 	export_format: EnumProperty(name="", items=export_format_menu_items)
 
 	obj_separate_by_materials: BoolProperty(
@@ -59,6 +60,33 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		name="Smooth Groups",
 		description="Export Smooth Groups",
 		default=True)
+
+	gltf_export_image_format_items = (
+		('AUTO', 'Auto', ''),
+		('JPEG', 'JPEG', ''),
+		('WEBP', 'WebP', ''),
+		('NONE', 'None', ''))
+	gltf_export_image_format: EnumProperty(name="", items=gltf_export_image_format_items)
+
+	gltf_export_custom_properties: BoolProperty(
+		name="Custom Properties",
+		description="Export Custom Properties",
+		default=True)
+
+	gltf_export_deform_bones_only: BoolProperty(
+		name="Deform Bones Only",
+		description="Deform Bones Only",
+		default=False)
+
+	gltf_export_tangents: BoolProperty(
+		name="Tangents",
+		description="Export Tangents",
+		default=False)
+
+	gltf_export_attributes: BoolProperty(
+		name="Attributes",
+		description="Export Attributes",
+		default=False)
 
 	apply_rot: BoolProperty(
 		name="Apply Rotation",

@@ -6,11 +6,11 @@ from bpy_extras.io_utils import ImportHelper
 from . import utils
 from datetime import datetime
 
-# FBX and OBJ export
+# FBX/OBJ/GLTF export
 class Multi_FBX_Export(bpy.types.Operator):
-	"""Export FBXs to Unity"""
+	"""Export FBXs/OBJs/GLTFs to Unity/UE/Godot"""
 	bl_idname = "object.multi_fbx_export"
-	bl_label = "Export FBXs"
+	bl_label = "Export FBXs/OBJs/GLTFs"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -40,6 +40,8 @@ class Multi_FBX_Export(bpy.types.Operator):
 					path = bpy.path.abspath('//FBXs/')
 				if act.export_format == 'OBJ':
 					path = bpy.path.abspath('//OBJs/')
+				if act.export_format == 'GLTF':
+					path = bpy.path.abspath('//GLTFs/')
 
 			if act.custom_export_path:
 				if len(act.export_path) == 0:
@@ -110,7 +112,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 				# Apply modifiers (except Armature)
 				if act.export_target_engine == 'UNITY2023' and act.export_format == 'FBX':
-					# Pocessing only objects without linked data or for all of enabled option combine meshes
+					# Processing only objects without linked data or for all of enabled option combine meshes
 					if ((obj.type == 'MESH' and obj.data.users < 2) or (act.fbx_export_mode != 'INDIVIDUAL' and act.export_combine_meshes)):
 						for modifier in obj.modifiers:
 							if modifier.type != 'ARMATURE':
@@ -163,9 +165,9 @@ class Multi_FBX_Export(bpy.types.Operator):
 			for obj in exp_objects:
 				obj.select_set(True)
 
-			# Apply Scale and Rotation for UNITY2023 Export
-			# Pocessing only objects without linked data
-			if act.export_target_engine == 'UNITY2023' and act.export_format == 'FBX':
+			# Apply Scale and Rotation for UNITY2023 Export or GLTF
+			# Processing only objects without linked data
+			if (act.export_target_engine == 'UNITY2023' and act.export_format == 'FBX') or act.export_format == 'GLTF':
 				current_active = bpy.context.view_layer.objects.active
 				bpy.ops.object.select_all(action='DESELECT')
 				for x in exp_objects:
@@ -270,7 +272,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 				if name != prefilter_name:
 					incorrect_names.append(prefilter_name)
 
-				# Export FBX/OBJ
+				# Export FBX/OBJ/GLTF
 				utils.Export_Model(path, name)
 
 			# Individual Export
@@ -302,7 +304,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 					if name != prefilter_name:
 						incorrect_names.append(prefilter_name)
 
-					# Export FBX/OBJ
+					# Export FBX/OBJ/GLTF
 					utils.Export_Model(path, name)
 
 					# Restore object location
@@ -414,7 +416,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 						for obj in bpy.context.selected_objects:
 							combined_meshes.append(obj)
 
-					# Export FBX/OBJ
+					# Export FBX/OBJ/GLTF
 					utils.Export_Model(path, name)
 					bpy.ops.object.select_all(action='DESELECT')
 					current_parent.select_set(True)
@@ -482,7 +484,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 						for obj in bpy.context.selected_objects:
 							combined_meshes.append(obj)
 
-					# Export FBX/OBJ
+					# Export FBX/OBJ/GLTF
 					utils.Export_Model(path, name)
 
 				bpy.ops.object.select_all(action='DESELECT')
@@ -651,7 +653,7 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 					row.label(text="Apply:")
 
 					row = box.row(align=True)
-					if act.export_format == 'FBX':
+					if act.export_format == 'FBX' or act.export_format == 'GLTF':
 						if act.apply_rot:
 							row.prop(act, "apply_rot", text="Rotation", icon="CHECKBOX_HLT")
 						else:
@@ -729,6 +731,27 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 						row.label(text=" Smooth Groups")
 						row.prop(act, "obj_export_smooth_groups", text="")
 
+					if act.export_format == 'GLTF':
+						row = box.row(align=True)
+						row.label(text=" Pack Images")
+						row.prop(act, "gltf_export_image_format", text="")
+
+						row = box.row(align=True)
+						row.label(text=" Deform Bones Only")
+						row.prop(act, "gltf_export_deform_bones_only", text="")
+
+						row = box.row(align=True)
+						row.label(text=" Custom Properties")
+						row.prop(act, "gltf_export_custom_properties", text="")
+
+						row = box.row(align=True)
+						row.label(text=" Tangents")
+						row.prop(act, "gltf_export_tangents", text="")
+
+						row = box.row(align=True)
+						row.label(text=" Attributes")
+						row.prop(act, "gltf_export_attributes", text="")
+
 				box = layout.box()
 				row = box.row()
 				row.prop(act, "custom_export_path", text="Custom Export Path")
@@ -745,6 +768,8 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 						row.operator("object.multi_fbx_export", text="Export FBX to Unreal")
 				if act.export_format == 'OBJ':
 					row.operator("object.multi_fbx_export", text="Export OBJ")
+				if act.export_format == 'GLTF':
+					row.operator("object.multi_fbx_export", text="Export GLTF")
 
 				if len(act.export_dir) > 0:
 					row = layout.row()

@@ -127,6 +127,7 @@ def Export_Model(path, name):
 				bpy.ops.export_scene.fbx(
 					filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options='FBX_SCALE_NONE',
 					global_scale=0.01, colors_type='LINEAR', axis_forward='Y', axis_up='Z', add_leaf_bones=False)
+
 		if act.export_format == 'OBJ':
 			bpy.ops.wm.obj_export(
 				filepath=str(path + name + '.obj'), export_selected_objects=True, apply_modifiers=True,

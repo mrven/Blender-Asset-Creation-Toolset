@@ -569,47 +569,6 @@ class Open_Export_Dir(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-# Batch Import FBX and OBJ
-class Import_FBX_OBJ(bpy.types.Operator, ImportHelper):
-	"""Batch Import FBX and OBJ"""
-	bl_idname = "object.import_fbxobj"
-	bl_label = "Import FBXs/OBJs"
-	bl_options = {'REGISTER', 'UNDO'}
-	files: bpy.props.CollectionProperty(name="File Path", type=bpy.types.OperatorFileListElement)
-	directory: bpy.props.StringProperty(subtype="DIR_PATH")
-
-	def execute(self, context):
-		start_time = datetime.now()
-		act = bpy.context.scene.act
-
-		# Import selected files from inspector
-		directory = self.directory
-		for f in self.files:
-			# Get path and extension
-			filepath = os.path.join(directory, f.name)
-			extension = (os.path.splitext(f.name)[1])[1:]
-			# export fbx
-			if extension == "fbx" or extension == "FBX":
-				if act.import_custom_options:
-					bpy.ops.import_scene.fbx(
-						filepath=filepath, use_custom_normals=act.import_normals,
-						use_anim=act.import_animation,
-						automatic_bone_orientation=act.import_automatic_bone_orientation,
-						ignore_leaf_bones=act.import_ignore_leaf_bones)
-				else:
-					bpy.ops.import_scene.fbx(filepath=filepath)
-
-			# Or export OBJ
-			if extension == "obj" or extension == "OBJ":
-				if act.import_custom_options:
-					bpy.ops.import_scene.obj(filepath=filepath, use_smooth_groups=act.import_normals)
-				else:
-					bpy.ops.import_scene.obj(filepath=filepath)
-
-		utils.Print_Execution_Time("Import FBX/OBJ", start_time)
-		return {'FINISHED'}
-
-
 # Import Export UI Panel
 class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 	bl_label = "Import/Export Tools"
@@ -621,8 +580,7 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 	def poll(self, context):
 		# If this panel not hidden in preferences
 		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is None or (
-					context.object is not None and context.mode == 'OBJECT')) and preferences.export_import_enable
+		return (context.object is not None and context.mode == 'OBJECT') and preferences.export_import_enable
 
 	def draw(self, context):
 		act = bpy.context.scene.act
@@ -722,6 +680,10 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 						row.label(text=" VC color space")
 						row.prop(act, "export_vc_color_space", expand=False)
 
+						row = box.row(align=True)
+						row.label(text=" Custom Props")
+						row.prop(act, "export_custom_props", text = "")
+
 					if act.export_format == 'OBJ':
 						row = box.row(align=True)
 						row.label(text=" Separate By Mats")
@@ -775,30 +737,6 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 					row = layout.row()
 					row.operator("object.open_export_dir", text="Open Export Directory")
 
-		if context.mode == 'OBJECT':
-			box = layout.box()
-			row = box.row()
-			row.operator("object.import_fbxobj", text="Import FBXs/OBJs")
-
-			row = box.row()
-			row.prop(act, "import_custom_options", text="Custom Import Options")
-			if act.import_custom_options:
-				row = box.row(align=True)
-				row.label(text=" Import Normals")
-				row.prop(act, "import_normals", text="")
-
-				row = box.row(align=True)
-				row.label(text=" Import Animation")
-				row.prop(act, "import_animation", text="")
-
-				row = box.row(align=True)
-				row.label(text=" Auto Bone Orientation")
-				row.prop(act, "import_automatic_bone_orientation", text="")
-
-				row = box.row(align=True)
-				row.label(text=" Ignore Leaf Bones")
-				row.prop(act, "import_ignore_leaf_bones", text="")
-
 		else:
 			row = layout.row()
 			row.label(text=" ")
@@ -806,8 +744,7 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 
 classes = (
 	Multi_FBX_Export,
-	Open_Export_Dir,
-	Import_FBX_OBJ,
+	Open_Export_Dir
 )
 
 

@@ -16,10 +16,12 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		name="",
 		description="Save Directory",
 		default="")
+
 	custom_save_path: BoolProperty(
 		name="Custom Save Path",
 		description="Custom Save Path",
 		default=False)
+
 	pbr_workflow: BoolProperty(
 		name="PBR Workflow",
 		description="PBR Workflow",
@@ -162,6 +164,11 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		('EDGE', 'Edge', ''))
 	export_smoothing: EnumProperty(name="", items=export_smoothing_items)
 
+	export_custom_props: BoolProperty(
+		name="Custom Properties",
+		description="Custom Props",
+		default=True)
+
 	# Export FBX Target Engine
 	export_target_engine_items = (
 		('UNITY2023', 'Unity', ''),
@@ -189,32 +196,6 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		('LINEAR', 'Linear', ''),
 		('SRGB', 'sRGB', ''))
 	export_vc_color_space: EnumProperty(name="", items=export_vc_color_space_items)
-
-	# Custom Import Options
-	import_custom_options: BoolProperty(
-		name="Custom Import Options",
-		description="Custom FBX/OBJ Import Options",
-		default=False)
-
-	import_normals: BoolProperty(
-		name="Import Normals/Smooth Groups",
-		description="Import Normals/Smooth Groups",
-		default=True)
-
-	import_animation: BoolProperty(
-		name="Import Animation",
-		description="Import Animation",
-		default=True)
-
-	import_automatic_bone_orientation: BoolProperty(
-		name="Automatic Bone Orientation",
-		description="Automatic Bone Orientation",
-		default=True)
-
-	import_ignore_leaf_bones: BoolProperty(
-		name="Ignore Leaf Bones",
-		description="Ignore Leaf Bones",
-		default=False)
 
 	# Rename props
 	delete_nums: BoolProperty(

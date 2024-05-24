@@ -4,10 +4,11 @@
 
 **[Russian README](/README_ru.md)**
 
-**Asset Creation Toolset** is Many Tools for Game Asset Creation (Batch Import/Export FBXs, Origin Aligment Tool, Renaming, Low-Poly Art workflow tools, etc.) for Blender 2.79, 2.8-3.6, 4.0 (and higher).
+**Asset Creation Toolset** is Many Tools for Game Asset Creation (Batch Export FBXs/GLTF for Unity/UE/Godot, Origin Aligment Tool, Renaming, Low-Poly Art workflow tools, etc.) for Blender 2.79, 2.8-3.6, 4.0 (and higher).
 
 ***Download latest version:***
 
+* ***[(2024.1) Blender 4.1 and higher](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2024_1_Bl410.zip)***
 * ***[(2023.2) Blender 4.0 and higher](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2023_2_Bl400.zip)***
 * ***[(2023.1) Blender 3.6 and higher](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2023_1_Bl361.zip)***
 * ***[ACT Unity Editor Script (for 2023.1 and higher)](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Unity_Plugin/Releases/ACT_2023_1_Unity_Plugin.unitypackage)***
@@ -23,6 +24,15 @@ If you want to support me you can buy this addon:
 
 
 ***[Watch Features Overview (Youtube Playlist)](https://www.youtube.com/playlist?list=PLmXnsUZu0CRr_UOQp3TapOVyEqbzZ0MkL)***
+
+## New in Asset Creation Toolset 2024
+### New GLTF Export for GODOT
+![GLTF_Export](/images/pngs/2024/01_GLTF_Export.png)
+
+### "Add UV" has option for generating Smart UV or Lightmap UV
+![Add_UV_Packing](/images/pngs/2024/02_Add_UV_Packing.png)
+
+### Export FBX now supports Custom Properties
 
 ## New in Asset Creation Toolset 2023
 ### New Export Algorithm for Unity (Fix Flip orientation, Linked Objects Support, Animation Support)

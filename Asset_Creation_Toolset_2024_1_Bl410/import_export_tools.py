@@ -571,7 +571,7 @@ class Open_Export_Dir(bpy.types.Operator):
 
 # Import Export UI Panel
 class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
-	bl_label = "Import/Export Tools"
+	bl_label = "Export Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
 	bl_category = "ACT"

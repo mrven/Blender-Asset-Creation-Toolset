@@ -8,6 +8,7 @@
 
 ***Скачать последнюю версию:***
 
+* ***[(2024.1) Blender 4.1 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2024_1_Bl410.zip)***
 * ***[(2023.2) Blender 4.0 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2023_2_Bl400.zip)***
 * ***[(2023.1) Blender 3.6 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2023_1_Bl361.zip)***
 * ***[ACT Unity Editor Скрипт (для 2023.1 и выше)](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Unity_Plugin/Releases/ACT_2023_1_Unity_Plugin.unitypackage)***
@@ -22,6 +23,15 @@
 * ***[Gumroad (Свободная цена)](https://gumroad.com/l/hPXIh)***
 
 ***[Смотреть обзор всех функций (плейлист Youtube)](https://www.youtube.com/playlist?list=PLmXnsUZu0CRr_UOQp3TapOVyEqbzZ0MkL)***
+
+## Новое в версии Asset Creation Toolset 2024
+### Новый экспортёр GLTF для GODOT
+![GLTF_Export](/images/pngs/2024/01_GLTF_Export.png)
+
+### "Add UV" может генерировать Smart UV или Lightmap UV
+![Add_UV_Packing](/images/pngs/2024/02_Add_UV_Packing.png)
+
+### Export FBX теперь поддерживает экспорт Custom Properties
 
 ## Новое в версии Asset Creation Toolset 2023
 ### Новый алгоритм экспорта в Unity (Исправленная ориентация моделей, поддержка Linked Objects, Поддержка анимации)

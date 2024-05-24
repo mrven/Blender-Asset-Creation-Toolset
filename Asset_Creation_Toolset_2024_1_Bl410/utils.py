@@ -112,6 +112,12 @@ def Export_Model(path, name):
 				export_materials=True, export_triangulated_mesh=act.triangulate_before_export,
 				export_object_groups=True, export_material_groups=act.obj_separate_by_materials,
 				global_scale=1, path_mode='AUTO', forward_axis='NEGATIVE_Z', up_axis='Y')
+
+		if act.export_format == 'GLTF':
+			bpy.ops.export_scene.gltf(
+				filepath=str(path + name + '.glb'), check_existing=False, export_image_format=act.gltf_export_image_format,
+				export_tangents=act.gltf_export_tangents, export_attributes=act.gltf_export_attributes,
+				use_selection=True, export_extras=act.gltf_export_custom_properties, export_def_bones=act.gltf_export_deform_bones_only)
 	else:
 		if act.export_format == 'FBX':
 			if act.export_target_engine == 'UNITY':
@@ -135,6 +141,12 @@ def Export_Model(path, name):
 				export_materials=True, export_triangulated_mesh=act.triangulate_before_export,
 				export_object_groups=True, export_material_groups=True,
 				global_scale=1, path_mode='AUTO', forward_axis='NEGATIVE_Z', up_axis='Y')
+
+		if act.export_format == 'GLTF':
+			bpy.ops.export_scene.gltf(
+				filepath=str(path + name + '.glb'), check_existing=False, export_image_format='AUTO',
+				export_tangents=False, export_attributes=False,
+				use_selection=True, export_extras=True, export_def_bones=False)
 
 
 # Execution Time

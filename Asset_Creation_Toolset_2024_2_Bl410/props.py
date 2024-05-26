@@ -110,6 +110,11 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		description="Apply Location for Exported Models",
 		default=True)
 
+	fbx_flip_x: BoolProperty(
+		name="Flip X-Axis (2023 Back Compatibility)",
+		description="Flip X-Axis (2023 Back Compatibility)",
+		default=False)
+
 	set_custom_fbx_name: BoolProperty(
 		name="Set Custom Name for FBX",
 		description="Set Custom Name for FBX",

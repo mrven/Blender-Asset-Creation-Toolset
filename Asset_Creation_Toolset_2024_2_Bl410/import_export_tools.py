@@ -632,6 +632,10 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 							row = box.row()
 							row.prop(act, "apply_rot_rotated")
 
+					if act.export_format == 'FBX' and act.export_target_engine == 'UNITY2023':
+						row = box.row()
+						row.prop(act, "fbx_flip_x", text="Flip X Axis")
+
 				row = layout.row()
 				row.prop(act, "delete_mats_before_export", text="Delete All Materials")
 

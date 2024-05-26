@@ -75,6 +75,14 @@ def Prefilter_Export_Name(name):
 # Export Model
 def Export_Model(path, name):
 	act = bpy.context.scene.act
+
+	if act.fbx_flip_x:
+		forward_axis = 'Y'
+		space_transform = True
+	else:
+		forward_axis = '-Y'
+		space_transform = False
+
 	if act.export_custom_options:
 		if act.export_format == 'FBX':
 			if act.export_target_engine == 'UNITY':
@@ -101,9 +109,10 @@ def Export_Model(path, name):
 					apply_scale_options='FBX_SCALE_NONE',
 					use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing,
 					use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space,
-					global_scale=0.01, axis_forward='Y', axis_up='Z', add_leaf_bones=act.export_add_leaf_bones,
+					global_scale=0.01, axis_forward=forward_axis, axis_up='Z', add_leaf_bones=act.export_add_leaf_bones,
 					use_armature_deform_only=act.export_only_deform_bones,
-					colors_type=act.export_vc_color_space, use_custom_props=act.export_custom_props)
+					colors_type=act.export_vc_color_space, use_custom_props=act.export_custom_props,
+					use_space_transform=space_transform)
 
 		if act.export_format == 'OBJ':
 			bpy.ops.wm.obj_export(
@@ -133,8 +142,8 @@ def Export_Model(path, name):
 			elif act.export_target_engine == 'UNITY2023':
 				bpy.ops.export_scene.fbx(
 					filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options='FBX_SCALE_NONE',
-					global_scale=0.01, colors_type='LINEAR', axis_forward='Y', axis_up='Z', add_leaf_bones=False,
-					use_custom_props=True)
+					global_scale=0.01, colors_type='LINEAR', axis_forward=forward_axis, axis_up='Z', add_leaf_bones=False,
+					use_custom_props=True, use_space_transform=space_transform)
 
 		if act.export_format == 'OBJ':
 			bpy.ops.wm.obj_export(

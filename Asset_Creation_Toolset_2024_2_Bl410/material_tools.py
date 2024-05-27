@@ -955,13 +955,13 @@ class VIEW3D_PT_Material_Tools_Panel(bpy.types.Panel):
 			if context.mode == 'OBJECT':
 				box = layout.box()
 				row = box.row()
-				row.operator("object.material_to_viewport", text="Material -> Viewport Color")
+				row.operator("object.material_to_viewport", text="Material -> Viewport Colors")
 
 				row = box.row()
-				row.operator("object.random_viewport_color", text="Random Material Viewport Color")
+				row.operator("object.random_viewport_color", text="Random Material Viewport Colors")
 
 				row = box.row()
-				row.operator("object.clear_viewport_color", text="Clear Viewport Color")
+				row.operator("object.clear_viewport_color", text="Clear Viewport Colors")
 				
 				row = layout.row()
 				row.operator("object.clear_vc", text="Clear Vertex Colors")

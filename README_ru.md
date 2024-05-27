@@ -8,7 +8,7 @@
 
 ***Скачать последнюю версию:***
 
-* ***[(2024.1) Blender 4.1 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2024_1_Bl410.zip)***
+* ***[(2024.2) Blender 4.1 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2024_2_Bl410.zip)***
 * ***[(2023.2) Blender 4.0 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2023_2_Bl400.zip)***
 * ***[(2023.1) Blender 3.6 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2023_1_Bl361.zip)***
 * ***[ACT Unity Editor Скрипт (для 2023.1 и выше)](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Unity_Plugin/Releases/ACT_2023_1_Unity_Plugin.unitypackage)***

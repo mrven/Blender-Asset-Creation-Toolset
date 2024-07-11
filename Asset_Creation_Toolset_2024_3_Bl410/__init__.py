@@ -8,7 +8,7 @@ bl_info = {
 	"wiki_url": "https://gum.co/hPXIh",
 	"tracker_url": "https://github.com/mrven/Blender-Asset-Creation-Toolset/issues",
 	"doc_url": "https://github.com/mrven/Blender-Asset-Creation-Toolset#readme",
-	"version": (2024, 1),
+	"version": (2024, 3),
 	"blender": (4, 1, 0),
 	"location": "3D View > Toolbox > ACT",
 	"category": "Object",

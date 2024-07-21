@@ -549,7 +549,7 @@ class Open_Export_Dir(bpy.types.Operator):
 		start_time = datetime.now()
 		act = bpy.context.scene.act
 
-		if not os.path.exists(os.path.realpath(bpy.path.abspath(act.export_path))):
+		if not os.path.exists(os.path.realpath(bpy.path.abspath(act.export_dir))):
 			act.export_dir = ""
 			self.report({'INFO'}, 'Directory not exist')
 

@@ -41,8 +41,8 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		default="")
 
 	fbx_export_mode_menu_items = (
-		('INDIVIDUAL', '1 Obj->1 FBX', ''),
-		('ALL', 'All->One FBX', ''),
+		('INDIVIDUAL', 'One-to-One', ''),
+		('ALL', 'All-to-One', ''),
 		('PARENT', 'By Parent', ''),
 		('COLLECTION', 'By Collection', ''))
 	fbx_export_mode: EnumProperty(name="", items=fbx_export_mode_menu_items)

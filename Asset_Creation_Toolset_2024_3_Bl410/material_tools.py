@@ -971,7 +971,7 @@ class VIEW3D_PT_Material_Tools_Panel(bpy.types.Panel):
 
 				box = layout.box()
 				row = box.row()
-				row.prop(act, "pbr_workflow", text="PBR_Workflow")
+				row.prop(act, "pbr_workflow", text="PBR Workflow")
 				row = box.row()
 				row.prop(act, "custom_save_path", text="Custom Save Path")
 				if act.custom_save_path:

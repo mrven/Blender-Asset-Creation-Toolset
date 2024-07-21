@@ -20,35 +20,29 @@
 
 If you want to support me you can buy this addon:
 * ***[Gumroad (Pay what you want)](https://gumroad.com/l/hPXIh)***
+* ***[Blender Market](https://blendermarket.com/products/asset-creation-toolset-2024)***
 
 
-***[Watch Features Overview (Youtube Playlist)](https://www.youtube.com/playlist?list=PLmXnsUZu0CRr_UOQp3TapOVyEqbzZ0MkL)***
+***[Watch Features Overview (Youtube Playlist)](https://www.youtube.com/playlist?list=PLmXnsUZu0CRpLoJD79MC6AQf_phyXP62b)***
 
-## New in Asset Creation Toolset 2024
-### New GLTF Export for GODOT
-![GLTF_Export](/images/pngs/2024/01_GLTF_Export.png)
+# Features
+## Origin Tools
 
-### "Add UV" has option for generating Smart UV or Lightmap UV
-![Add_UV_Packing](/images/pngs/2024/02_Add_UV_Packing.png)
+[![Origin Tools Overview](https://img.youtube.com/vi/cxcSM-HvMH8/0.jpg)](https://www.youtube.com/watch?v=cxcSM-HvMH8)
 
-### Export FBX now supports Custom Properties
-
-
-## Features
 ### Origin Align Tool
 Aligment Origin Point to:
 * Max/Min/Middle point of object for X, Y or Z axis
 * 3D Cursor (Separate Axis)
 * Coordinates (Separate Axis)
 
-![Origin Align](/images/gifs/01_Origin_Align.gif)
-
-
 ### Set Origin to Selected (Edit Mode)
 Set Origin Point to Selected Element(s)
 
-![Origin To Selected](/images/gifs/13_OriginToSelected.gif)
 
+## Renaming Tools
+
+[![Renaming Tools Overview](https://img.youtube.com/vi/pqz-mSK8n90/0.jpg)](https://www.youtube.com/watch?v=pqz-mSK8n90)
 
 ### Numbering Objects
 Delete Blender's default numbering and add new numbering by Axis/Outliner order with pattern:
@@ -56,32 +50,28 @@ Delete Blender's default numbering and add new numbering by Axis/Outliner order 
 * xxx_01, xxx_10, xxx_100
 * xxx_001, xxx_010, xxx_100
 
-![Numbering Objects](/images/gifs/03_Numbering.gif)
-
-
 ### Add .L or .R suffix to Bones
 Quick add suffix .L or .R to Selected Bones.
 
-![Suffix Bones](/images/gifs/16_BonesSuffix.gif)
 
+## UV Tools
 
-### UV Tools
+[![UV Tools Overview](https://img.youtube.com/vi/ble4bwOJwjQ/0.jpg)](https://www.youtube.com/watch?v=ble4bwOJwjQ)
+
 * Batch Renaming UV by Index (example, Lightmap - second uv channel)
 * Batch Add UV with custom name (copy UV from active, smart projection or lightmap uv)
 * Batch Remove UV by Index
 * Set Active UV Layer for Selected Objects in 3D View and Image/UV Editor by UV Index
-
-![Rename UV](/images/gifs/02_RenameUV.gif)
-![UV Tools](/images/pngs/02_UV_Tools.png)
-
 
 ### UV Mover (UV Image Editor)
 Tool for easier Atlas Packing.
 * Scale UV with power of 2
 * Move UV with steps
 
-![UV Mover](/images/gifs/15_UVMover.gif)
 
+## Export Tools
+
+[![Export Tools Overview](https://img.youtube.com/vi/XTyvRZLvVUg/0.jpg)](https://www.youtube.com/watch?v=XTyvRZLvVUg)
 
 ### Export OBJ/FBX/GLTF to Unity/UE/Godot
 Batch Export Selected Objects for Unity, UE or Godot. Available some modes:
@@ -89,8 +79,6 @@ Batch Export Selected Objects for Unity, UE or Godot. Available some modes:
 * Export Each Object into Individual file
 * Batch Objects by Parent
 * Batch Objects by Collection
-
-![Export FBXs](/images/gifs/04_ExportFBX.gif)
 
 #### Export Algorithm for Unity
 Now ACT has two different algorithms for export FBXs to Unity: ***"Unity"*** and ***"Unity (Legacy)"***.\
@@ -114,46 +102,34 @@ But you can also use previous algorithm: This algorithm doesn't require addition
 ![Old_Algorithm](/images/pngs/2023/07_Old_Algorithm.png)
 
 
+## Material/Texture Tools
+
+[![Material Tools Overview](https://img.youtube.com/vi/WY9vJja1nqw/0.jpg)](https://www.youtube.com/watch?v=WY9vJja1nqw)
+
 ### Material -> Viewport Color / Random Material Viewport Colors
 Transfer Material Base Color to Viewport Color for Solid View Mode. Or Generate Random Colors for Materials for Viewport.
-
-![Material To Viewport](/images/gifs/07_MaterialToViewport.gif)
-
 
 ### Clear UV Maps/Clear Vertex Color
 Just remove all UV Maps or all Vertex Colors from selected objects.
 
-![Clear UV Maps](/images/gifs/08_ClearUVandVC.gif)
-
-
 ### Delete Unused Materials
 Delete from selected objects unused materials (not applyed to faces) and unused material slots.
-
-![Delete Unused Materials](/images/gifs/12_DeleteUnusedMats.gif)
-
 
 ### Create Palette Textures (Albedo, Roughness, Metallic, Opacity and Emission)
 Create Palette Textures (32x32px) for Selected Objects painted with colored materials. In one palette texture can be up to 256 colors (materials).
 
-![Create Palette Texture](/images/gifs/06_PaletteTexture.gif)
-
-
 ### Quick Select Texture from Active material in UV Editor
-
-![Quick Select Texture](/images/pngs/03_Quick_Select_Texture.png)
-
 
 ### Active Material -> Selected
 Assign active material to selected faces in MultiEdit Mode.
 
-![Active Material To Selected](/images/gifs/14_ActiveMatToSelected.gif)
 
+## Other Tools
+
+[![Other Tools Overview](https://img.youtube.com/vi/n8ZBI3KZ47Y/0.jpg)](https://www.youtube.com/watch?v=n8ZBI3KZ47Y)
 
 ### Obj Name -> Data Name
 Copy Object Name to Mesh/Font/Etc.(Data-Block) Name.
-
-![Copy Name](/images/gifs/09_ObjToMeshName.gif)
-
 
 ### Collection Name -> Obj Name
 Transfer Collection Name to Object Name. You can use dirrernt ways for that:
@@ -165,22 +141,13 @@ Transfer Collection Name to Object Name. You can use dirrernt ways for that:
 ### Clear Custom Normals
 Clear Custom Normals and set Autosmooth to 180 degrees for Selected Objects.
 
-![Clear Custom Normals](/images/gifs/10_ClearCustomNormals.gif)
-
-
 ### Flip/Calculate Normals
 Flip or Recalculate Normals for Selected Objects in Object Mode.
-
-![Flip Calculate Normals](/images/gifs/11_CalcNormals.gif)
-
 
 ### Merge Bones Tool
 Tool For Easy Simplifying Armature: Delete (or Dissolve) Selected Bones (Exclude Active) and Transfer Vertex Weights to Active Bone.
 
-![Merge Bones](/images/gifs/17_MergeBones.gif)
-
-
-### Addon Preferences
+## Addon Preferences
 * Show/Hide UI Panels via Addon Preferences
 * Changing Category for each Panel from Preferences
 

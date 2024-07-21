@@ -137,7 +137,6 @@ Transfer Collection Name to Object Name. You can use dirrernt ways for that:
 2. Replace Object Name to "Collection Name + Type + Numbering", For example, ***"CollectionName_Mesh_001"*** or ***"CollectionName_MESH_001"***. Thanks @Oxicid for implementation!\
 ![Col_To_Name](/images/pngs/2023/09_Col_To_Name.png)
 
-
 ### Clear Custom Normals
 Clear Custom Normals and set Autosmooth to 180 degrees for Selected Objects.
 

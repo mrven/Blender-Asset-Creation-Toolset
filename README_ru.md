@@ -20,33 +20,21 @@
 
 Если вы хотите поддержать меня, то можете купить аддон на следующих площадках:
 * ***[Gumroad (Свободная цена)](https://gumroad.com/l/hPXIh)***
+* ***[Blender Market](https://blendermarket.com/products/asset-creation-toolset-2024)***
 
 
-***[Смотреть обзор всех функций (плейлист Youtube)](https://www.youtube.com/playlist?list=PLmXnsUZu0CRr_UOQp3TapOVyEqbzZ0MkL)***
+***[Смотреть обзор всех функций (плейлист Youtube)](https://www.youtube.com/playlist?list=PLmXnsUZu0CRpLoJD79MC6AQf_phyXP62b)***
 
-## Новое в версии Asset Creation Toolset 2024
-### Новый экспортёр GLTF для GODOT
-![GLTF_Export](/images/pngs/2024/01_GLTF_Export.png)
+# Функции
+## Origin Tools
 
-### "Add UV" может генерировать Smart UV или Lightmap UV
-![Add_UV_Packing](/images/pngs/2024/02_Add_UV_Packing.png)
-
-### Export FBX теперь поддерживает экспорт Custom Properties
-
-
-## Функции
+[![Origin Tools Overview](https://img.youtube.com/vi/cxcSM-HvMH8/0.jpg)](https://www.youtube.com/watch?v=cxcSM-HvMH8)
 
 ### Origin Align Tool
 Выравнивание Origin Point объекта. Позволяет выровнять Origin по заданной оси по максимальной/минимальной/средней точки объекта, 3D-курсору или заданной координате.
 
-![Origin Align](/images/gifs/01_Origin_Align.gif)
-
-
 ### Set Origin to Selected (Edit Mode)
 Выравнивание Origin по выделенным элементам. Является автоматизацией шагов: перемещение 3D-курсора к выделенному, переключение в объектный режим, установка Origin по 3D-курсору и возврат в режим редактирования.
-
-![Origin To Selected](/images/gifs/13_OriginToSelected.gif)
-
 
 ### Numbering Objects
 Удаляет стандартную нумерацию блендера и добавляет свою собственную нумерацию вдоль оси или по порядку аутлайнера:
@@ -54,35 +42,29 @@
 * xxx_01, xxx_10, xxx_100
 * xxx_001, xxx_010, xxx_100
 
-![Numbering Objects](/images/gifs/03_Numbering.gif)
-
-
 ### Add .L or .R suffix to Bones
 Быстрое добавление суффикса .L или .R к выделенным костям.
 
-![Suffix Bones](/images/gifs/16_BonesSuffix.gif)
 
+## UV Tools
 
-### UV Tools
+[![UV Tools Overview](https://img.youtube.com/vi/ble4bwOJwjQ/0.jpg)](https://www.youtube.com/watch?v=ble4bwOJwjQ)
+
 * Переименовывание UV-развёртку выделенных объектов по заданному индексу (каналу) развёртки. Например, у объектов, импортированных из 3Ds Max название развёртки UVChannel_1, а у объектов, созданных в Blender UVMap. Таким образом при объединении объектов вместо объединения развёрток они разбросаются по двум каналам. Также удобно задавать имя для канала Lightmap и т.п.
 * Добавление нового UV-канала c заданным именем на выделенные объекты (с копированием UV  активного канала или автоматической развёрткой (Smart/Lightmap))
 * Удаление UV-канала по индексу с выделенных объектов
 * Выбор активного UV-канала в 3D View и Image/UV Editor по индексу
 
-![Rename UV](/images/gifs/02_RenameUV.gif)
-![UV Tools](/images/pngs/02_UV_Tools.png)
-
-
 ### UV Mover (UV Image Editor)
 Инструмент, облегчающий масштабирование и перемещение островов с заданным шагом при паковке текстурных атласов.
 
-![UV Mover](/images/gifs/15_UVMover.gif)
 
+## Export Tools
+
+[![Export Tools Overview](https://img.youtube.com/vi/XTyvRZLvVUg/0.jpg)](https://www.youtube.com/watch?v=XTyvRZLvVUg)
 
 ### Export OBJ/FBX/GLTF to Unity/UE/Godot
 Пакетный экспорт выделенных объектов в FBX/OBJ/GLTF с корректным масштабом и поворотом. Рядом с файлом .Blend будет создана папка, в которую будут экспортированы объекты. Каждый объект/группа/коллекция будет экспортирован(а) в отдельный файл.
-
-![Export FBXs](/images/gifs/04_ExportFBX.gif)
 
 #### Алгоритм экспорта в Unity
 Теперь у ACT два разных алгоритма для экспорта FBXs в Unity: ***"Unity"*** и ***"Unity (Legacy)"***.\
@@ -106,46 +88,34 @@ Unity editor ACT скрипт поставляется вместе с ACT Blend
 ![Old_Algorithm](/images/pngs/2023/07_Old_Algorithm.png)
 
 
+## Material/Texture Tools
+
+[![Material Tools Overview](https://img.youtube.com/vi/WY9vJja1nqw/0.jpg)](https://www.youtube.com/watch?v=WY9vJja1nqw)
+
 ### Material -> Viewport Color / Random Material Viewport Colors
 Копирование Base Color материала в Viewport Color для режима отображения Solid View. Или назначение случайных цветов для материалов во Viewport.
-
-![Material To Viewport](/images/gifs/07_MaterialToViewport.gif)
-
 
 ### Clear UV Maps/Clear Vertex Colors
 Удаление всех UV-развёрток или vertex color с выделенных объектов.
 
-![Clear UV Maps](/images/gifs/08_ClearUVandVC.gif)
-
-
 ### Delete Unused Materials
 Удаление с выделенных объектов неиспользуемых материалов и слотов.
-
-![Delete Unused Materials](/images/gifs/12_DeleteUnusedMats.gif)
-
 
 ### Create Palette Textures (Albedo, Roughness, Metallic, Opacity and Emission)
 Создание текстуры-палитры для выделенных объектов, раскрашенных разными материалами. С объектов индексируются Diffuse цвета (или PBR сет) материалов и распределяются на текстуре 32 пикселя (одна палитра может содержать до 256 цветов). Затем на объектах создаётся UV-развёртка, в которой полигоны, имеющие один материал сводятся в точку и размещаются на палитре в соответсвующее место.
 
-![Create Palette Texture](/images/gifs/06_PaletteTexture.gif)
-
-
 ### Быстрый выбор текстуры из активного материала в Image/UV Editor
-
-![Quick Select Texture](/images/pngs/03_Quick_Select_Texture.png)
-
 
 ### Active Material -> Selected
 Назначить активный материал на выделенные полигоны в режиме MultiEdit.
 
-![Active Material To Selected](/images/gifs/14_ActiveMatToSelected.gif)
 
+## Other Tools
+
+[![Other Tools Overview](https://img.youtube.com/vi/n8ZBI3KZ47Y/0.jpg)](https://www.youtube.com/watch?v=n8ZBI3KZ47Y)
 
 ### Obj Name -> Data Name
 Назначение имени меша/шрифта и т.п. по имени объекта.
-
-![Copy Name](/images/gifs/09_ObjToMeshName.gif)
-
 
 ### Collection Name -> Obj Name
 Переносит имя коллекции в имя объекта. Вы можете использовать разные пути для этого:
@@ -153,26 +123,17 @@ Unity editor ACT скрипт поставляется вместе с ACT Blend
 2. Замена имени объекта на "Collection Name + Type + Numbering", Например, ***"CollectionName_Mesh_001"*** или ***"CollectionName_MESH_001"***. Спасибо @Oxicid за имплементацию!\
 ![Col_To_Name](/images/pngs/2023/09_Col_To_Name.png)
 
-
 ### Clear Custom Normals
 Удаляет с выделенных объектов объектов информацию о кастомных нормалях и устанавливает автосглаживание (AutoSmooth) на 180 градусов.
-
-![Clear Custom Normals](/images/gifs/10_ClearCustomNormals.gif)
-
 
 ### Flip/Calculate Normals
 Перевернуть/пересчитать нормали в объектном режиме для выделенных объектов.
 
-![Flip Calculate Normals](/images/gifs/11_CalcNormals.gif)
-
-
 ### Merge Bones Tool
 Инструмент для упрощения скелета: Удаление выделенных костей (кроме активной) и перенос весов на активную кость.
 
-![Merge Bones](/images/gifs/17_MergeBones.gif)
 
-
-### Addon Preferences
+## Addon Preferences
 * Возможность включать/отключать через настройки аддона видимость панелей
 * Возможность изменять категорию для каждой панели через настройки аддона
 

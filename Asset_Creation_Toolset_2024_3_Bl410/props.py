@@ -346,6 +346,7 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		description="Enable Debug Mode",
 		default=False)
 
+
 classes = (
 	ACT_Addon_Props,
 )

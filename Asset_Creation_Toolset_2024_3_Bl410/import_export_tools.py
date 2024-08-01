@@ -6,6 +6,7 @@ from bpy_extras.io_utils import ImportHelper
 from . import utils
 from datetime import datetime
 
+
 # FBX/OBJ/GLTF export
 class Multi_FBX_Export(bpy.types.Operator):
 	"""Export FBXs/OBJs/GLTFs to Unity/UE/Godot"""
@@ -113,7 +114,8 @@ class Multi_FBX_Export(bpy.types.Operator):
 				# Apply modifiers (except Armature)
 				if act.export_target_engine == 'UNITY2023' and act.export_format == 'FBX':
 					# Processing only objects without linked data or for all of enabled option combine meshes
-					if ((obj.type == 'MESH' and obj.data.users < 2) or (act.fbx_export_mode != 'INDIVIDUAL' and act.export_combine_meshes)):
+					if ((obj.type == 'MESH' and obj.data.users < 2) or (
+							act.fbx_export_mode != 'INDIVIDUAL' and act.export_combine_meshes)):
 						for modifier in obj.modifiers:
 							if modifier.type != 'ARMATURE':
 								try:
@@ -203,9 +205,9 @@ class Multi_FBX_Export(bpy.types.Operator):
 							x.select_set(True)
 
 							# X-rotation fix
-							if  act.export_format == 'FBX' and (act.apply_rot_rotated
-																or (not act.apply_rot_rotated and not child_rotated)
-																or not act.fbx_export_mode == 'PARENT'):
+							if act.export_format == 'FBX' and (act.apply_rot_rotated
+															   or (not act.apply_rot_rotated and not child_rotated)
+															   or not act.fbx_export_mode == 'PARENT'):
 								bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
 								bpy.ops.transform.rotate(
 									value=(math.pi * -90 / 180), orient_axis='X',
@@ -532,7 +534,9 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 		# Show message about incorrect names
 		if len(incorrect_names) > 0:
-			utils.Show_Message_Box("Object(s) has invalid characters in name. Some chars in export name have been replaced", "Invalid Export Names")
+			utils.Show_Message_Box(
+				"Object(s) has invalid characters in name. Some chars in export name have been replaced",
+				"Invalid Export Names")
 
 		utils.Print_Execution_Time("FBX/OBJ Export", start_time)
 		return {'FINISHED'}
@@ -604,7 +608,8 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 					row.label(text="Target Engine:")
 					row.prop(act, "export_target_engine", expand=False)
 
-				if not (act.export_format == 'OBJ' and (act.fbx_export_mode == 'ALL' or act.fbx_export_mode == 'COLLECTION')):
+				if not (act.export_format == 'OBJ' and (
+						act.fbx_export_mode == 'ALL' or act.fbx_export_mode == 'COLLECTION')):
 					# Apply Transforms
 					box = layout.box()
 					row = box.row()
@@ -686,7 +691,7 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 
 						row = box.row(align=True)
 						row.label(text=" Custom Props")
-						row.prop(act, "export_custom_props", text = "")
+						row.prop(act, "export_custom_props", text="")
 
 					if act.export_format == 'OBJ':
 						row = box.row(align=True)

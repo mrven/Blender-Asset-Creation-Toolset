@@ -19,7 +19,7 @@ modules_names = ['props', 'preferences', 'utils', 'origin_tools', 'rename_tools'
 
 modules_full_names = {}
 for current_module_name in modules_names:
-	modules_full_names[current_module_name] = ('{}.{}'.format(__name__, current_module_name))
+	modules_full_names[current_module_name] = ('{}.{}'.format(__package__, current_module_name))
 
 for current_module_full_name in modules_full_names.values():
 	if current_module_full_name in sys.modules:

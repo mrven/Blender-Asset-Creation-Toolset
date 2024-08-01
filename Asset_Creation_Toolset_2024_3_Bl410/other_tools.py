@@ -6,6 +6,7 @@ from collections import defaultdict
 from . import utils
 from datetime import datetime
 
+
 # Clear custom split normals
 class Clear_Normals(bpy.types.Operator):
 	"""Clear Custom Split Normals"""
@@ -17,7 +18,7 @@ class Clear_Normals(bpy.types.Operator):
 		start_time = datetime.now()
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
-		
+
 		for x in selected_obj:
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
@@ -26,16 +27,16 @@ class Clear_Normals(bpy.types.Operator):
 				bpy.ops.mesh.customdata_custom_splitnormals_clear()
 				# Enable Auto Smooth with angle 180 degrees
 				bpy.ops.object.shade_smooth_by_angle(angle=3.14159, keep_sharp_edges=True)
-				
+
 		# Select again objects
 		for j in selected_obj:
 			j.select_set(True)
-		
+
 		bpy.context.view_layer.objects.active = active_obj
 
 		utils.Print_Execution_Time("Clear Custom Normals", start_time)
-		return {'FINISHED'}		
-		
+		return {'FINISHED'}
+
 
 # Recalculate normals
 class Calc_Normals(bpy.types.Operator):
@@ -49,7 +50,7 @@ class Calc_Normals(bpy.types.Operator):
 		act = bpy.context.scene.act
 		selected_obj = bpy.context.selected_objects
 		active_obj = bpy.context.active_object
-		
+
 		for x in selected_obj:
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
@@ -65,11 +66,11 @@ class Calc_Normals(bpy.types.Operator):
 					bpy.ops.mesh.normals_make_consistent(inside=act.normals_inside)
 				bpy.ops.mesh.select_all(action='DESELECT')
 				bpy.ops.object.mode_set(mode='OBJECT')
-				
+
 		# Select again objects
 		for j in selected_obj:
 			j.select_set(True)
-		
+
 		bpy.context.view_layer.objects.active = active_obj
 
 		utils.Print_Execution_Time("Calculate Normals", start_time)
@@ -78,26 +79,27 @@ class Calc_Normals(bpy.types.Operator):
 
 # Object name to data name
 def Obj_Name_To_Data_Name():
-    obj_dict = defaultdict(list)
+	obj_dict = defaultdict(list)
 
-    for obj in bpy.context.selected_objects:
-        if obj.type != 'EMPTY':
-            obj_dict[obj.data].append(obj)
+	for obj in bpy.context.selected_objects:
+		if obj.type != 'EMPTY':
+			obj_dict[obj.data].append(obj)
 
-    for mesh, objects in obj_dict.items():
-        for enum, object_mesh in enumerate(objects):
+	for mesh, objects in obj_dict.items():
+		for enum, object_mesh in enumerate(objects):
 			# Skip instances
-            if enum == 0:
-                object_mesh.data.name = object_mesh.name
-            else:
-                break
+			if enum == 0:
+				object_mesh.data.name = object_mesh.name
+			else:
+				break
+
 
 class Obj_Name_To_Mesh_Name(bpy.types.Operator):
 	"""Obj Name to Data Name"""
 	bl_idname = "object.objname_to_meshname"
 	bl_label = "Obj Name to Data Name"
 	bl_options = {'REGISTER', 'UNDO'}
-	
+
 	def execute(self, context):
 		start_time = datetime.now()
 		Obj_Name_To_Data_Name()
@@ -132,7 +134,8 @@ class Col_Name_To_Obj_Name(bpy.types.Operator):
 			for object_type in obj_types:
 				add_digit = 0
 				# Get list by selected obj and obj types in current collection
-				cur_collect_obj_list = [x.name for x in collect_dict[collect] if x.type == object_type and x.select_get()]
+				cur_collect_obj_list = [x.name for x in collect_dict[collect] if
+										x.type == object_type and x.select_get()]
 
 				if act.col_to_obj_name_method == 'ADD':
 					col_name = collect[0].name
@@ -187,7 +190,7 @@ class Merge_Bones(bpy.types.Operator):
 		start_time = datetime.now()
 		act = bpy.context.scene.act
 
-		# TODO: BUG!! Active Bone not updating if switch MODE from POSE to EDIT
+		# Active Bone not updating if switch MODE from POSE to EDIT
 		bpy.ops.object.mode_set(mode='OBJECT')
 		bpy.ops.object.mode_set(mode='EDIT')
 
@@ -298,7 +301,7 @@ class Weight_Paint_Brush_Invert(bpy.types.Operator):
 	bl_idname = "paint.weigth_paint_brush_invert"
 	bl_label = "Weight Paint Brush Substract Mode"
 	bl_options = {'REGISTER', 'UNDO'}
-	
+
 	def execute(self, context):
 		current_brush = bpy.context.scene.tool_settings.weight_paint.brush
 
@@ -323,21 +326,22 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 	@classmethod
 	def poll(self, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is not None and (context.object.mode == 'OBJECT' or context.mode == 'EDIT_ARMATURE' or context.mode == 'PAINT_WEIGHT')) \
+		return (context.object is not None and (
+				context.object.mode == 'OBJECT' or context.mode == 'EDIT_ARMATURE' or context.mode == 'PAINT_WEIGHT')) \
 			and preferences.other_enable
 
 	def draw(self, context):
 		act = bpy.context.scene.act
-		
-		layout = self.layout	
+
+		layout = self.layout
 
 		if context.object is not None:
 			if context.object.mode == 'EDIT':
 				row = layout.row()
-		
+
 		if context.object is not None:
 			if context.mode == 'OBJECT':
-				row = layout.row()	
+				row = layout.row()
 				row.operator("object.objname_to_meshname", text="Obj Name -> Data Name")
 
 				box = layout.box()
@@ -357,10 +361,10 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 
 				row = layout.row()
 				row.operator("object.clear_normals", text="Clear Custom Normals")
-				
+
 				box = layout.box()
 				row = box.row()
-				row.operator("object.calc_normals", text="Flip/Calculate Normals")				
+				row.operator("object.calc_normals", text="Flip/Calculate Normals")
 				row = box.row(align=True)
 				if act.calc_normals_en:
 					row.prop(act, "calc_normals_en", text="Recalc Normals", icon="CHECKBOX_HLT")
@@ -378,17 +382,17 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 				row = layout.row(align=True)
 				row.label(text="Method")
 				row.prop(act, "merge_bones_method", text="", expand=False)
-				
+
 				row = layout.row()
 				row.operator("object.merge_bones", text="Merge Bones")
 
 			if context.mode == 'PAINT_WEIGHT':
 				box = layout.box()
-				row = box.row(align = True)
+				row = box.row(align=True)
 				row.label(text="Current Mode:")
 				row.label(text=bpy.context.scene.tool_settings.weight_paint.brush.blend)
 				row = box.row()
-				row.operator("paint.weigth_paint_brush_invert", text="Invert Brush")		
+				row.operator("paint.weigth_paint_brush_invert", text="Invert Brush")
 
 
 classes = (
@@ -398,7 +402,7 @@ classes = (
 	Col_Name_To_Obj_Name,
 	Merge_Bones,
 	Weight_Paint_Brush_Invert,
-)	
+)
 
 
 def register():

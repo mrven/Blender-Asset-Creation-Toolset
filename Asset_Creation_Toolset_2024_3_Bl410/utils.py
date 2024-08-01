@@ -44,30 +44,17 @@ def Str_Is_Int(s):
 		return False
 
 
-# Get BlenderVersion
-def Get_Version():
-	result = 0
-	version = bpy.app.version_string[:4]
-	if version[-1:] == ".":
-		version = version[:3]
-	try:
-		result = float(version)
-	except:
-		result = 2.90
-
-	return result
-
 # Message Box
-def Show_Message_Box(message = "", title = "Message Box", icon = 'INFO'):
-    def draw(self, context):
-        self.layout.label(text=message)
+def Show_Message_Box(message="", title="Message Box", icon='INFO'):
+	def draw(self, context):
+		self.layout.label(text=message)
 
-    bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
+	bpy.context.window_manager.popup_menu(draw, title=title, icon=icon)
 
 
 # Prefilter Export Name
 def Prefilter_Export_Name(name):
-	result = re.sub("[#%&{}\<>\\\*?/'\":`|]","_",name)
+	result = re.sub("[#%&{}\<>\\\*?/'\":`|]", "_", name)
 
 	return result
 
@@ -124,9 +111,11 @@ def Export_Model(path, name):
 
 		if act.export_format == 'GLTF':
 			bpy.ops.export_scene.gltf(
-				filepath=str(path + name + '.glb'), check_existing=False, export_image_format=act.gltf_export_image_format,
+				filepath=str(path + name + '.glb'), check_existing=False,
+				export_image_format=act.gltf_export_image_format,
 				export_tangents=act.gltf_export_tangents, export_attributes=act.gltf_export_attributes,
-				use_selection=True, export_extras=act.gltf_export_custom_properties, export_def_bones=act.gltf_export_deform_bones_only)
+				use_selection=True, export_extras=act.gltf_export_custom_properties,
+				export_def_bones=act.gltf_export_deform_bones_only)
 	else:
 		if act.export_format == 'FBX':
 			if act.export_target_engine == 'UNITY':
@@ -142,7 +131,8 @@ def Export_Model(path, name):
 			elif act.export_target_engine == 'UNITY2023':
 				bpy.ops.export_scene.fbx(
 					filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options='FBX_SCALE_NONE',
-					global_scale=0.01, colors_type='LINEAR', axis_forward=forward_axis, axis_up='Z', add_leaf_bones=False,
+					global_scale=0.01, colors_type='LINEAR', axis_forward=forward_axis, axis_up='Z',
+					add_leaf_bones=False,
 					use_custom_props=True, use_space_transform=space_transform)
 
 		if act.export_format == 'OBJ':
@@ -173,10 +163,10 @@ def Print_Execution_Time(function_name, start_time):
 
 
 # Exclude unnecessary objects
-def selected_obj_with_unique_data(obj_type = 'MESH'):    
-    objs_with_instances = collections.defaultdict(list)
-	
-    for obj in bpy.context.selected_objects:        
-        if obj.type == obj_type:
-            objs_with_instances[obj.data].append(obj)               
-    return [objs[0] for objs in objs_with_instances.values()]   
+def selected_obj_with_unique_data(obj_type='MESH'):
+	objs_with_instances = collections.defaultdict(list)
+
+	for obj in bpy.context.selected_objects:
+		if obj.type == obj_type:
+			objs_with_instances[obj.data].append(obj)
+	return [objs[0] for objs in objs_with_instances.values()]

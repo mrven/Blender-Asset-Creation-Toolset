@@ -3,6 +3,7 @@ from . import utils
 from datetime import datetime
 import math
 
+
 # UV remover
 class Clear_UV(bpy.types.Operator):
 	"""Clear UV layers"""
@@ -80,12 +81,14 @@ class Add_UV(bpy.types.Operator):
 				bpy.ops.object.mode_set(mode='EDIT')
 				angle = math.pi * act.uv_packing_smart_angle / 180
 				bpy.ops.uv.smart_project(angle_limit=angle, margin_method='SCALED', rotate_method='AXIS_ALIGNED_Y',
-										 island_margin=act.uv_packing_smart_margin, area_weight=0.0, correct_aspect=True, scale_to_bounds=False)
+										 island_margin=act.uv_packing_smart_margin, area_weight=0.0,
+										 correct_aspect=True, scale_to_bounds=False)
 				bpy.ops.object.mode_set(mode='OBJECT')
 			if act.uv_packing_mode == 'LIGHTMAP':
 				bpy.ops.object.mode_set(mode='EDIT')
 				bpy.ops.uv.lightmap_pack(PREF_CONTEXT='ALL_FACES', PREF_PACK_IN_ONE=False, PREF_NEW_UVLAYER=False,
-										 PREF_BOX_DIV=act.uv_packing_lightmap_quality, PREF_MARGIN_DIV=act.uv_packing_lightmap_margin)
+										 PREF_BOX_DIV=act.uv_packing_lightmap_quality,
+										 PREF_MARGIN_DIV=act.uv_packing_lightmap_margin)
 				bpy.ops.object.mode_set(mode='OBJECT')
 
 		# Select again objects

@@ -3,6 +3,7 @@ import bpy
 from . import utils
 from datetime import datetime
 
+
 # Align origin to min
 class Align_Min(bpy.types.Operator):
 	"""Origin To Min """
@@ -10,7 +11,7 @@ class Align_Min(bpy.types.Operator):
 	bl_label = "Origin To Min"
 	bl_options = {'REGISTER', 'UNDO'}
 	align_type: bpy.props.StringProperty()
-	
+
 	def execute(self, context):
 		start_time = datetime.now()
 		act = bpy.context.scene.act
@@ -19,7 +20,7 @@ class Align_Min(bpy.types.Operator):
 		current_selected_obj = bpy.context.selected_objects
 		current_active_obj = bpy.context.active_object
 		saved_cursor_loc = bpy.context.scene.cursor.location.copy()
-		bpy.ops.object.mode_set(mode = 'OBJECT')
+		bpy.ops.object.mode_set(mode='OBJECT')
 
 		# Change individual origin point
 		for x in current_selected_obj:
@@ -53,12 +54,12 @@ class Align_Min(bpy.types.Operator):
 					# Move cursor
 					bpy.ops.object.mode_set(mode='OBJECT')
 					if self.align_type == 'X':
-						bpy.context.scene.cursor.location = [min_co, saved_origin_loc[1], saved_origin_loc[2]] 
+						bpy.context.scene.cursor.location = [min_co, saved_origin_loc[1], saved_origin_loc[2]]
 					if self.align_type == 'Y':
-						bpy.context.scene.cursor.location = [saved_origin_loc[0], min_co, saved_origin_loc[2]] 
+						bpy.context.scene.cursor.location = [saved_origin_loc[0], min_co, saved_origin_loc[2]]
 					if self.align_type == 'Z':
 						bpy.context.scene.cursor.location = [saved_origin_loc[0], saved_origin_loc[1], min_co]
-						
+
 					# Apply origin to cursor position
 					bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
 					# Reset 3D Cursor position to previous point
@@ -73,7 +74,7 @@ class Align_Min(bpy.types.Operator):
 						difference = saved_origin_loc[1] - min_co
 					if self.align_type == 'Z':
 						difference = saved_origin_loc[2] - min_co
-					
+
 					bpy.ops.mesh.reveal()
 					bpy.ops.mesh.select_all(action='SELECT')
 					if self.align_type == 'X':
@@ -94,13 +95,13 @@ class Align_Min(bpy.types.Operator):
 							orient_type='GLOBAL', orient_matrix_type='GLOBAL',
 							mirror=False, use_proportional_edit=False,
 							proportional_edit_falloff='SMOOTH', proportional_size=1)
-						
-					bpy.ops.object.mode_set(mode = 'OBJECT')
+
+					bpy.ops.object.mode_set(mode='OBJECT')
 
 		# Select again objects
 		for j in current_selected_obj:
 			j.select_set(True)
-			
+
 		bpy.context.view_layer.objects.active = current_active_obj
 
 		utils.Print_Execution_Time("Align Origin to Min", start_time)
@@ -114,7 +115,7 @@ class Align_Max(bpy.types.Operator):
 	bl_label = "Origin To Max"
 	bl_options = {'REGISTER', 'UNDO'}
 	align_type: bpy.props.StringProperty()
-	
+
 	def execute(self, context):
 		start_time = datetime.now()
 		act = bpy.context.scene.act
@@ -156,12 +157,12 @@ class Align_Max(bpy.types.Operator):
 				if not act.align_geom_to_orig:
 					bpy.ops.object.mode_set(mode='OBJECT')
 					if self.align_type == 'X':
-						bpy.context.scene.cursor.location = [max_co, saved_origin_loc[1], saved_origin_loc[2]] 
+						bpy.context.scene.cursor.location = [max_co, saved_origin_loc[1], saved_origin_loc[2]]
 					if self.align_type == 'Y':
-						bpy.context.scene.cursor.location = [saved_origin_loc[0], max_co, saved_origin_loc[2]] 
+						bpy.context.scene.cursor.location = [saved_origin_loc[0], max_co, saved_origin_loc[2]]
 					if self.align_type == 'Z':
 						bpy.context.scene.cursor.location = [saved_origin_loc[0], saved_origin_loc[1], max_co]
-						
+
 					# Apply origin to Cursor position
 					bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
 					# Reset 3D Cursor position  
@@ -197,13 +198,13 @@ class Align_Max(bpy.types.Operator):
 							orient_type='GLOBAL', orient_matrix_type='GLOBAL',
 							mirror=False, use_proportional_edit=False,
 							proportional_edit_falloff='SMOOTH', proportional_size=1)
-						
-					bpy.ops.object.mode_set(mode = 'OBJECT')
+
+					bpy.ops.object.mode_set(mode='OBJECT')
 
 		# Select again objects
 		for j in current_selected_obj:
 			j.select_set(True)
-			
+
 		bpy.context.view_layer.objects.active = current_active_obj
 
 		utils.Print_Execution_Time("Align Origin to Max", start_time)
@@ -322,7 +323,7 @@ class Align_Cur(bpy.types.Operator):
 	bl_label = "Origin To Cursor"
 	bl_options = {'REGISTER', 'UNDO'}
 	align_type: bpy.props.StringProperty()
-	
+
 	def execute(self, context):
 		start_time = datetime.now()
 		act = bpy.context.scene.act
@@ -343,11 +344,11 @@ class Align_Cur(bpy.types.Operator):
 
 			# Align to 3D Cursor
 			if self.align_type == 'X':
-				bpy.context.scene.cursor.location = [saved_cursor_loc[0], saved_origin_loc[1], saved_origin_loc[2]] 
+				bpy.context.scene.cursor.location = [saved_cursor_loc[0], saved_origin_loc[1], saved_origin_loc[2]]
 			if self.align_type == 'Y':
-				bpy.context.scene.cursor.location = [saved_origin_loc[0], saved_cursor_loc[1], saved_origin_loc[2]] 
+				bpy.context.scene.cursor.location = [saved_origin_loc[0], saved_cursor_loc[1], saved_origin_loc[2]]
 			if self.align_type == 'Z':
-				bpy.context.scene.cursor.location = [saved_origin_loc[0], saved_origin_loc[1], saved_cursor_loc[2]] 
+				bpy.context.scene.cursor.location = [saved_origin_loc[0], saved_origin_loc[1], saved_cursor_loc[2]]
 
 			# Apply origin to Cursor position
 			if not act.align_geom_to_orig:
@@ -376,7 +377,7 @@ class Align_Cur(bpy.types.Operator):
 						proportional_edit_falloff='SMOOTH', proportional_size=1)
 			# Reset 3D Cursor position  
 			bpy.context.scene.cursor.location = saved_cursor_loc
-		
+
 		# Select again objects
 		for j in current_selected_obj:
 			j.select_set(True)
@@ -406,8 +407,8 @@ class Align_Co(bpy.types.Operator):
 			align_coordinate = float(act.align_co)
 		except:
 			self.report({'INFO'}, 'Coordinate is wrong')
-			wrong_align_co = True   
-		
+			wrong_align_co = True
+
 		if not wrong_align_co:
 			# Save selected objects and current position of 3D Cursor
 			current_selected_obj = bpy.context.selected_objects
@@ -422,15 +423,15 @@ class Align_Co(bpy.types.Operator):
 				x.select_set(True)
 				# Save current origin and relocate 3D Cursor
 				saved_origin_loc = x.location.copy()
-				
+
 				# Align to coordinate
 				if self.align_type == 'X':
-					bpy.context.scene.cursor.location = [align_coordinate, saved_origin_loc[1], saved_origin_loc[2]] 
+					bpy.context.scene.cursor.location = [align_coordinate, saved_origin_loc[1], saved_origin_loc[2]]
 				if self.align_type == 'Y':
-					bpy.context.scene.cursor.location = [saved_origin_loc[0], align_coordinate, saved_origin_loc[2]] 
+					bpy.context.scene.cursor.location = [saved_origin_loc[0], align_coordinate, saved_origin_loc[2]]
 				if self.align_type == 'Z':
-					bpy.context.scene.cursor.location = [saved_origin_loc[0], saved_origin_loc[1], align_coordinate] 
-				
+					bpy.context.scene.cursor.location = [saved_origin_loc[0], saved_origin_loc[1], align_coordinate]
+
 				if not act.align_geom_to_orig:
 					bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
 				else:
@@ -457,7 +458,7 @@ class Align_Co(bpy.types.Operator):
 							proportional_edit_falloff='SMOOTH', proportional_size=1)
 				# Reset 3D Cursor position  
 				bpy.context.scene.cursor.location = saved_cursor_loc
-			
+
 			# Select again objects
 			for j in current_selected_obj:
 				j.select_set(True)
@@ -474,7 +475,7 @@ class Set_Origin_To_Select(bpy.types.Operator):
 	bl_idname = "object.set_origin_to_select"
 	bl_label = "Set Origin To Selection"
 	bl_options = {'REGISTER', 'UNDO'}
-	
+
 	def execute(self, context):
 		start_time = datetime.now()
 		saved_cursor_loc = bpy.context.scene.cursor.location.copy()
@@ -487,7 +488,7 @@ class Set_Origin_To_Select(bpy.types.Operator):
 		bpy.ops.object.mode_set(mode='EDIT')
 
 		utils.Print_Execution_Time("Set Origin to Selection", start_time)
-		return {'FINISHED'} 	
+		return {'FINISHED'}
 
 
 # Origin tools UI panel
@@ -500,59 +501,60 @@ class VIEW3D_PT_Origin_Tools_Panel(bpy.types.Panel):
 	@classmethod
 	def poll(self, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is not None and (context.mode == 'OBJECT' or context.mode == 'EDIT_MESH')) and preferences.origin_enable
+		return (context.object is not None and (
+					context.mode == 'OBJECT' or context.mode == 'EDIT_MESH')) and preferences.origin_enable
 
 	def draw(self, context):
 		act = bpy.context.scene.act
-		
+
 		layout = self.layout
 		if context.object is not None:
 			if context.mode == 'OBJECT':
 				row = layout.row()
 				row.label(text="Origin Align")
-				
+
 				row = layout.row()
 				row.prop(act, "align_geom_to_orig", text="Geometry To Origin")
-				
+
 				# Aligner Labels
 				row = layout.row(align=True)
 				row.label(text="X")
 				row.label(text="Y")
 				row.label(text="Z")
-				
+
 				# Aligner Min Buttons
 				row = layout.row(align=True)
-				row.operator("object.align_min", text="Min").align_type='X'
-				row.operator("object.align_min", text="Min").align_type='Y'
-				row.operator("object.align_min", text="Min").align_type='Z'
-				
+				row.operator("object.align_min", text="Min").align_type = 'X'
+				row.operator("object.align_min", text="Min").align_type = 'Y'
+				row.operator("object.align_min", text="Min").align_type = 'Z'
+
 				# Aligner Max Buttons
 				row = layout.row(align=True)
-				row.operator("object.align_max", text="Max").align_type='X'
-				row.operator("object.align_max", text="Max").align_type='Y'
-				row.operator("object.align_max", text="Max").align_type='Z'
+				row.operator("object.align_max", text="Max").align_type = 'X'
+				row.operator("object.align_max", text="Max").align_type = 'Y'
+				row.operator("object.align_max", text="Max").align_type = 'Z'
 
 				# Aligner Mid Buttons
 				row = layout.row(align=True)
 				row.operator("object.align_mid", text="Middle").align_type = 'X'
 				row.operator("object.align_mid", text="Middle").align_type = 'Y'
 				row.operator("object.align_mid", text="Middle").align_type = 'Z'
-				
+
 				# Aligner Cursor Buttons
 				row = layout.row(align=True)
-				row.operator("object.align_cur", text="Cursor").align_type='X'
-				row.operator("object.align_cur", text="Cursor").align_type='Y'
-				row.operator("object.align_cur", text="Cursor").align_type='Z'
-				
+				row.operator("object.align_cur", text="Cursor").align_type = 'X'
+				row.operator("object.align_cur", text="Cursor").align_type = 'Y'
+				row.operator("object.align_cur", text="Cursor").align_type = 'Z'
+
 				# Aligner Coordinates Buttons
 				row = layout.row(align=True)
-				row.operator("object.align_co", text="Coordinate").align_type='X'
-				row.operator("object.align_co", text="Coordinate").align_type='Y'
-				row.operator("object.align_co", text="Coordinate").align_type='Z'
+				row.operator("object.align_co", text="Coordinate").align_type = 'X'
+				row.operator("object.align_co", text="Coordinate").align_type = 'Y'
+				row.operator("object.align_co", text="Coordinate").align_type = 'Z'
 
 				row = layout.row()
 				row.prop(act, "align_co", text="Coordinate")
-				
+
 		if context.object is not None:
 			if context.object.mode == 'EDIT':
 				row = layout.row()
@@ -570,7 +572,7 @@ classes = (
 	Align_Cur,
 	Align_Co,
 	Set_Origin_To_Select,
-)	
+)
 
 
 def register():

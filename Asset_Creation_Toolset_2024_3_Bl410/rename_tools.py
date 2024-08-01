@@ -131,7 +131,7 @@ class VIEW3D_PT_Rename_Tools_Panel(bpy.types.Panel):
 	def poll(self, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
 		return (context.object is not None and (
-					context.object.mode == 'OBJECT' or context.mode == 'EDIT_ARMATURE')) and preferences.renaming_enable
+				context.object.mode == 'OBJECT' or context.mode == 'EDIT_ARMATURE')) and preferences.renaming_enable
 
 	def draw(self, context):
 		act = bpy.context.scene.act

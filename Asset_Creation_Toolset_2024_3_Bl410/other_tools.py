@@ -134,7 +134,7 @@ class Col_Name_To_Obj_Name(bpy.types.Operator):
 			for object_type in obj_types:
 				add_digit = 0
 				# Get list by selected obj and obj types in current collection
-				cur_collect_obj_list = [x.name for x in collect_dict[collect] if
+				cur_collect_obj_list = [x for x in collect_dict[collect] if
 										x.type == object_type and x.select_get()]
 
 				if act.col_to_obj_name_method == 'ADD':
@@ -154,7 +154,7 @@ class Col_Name_To_Obj_Name(bpy.types.Operator):
 						name = f'{col_name}_{zeros}{1 + add_digit}'
 
 						while True:
-							if name == obj:
+							if name == obj.name:
 								all_obj_list.append(name)
 								break
 							elif name in all_obj_list:
@@ -162,16 +162,14 @@ class Col_Name_To_Obj_Name(bpy.types.Operator):
 								zeros = "0" * (obj_count_len + 1 - len(str(add_digit + 1)))
 								name = f'{col_name}_{zeros}{1 + add_digit}'
 							else:
-								current_obj = bpy.data.objects[obj]
-								current_obj.name = name
+								obj.name = name
 								all_obj_list.append(name)
 								break
 					else:
-						current_obj = bpy.data.objects[obj]
 						if act.col_name_position == 'START':
-							current_obj.name = col_name + '_' + current_obj.name
+							obj.name = col_name + '_' + obj.name
 						else:
-							current_obj.name = current_obj.name + '_' + col_name
+							obj.name = obj.name + '_' + col_name
 
 		Obj_Name_To_Data_Name()
 

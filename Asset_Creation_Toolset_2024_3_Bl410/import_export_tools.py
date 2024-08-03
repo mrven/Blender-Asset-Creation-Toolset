@@ -247,8 +247,8 @@ class Multi_FBX_Export(bpy.types.Operator):
 				if act.export_combine_meshes:
 					# If parent object is mesh
 					# combine all children to parent object
-					if bpy.data.objects[name].type == 'MESH':
-						bpy.context.view_layer.objects.active = bpy.data.objects[name]
+					if start_active_obj.type == 'MESH':
+						bpy.context.view_layer.objects.active = start_active_obj
 						bpy.ops.object.join()
 					# If  parent is empty
 					else:
@@ -445,7 +445,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 					if collection_in_list is False:
 						used_collections.append(x.users_collection[0].name)
 
-					obj_col_dict[x.name] = x.users_collection[0].name
+					obj_col_dict[x] = x.users_collection[0].name
 
 				# Select objects by collection and export
 				for c in used_collections:
@@ -453,13 +453,13 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 					# Select Objects in Collection
 					set_active_mesh = False
-					for obj_name, col_name in obj_col_dict.items():
+					for obj, col_name in obj_col_dict.items():
 						if col_name == c:
-							bpy.data.objects[obj_name].select_set(True)
-							if bpy.data.objects[obj_name].type == 'MESH' and not set_active_mesh:
-								bpy.context.view_layer.objects.active = bpy.data.objects[obj_name]
+							obj.select_set(True)
+							if obj.type == 'MESH' and not set_active_mesh:
+								bpy.context.view_layer.objects.active = obj
 								if act.export_combine_meshes:
-									bpy.data.objects[obj_name].name = c
+									obj.name = c
 								set_active_mesh = True
 
 					if act.export_combine_meshes and set_active_mesh:

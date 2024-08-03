@@ -3,12 +3,12 @@ import importlib
 
 bl_info = {
 	"name": "Asset Creation Toolset",
-	"description": "Toolset for easy create assets for Unity/UE/Stocks/etc.",
+	"description": "Tools for easy create and export low-poly assets for games",
 	"author": "Ivan 'mrven' Vostrikov,  Felipe Torrents, mokalux, Oxicid, ani-kun",
 	"wiki_url": "https://gum.co/hPXIh",
 	"tracker_url": "https://github.com/mrven/Blender-Asset-Creation-Toolset/issues",
 	"doc_url": "https://github.com/mrven/Blender-Asset-Creation-Toolset#readme",
-	"version": (2024, 3),
+	"version": (2024, 3, 1),
 	"blender": (4, 1, 0),
 	"location": "3D View > Toolbox > ACT",
 	"category": "Object",

@@ -41,15 +41,15 @@ class Numbering(bpy.types.Operator):
 			selected_obj = bpy.context.selected_objects
 
 		for x in selected_obj:
-			object_class = [x.name, 0]
+			object_class = [x, 0]
 
 			# List of objects
 			if act.nums_method == 'ALONG_X' or act.nums_method == 'SIMPLE' or act.nums_method == 'NONE':
-				object_class = [x.name, x.location.x]
+				object_class = [x, x.location.x]
 			if act.nums_method == 'ALONG_Y':
-				object_class = [x.name, x.location.y]
+				object_class = [x, x.location.y]
 			if act.nums_method == 'ALONG_Z':
-				object_class = [x.name, x.location.z]
+				object_class = [x, x.location.z]
 
 			objects_list.append(object_class)
 
@@ -59,7 +59,7 @@ class Numbering(bpy.types.Operator):
 
 		# Preprocess delete Blender numbers and add new numbers
 		for y in range(len(objects_list)):
-			current_obj = bpy.data.objects[objects_list[y][0]]
+			current_obj = objects_list[y][0]
 
 			# Delete Blender numbers (.001, .002, etc.)
 			ob_name = current_obj.name
@@ -92,9 +92,9 @@ class Numbering(bpy.types.Operator):
 					num_str = str(y + 1)
 
 			if act.nums_method == 'NONE':
-				bpy.data.objects[objects_list[y][0]].name = ob_name
+				objects_list[y][0].name = ob_name
 			else:
-				bpy.data.objects[objects_list[y][0]].name = ob_name + '_' + num_str
+				objects_list[y][0].name = ob_name + '_' + num_str
 
 		utils.Print_Execution_Time("Numbering", start_time)
 		return {'FINISHED'}

@@ -112,14 +112,16 @@ class Palette_Create(bpy.types.Operator):
 
 		# Check exist palette plane (for baking)
 		flag_exist_obj = False
+		plane_obj = None
 		for o in range(len(bpy.data.objects)):
 			if bpy.data.objects[o].name == ('Palette_' + add_name_palette):
 				flag_exist_obj = True
+				plane_obj = o
 
 		# Delete plane
-		if flag_exist_obj:
+		if flag_exist_obj and plane_obj:
 			bpy.ops.object.select_all(action='DESELECT')
-			bpy.data.objects['Palette_' + add_name_palette].select = True
+			plane_obj.select = True
 			bpy.ops.object.delete()
 
 		# Create new plane
@@ -127,7 +129,7 @@ class Palette_Create(bpy.types.Operator):
 		pln = bpy.context.object
 		pln.name = 'Palette_' + add_name_palette
 
-		temp_meshes.append(pln.data.name)
+		temp_meshes.append(pln.data)
 
 		# Add palette background material to palette plane
 		pln.data.materials.append(palette_back_color)
@@ -257,7 +259,7 @@ class Palette_Create(bpy.types.Operator):
 		bpy.ops.mesh.primitive_plane_add(location=(0, 0, 0))
 		bake_plane = bpy.context.object
 		bake_plane.name = 'Palette_Bake_Plane'
-		temp_meshes.append(bake_plane.data.name)
+		temp_meshes.append(bake_plane.data)
 		bpy.ops.object.mode_set(mode='OBJECT')
 
 		# Check exist material for baking
@@ -572,8 +574,8 @@ class Palette_Create(bpy.types.Operator):
 		# Delete temp materials and cleanup
 		bpy.data.materials.remove(bpy.data.materials['Palette_background'])
 
-		for mesh_name in temp_meshes:
-			bpy.data.meshes.remove(bpy.data.meshes[mesh_name])
+		for mesh in temp_meshes:
+			bpy.data.meshes.remove(mesh)
 
 		for material in bpy.data.materials:
 			if material.name == 'Palette_Bake':

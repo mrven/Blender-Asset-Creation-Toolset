@@ -113,8 +113,8 @@ class Palette_Create(bpy.types.Operator):
 		# Check exist palette plane (for baking)
 		flag_exist_obj = False
 		plane_obj = None
-		for o in range(len(bpy.data.objects)):
-			if bpy.data.objects[o].name == ('Palette_' + add_name_palette):
+		for o in bpy.data.objects:
+			if o.name == ('Palette_' + add_name_palette):
 				flag_exist_obj = True
 				plane_obj = o
 

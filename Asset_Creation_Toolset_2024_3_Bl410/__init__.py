@@ -1,6 +1,3 @@
-import sys
-import importlib
-
 bl_info = {
 	"name": "Asset Creation Toolset",
 	"description": "Tools for easy create and export low-poly assets for games",
@@ -14,30 +11,31 @@ bl_info = {
 	"category": "Object",
 }
 
-modules_names = ['props', 'preferences', 'utils', 'origin_tools', 'rename_tools', 'uv_tools', 'import_export_tools', 'material_tools', 'other_tools']
+from . import props
+from . import preferences
+from . import utils
+from . import origin_tools
+from . import rename_tools
+from . import uv_tools
+from . import import_export_tools
+from . import material_tools
+from . import other_tools
 
-
-modules_full_names = {}
-for current_module_name in modules_names:
-	modules_full_names[current_module_name] = ('{}.{}'.format(__package__, current_module_name))
-
-for current_module_full_name in modules_full_names.values():
-	if current_module_full_name in sys.modules:
-		importlib.reload(sys.modules[current_module_full_name])
-	else:
-		globals()[current_module_full_name] = importlib.import_module(current_module_full_name)
-		setattr(globals()[current_module_full_name], 'modulesNames', modules_full_names)
-
+modules_names = (
+	props,
+	origin_tools,
+	rename_tools,
+	uv_tools,
+	import_export_tools,
+	material_tools,
+	other_tools,
+	preferences
+)
 
 def register():
-	for current_module_name in modules_full_names.values():
-		if current_module_name in sys.modules:
-			if hasattr(sys.modules[current_module_name], 'register'):
-				sys.modules[current_module_name].register()
-
+	for module_name in modules_names:
+		module_name.register()
 
 def unregister():
-	for current_module_name in modules_full_names.values():
-		if current_module_name in sys.modules:
-			if hasattr(sys.modules[current_module_name], 'unregister'):
-				sys.modules[current_module_name].unregister()
+	for module_name in reversed(modules_names):
+		module_name.unregister()

@@ -20,7 +20,7 @@ class Palette_Create(bpy.types.Operator):
 		act.export_dir = ""
 		path = ""
 		incorrect_names = []
-		palette_back_color = (0.5, 0.5, 0.5, 1)
+		palette_back_material = (0.5, 0.5, 0.5, 1)
 		# Bake PBR Palette Texture Set (Albedo, Roughness, Metallic, Opacity, Emission) or only Albedo
 		pbr_mode = act.pbr_workflow
 		# Store temporary data for cleanUp
@@ -98,17 +98,19 @@ class Palette_Create(bpy.types.Operator):
 		for x in current_objects:
 			me += x.data.materials
 
+		palette_back_material = None
+
 		# Check exist material Palette_background
 		flag_exist_mat = False
 		for a in range(len(bpy.data.materials)):
 			if bpy.data.materials[a].name == 'Palette_background':
 				flag_exist_mat = True
-				palette_back_color = bpy.data.materials[a]
+				palette_back_material = bpy.data.materials[a]
 
 		# Create palette background material
 		if not flag_exist_mat:
-			palette_back_color = bpy.data.materials.new('Palette_background')
-			palette_back_color.diffuse_color = 0.8, 0.8, 0.8, 1.0
+			palette_back_material = bpy.data.materials.new('Palette_background')
+			palette_back_material.diffuse_color = 0.8, 0.8, 0.8, 1.0
 
 		# Check exist palette plane (for baking)
 		flag_exist_obj = False
@@ -132,7 +134,7 @@ class Palette_Create(bpy.types.Operator):
 		temp_meshes.append(pln.data)
 
 		# Add palette background material to palette plane
-		pln.data.materials.append(palette_back_color)
+		pln.data.materials.append(palette_back_material)
 
 		# Names for textures
 		albedo_texture_name = 'Palette_' + add_name_palette + '_Albedo'
@@ -572,7 +574,8 @@ class Palette_Create(bpy.types.Operator):
 			palette_mat.shadow_method = 'CLIP'
 
 		# Delete temp materials and cleanup
-		bpy.data.materials.remove(bpy.data.materials['Palette_background'])
+		if palette_back_material:
+			bpy.data.materials.remove(palette_back_material)
 
 		for mesh in temp_meshes:
 			bpy.data.meshes.remove(mesh)

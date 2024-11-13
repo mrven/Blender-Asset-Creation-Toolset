@@ -1,25 +1,25 @@
-# Blender Addon: Asset Creation Toolset
+# Blender Addon: ACT: Game Asset Creation Toolset
 
 ![Header](/images/headers/ACT_Header_1920.png)
 
 **[English README](/README.md)**
 
-**Asset Creation Toolset** аддон для Blender, который содержит в себе набор инструментов, помогающих при создании низкополигональных ассетов для Blender.
+**ACT** аддон для Blender, который содержит в себе набор инструментов, помогающих при создании низкополигональных ассетов для Blender.
 
 ***Скачать последнюю версию:***
 
-* ***[(2024.2) Blender 4.1 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2024_2_Bl410.zip)***
-* ***[(2023.2) Blender 4.0 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2023_2_Bl400.zip)***
-* ***[(2023.1) Blender 3.6 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2023_1_Bl361.zip)***
-* ***[ACT Unity Editor Скрипт (для ACT 2023.1 и выше)](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Unity_Plugin/Releases/ACT_2023_1_Unity_Plugin.unitypackage)***
-* -----------------------------------------------------
-* ***[(3.3) Blender 3.4 и выше](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_3_341.zip)***
+* ***[(2024.2) Blender 4.2+ (с Blender Extensions)](https://extensions.blender.org/add-ons/act-game-asset-creation-toolset/)***
+* ***[(2024.2) Blender 4.1+](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2024_2_Bl410.zip)***
+* ***[(2023.2) Blender 4.0+](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2023_2_Bl400.zip)***
+* ***[(2023.1) Blender 3.6+](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2023_1_Bl361.zip)***
+* ***[ACT Unity Editor Скрипт (для ACT 2023.1+)](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Unity_Plugin/Releases/ACT_2023_1_Unity_Plugin.unitypackage)***
+-----------------------------------------------------
+* ***[(3.3) Blender 3.4+](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_3_341.zip)***
 * ***[(3.1.5) Blender 2.90 - 3.0](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_5_290.zip)***
 * ***[(3.1.2) Blender 2.83](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_2_283.zip)***
 * ***[(2.4.1) Blender 2.79](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_4_1_279.zip)***
 
 Если вы хотите поддержать меня, то можете купить аддон на следующих площадках:
-* ***[Gumroad (Свободная цена)](https://gumroad.com/l/hPXIh)***
 * ***[Blender Market](https://blendermarket.com/products/asset-creation-toolset-2024)***
 
 

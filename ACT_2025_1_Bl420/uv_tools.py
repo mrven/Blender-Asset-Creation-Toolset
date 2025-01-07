@@ -46,6 +46,8 @@ class Rename_UV(bpy.types.Operator):
 		selected_obj = utils.selected_obj_with_unique_data()
 		uv_index = act.uv_index_rename
 		uv_name = act.uv_name_rename
+		if len(uv_name) == 0:
+			uv_name = "UVMap"
 
 		for x in selected_obj:
 			if len(x.data.uv_layers) > 0:

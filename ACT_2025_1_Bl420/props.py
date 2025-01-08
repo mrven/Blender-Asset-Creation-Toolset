@@ -11,7 +11,7 @@ from bpy.props import (
 
 
 class ACT_Addon_Props(bpy.types.PropertyGroup):
-	# Palette props
+# region Palette props
 	save_dir: StringProperty(
 		name="",
 		description="Save Directory",
@@ -33,8 +33,9 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		description="Path for Save Palettes",
 		subtype='DIR_PATH'
 	)
+#endregion
 
-	# Export props
+#region Export props
 	export_dir: StringProperty(
 		name="",
 		description="Export Directory",
@@ -147,7 +148,7 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		subtype='DIR_PATH'
 	)
 
-	# Custom FBX Export Options
+	#Custom Export Options props
 	export_custom_options: BoolProperty(
 		name="Custom Export Options",
 		description="Custom FBX Export Options",
@@ -202,7 +203,22 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		('SRGB', 'sRGB', ''))
 	export_vc_color_space: EnumProperty(name="", items=export_vc_color_space_items)
 
-	# Rename props
+	# Use Custom Scale (for OBJ/FBX)
+	use_custom_export_scale: BoolProperty(
+		name="Custom Scale",
+		description="Set custom scale for export",
+		default=False)
+
+	custom_export_scale_value: FloatProperty(
+		name="",
+		description="Scale",
+		default=1.00,
+		min=0.00001,
+		max=9999,
+		step=1)
+#endregion
+
+#region Rename props
 	delete_nums: BoolProperty(
 		name="Delete Blender Nums",
 		description="Delete Blender Numbers from Object Names",
@@ -226,8 +242,9 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		('ONE_ZERO', '_0X, _XX, _XXX', ''),
 		('TWO_ZEROS', '_00X, _0XX, _XXX', ''))
 	nums_format: EnumProperty(name="", items=nums_format_items)
+#endregion
 
-	# Origin tools props
+#region Origin tools props
 	align_co: FloatProperty(
 		name="",
 		description="Coordinate",
@@ -240,8 +257,9 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		name="Geometry To Origin",
 		description="Align Geometry To Origin",
 		default=False)
+#endregion
 
-	# UV tools props
+#region UV tools props
 	uv_move_factor_items = (
 		('1', '2', ''),
 		('2', '4', ''),
@@ -304,8 +322,9 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		min=0,
 		max=1,
 		step=0.01)
+#endregion
 
-	# Other tools props
+#region Other tools props
 	normals_inside: BoolProperty(
 		name="Inside Normals",
 		description="Recalculate Normals Inside",
@@ -339,13 +358,14 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		('DEFAULT', 'Default', 'Example: Collection_Mesh_001'),
 		('CAPITAL', 'CAPITAL', 'Example: Collection_MESH_001'))
 	col_name_type_style: EnumProperty(name="", items=col_name_type_style_items)
+#endregion
 
-	# Debug Property
+#region Debug props
 	debug: BoolProperty(
 		name="Enable Debug Mode",
 		description="Enable Debug Mode",
 		default=False)
-
+#endregion
 
 classes = (
 	ACT_Addon_Props,

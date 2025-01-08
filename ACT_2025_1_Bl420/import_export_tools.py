@@ -660,6 +660,7 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 						row.label(text="File Name:")
 						row.prop(act, "custom_fbx_name")
 
+				# Custom Export Options
 				box = layout.box()
 				row = box.row()
 				row.prop(act, "export_custom_options", text="Custom Export Options")
@@ -701,6 +702,15 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 						row = box.row(align=True)
 						row.label(text=" Smooth Groups")
 						row.prop(act, "obj_export_smooth_groups", text="")
+
+					if act.export_format == 'FBX' or act.export_format == 'OBJ':
+						row = box.row(align=True)
+						row.label(text="Use Custom Scale")
+						row.prop(act, "use_custom_export_scale", text="")
+						if act.use_custom_export_scale:
+							row = box.row(align=True)
+							row.prop(act, "custom_export_scale_value", text="Scale")
+
 
 					if act.export_format == 'GLTF':
 						row = box.row(align=True)

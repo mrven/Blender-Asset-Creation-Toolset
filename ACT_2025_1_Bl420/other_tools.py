@@ -314,6 +314,35 @@ class Weight_Paint_Brush_Invert(bpy.types.Operator):
 		return {'FINISHED'}
 
 
+# Select Objects with Negative Scale
+class Select_Negative_Scaled_Objects(bpy.types.Operator):
+	"""Select Objects with Negative Scale"""
+	bl_idname = "object.select_negative_scaled_objects"
+	bl_label = "Select Objects with Negative Scale"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		start_time = datetime.now()
+		negative_scaled_obj = []
+		bpy.ops.object.select_all(action='DESELECT')
+
+		for obj in bpy.data.objects:
+			if min(obj.scale.x, min(obj.scale.y, obj.scale.z)) < 0:
+				negative_scaled_obj.append(obj)
+
+		if len(negative_scaled_obj) > 0:
+			for obj in negative_scaled_obj:
+				obj.select_set(True)
+
+			bpy.context.view_layer.objects.active = negative_scaled_obj[0]
+
+			utils.Show_Message_Box("Selected " + str(len(negative_scaled_obj)) + " objects", "Negative Scaled Objects")
+		else:
+			utils.Show_Message_Box("Objects with negative scale not found", "Negative Scaled Objects")
+		utils.Print_Execution_Time("Select Objects with Negative Scale", start_time)
+		return {'FINISHED'}
+
+
 # Panels
 class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 	bl_label = "Other Tools"
@@ -373,6 +402,9 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 				else:
 					row.prop(act, "calc_normals_en", text="Recalc Normals", icon="CHECKBOX_DEHLT")
 
+				row = layout.row()
+				row.operator("object.select_negative_scaled_objects", text="Select Negative Scaled Objs")
+
 			if context.mode == 'EDIT_ARMATURE':
 				row = layout.row()
 				row.label(text="Merge Bones:")
@@ -400,6 +432,7 @@ classes = (
 	Col_Name_To_Obj_Name,
 	Merge_Bones,
 	Weight_Paint_Brush_Invert,
+	Select_Negative_Scaled_Objects
 )
 
 

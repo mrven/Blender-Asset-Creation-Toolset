@@ -184,3 +184,14 @@ def selected_obj_with_unique_data(obj_type='MESH'):
 		if obj.type == obj_type:
 			objs_with_instances[obj.data].append(obj)
 	return [objs[0] for objs in objs_with_instances.values()]
+
+
+# Check Cycles Addon is Enabled or Not
+def Cycles_Is_Enabled():
+	is_cycles_enabled = False
+
+	for module_name in bpy.context.preferences.addons.keys():
+		if module_name == 'cycles':
+			is_cycles_enabled = True
+
+	return is_cycles_enabled

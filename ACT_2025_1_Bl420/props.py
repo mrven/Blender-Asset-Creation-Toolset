@@ -358,6 +358,12 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		('DEFAULT', 'Default', 'Example: Collection_Mesh_001'),
 		('CAPITAL', 'CAPITAL', 'Example: Collection_MESH_001'))
 	col_name_type_style: EnumProperty(name="", items=col_name_type_style_items)
+
+	# Cleanup Empties: Also delete empty meshes
+	delete_empty_meshes: BoolProperty(
+			name="Delete empty meshes",
+			description="Also delete empty meshes",
+			default=True)
 #endregion
 
 #region Debug props

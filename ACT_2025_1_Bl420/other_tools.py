@@ -343,6 +343,35 @@ class Select_Negative_Scaled_Objects(bpy.types.Operator):
 		return {'FINISHED'}
 
 
+class Cleanup_Empties(bpy.types.Operator):
+	"""Delete empties without any child"""
+	bl_idname = "object.cleanup_empties"
+	bl_label = "Cleanup Empties"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		start_time = datetime.now()
+		act = bpy.context.scene.act
+		selected_objects = bpy.context.selected_objects
+		bpy.ops.object.select_all(action='DESELECT')
+
+		for obj in selected_objects:
+			if obj.type == 'EMPTY' \
+					or (act.delete_empty_meshes and obj.type == "MESH" and len(obj.data.vertices) == 0):
+				empty_branch = True
+
+				for child in obj.children_recursive:
+					if child.type != 'EMPTY' \
+							or (act.delete_empty_meshes and obj.type == "MESH" and len(obj.data.vertices) > 0):
+						empty_branch = False
+
+				if empty_branch or len(obj.children) == 0:
+					obj.select_set(True)
+
+		bpy.ops.object.delete()
+		utils.Print_Execution_Time("Cleanup Empties", start_time)
+		return {'FINISHED'}
+
 # Panels
 class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 	bl_label = "Other Tools"
@@ -405,6 +434,12 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 				row = layout.row()
 				row.operator("object.select_negative_scaled_objects", text="Select Negative Scaled Objs")
 
+				box = layout.box()
+				row = box.row()
+				row.operator("object.cleanup_empties", text="Cleanup Empties")
+				row = box.row()
+				row.prop(act, "delete_empty_meshes", text="Also delete empty meshes")
+
 			if context.mode == 'EDIT_ARMATURE':
 				row = layout.row()
 				row.label(text="Merge Bones:")
@@ -432,7 +467,8 @@ classes = (
 	Col_Name_To_Obj_Name,
 	Merge_Bones,
 	Weight_Paint_Brush_Invert,
-	Select_Negative_Scaled_Objects
+	Select_Negative_Scaled_Objects,
+	Cleanup_Empties
 )
 
 

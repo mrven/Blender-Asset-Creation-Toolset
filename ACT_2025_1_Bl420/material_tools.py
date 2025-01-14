@@ -1051,15 +1051,17 @@ def register():
 	for cls in classes:
 		bpy.utils.register_class(cls)
 
-	bpy.types.CYCLES_PT_context_material.prepend(Material_Menu_Panel)
+	if utils.Cycles_Is_Enabled():
+		bpy.types.CYCLES_PT_context_material.prepend(Material_Menu_Panel)
 	bpy.types.EEVEE_MATERIAL_PT_context_material.prepend(Material_Menu_Panel)
 
 
 def unregister():
-	try:
-		bpy.types.CYCLES_PT_context_material.remove(Material_Menu_Panel)
-	except AttributeError as err:
-		print(err)
+	if utils.Cycles_Is_Enabled():
+		try:
+			bpy.types.CYCLES_PT_context_material.remove(Material_Menu_Panel)
+		except AttributeError as err:
+			print(err)
 
 	try:
 		bpy.types.EEVEE_MATERIAL_PT_context_material.remove(Material_Menu_Panel)

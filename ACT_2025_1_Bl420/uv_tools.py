@@ -221,6 +221,37 @@ class UV_Mover(bpy.types.Operator):
 		utils.Print_Execution_Time("UV Mover", start_time)
 		return {'FINISHED'}
 
+#Mark Seams from UV
+class Mark_Seams_From_UV(bpy.types.Operator):
+	"""Mark Seams from UV"""
+	bl_idname = "object.mark_seams_from_uv"
+	bl_label = "Mark Seams from UV"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		start_time = datetime.now()
+		current_area = bpy.context.area.type
+		bpy.ops.mesh.reveal()
+		bpy.ops.mesh.select_all(action='SELECT')
+
+		# Switch active area to Image Editor
+		bpy.context.area.type = 'IMAGE_EDITOR'
+
+		# If Image Editor has Render Result, Clean it
+		if bpy.context.area.spaces[0].image is not None:
+			if bpy.context.area.spaces[0].image.name == 'Render Result':
+				bpy.context.area.spaces[0].image = None
+
+		# Switch Image Editor to UV Editor
+		if bpy.context.space_data.mode != 'UV':
+			bpy.context.space_data.mode = 'UV'
+
+		bpy.ops.uv.select_all(action='SELECT')
+		bpy.ops.uv.seams_from_islands()
+		bpy.context.area.type = current_area
+		utils.Print_Execution_Time("Mark Seams from UV", start_time)
+		return {'FINISHED'}
+
 
 # UV mover UI panel
 class UV_PT_UV_Mover_Panel(bpy.types.Panel):
@@ -284,7 +315,8 @@ class VIEW3D_PT_UV_Tools_Panel(bpy.types.Panel):
 	@classmethod
 	def poll(self, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is not None and context.object.mode == 'OBJECT') and preferences.uv_view3d_enable
+		return (context.object is not None and (context.mode == 'OBJECT' or context.mode == 'EDIT_MESH')) \
+			and preferences.uv_view3d_enable
 
 	def draw(self, context):
 		act = bpy.context.scene.act
@@ -295,6 +327,7 @@ class VIEW3D_PT_UV_Tools_Panel(bpy.types.Panel):
 		if context.object is not None:
 			if context.object.mode == 'EDIT':
 				row = layout.row()
+				row.operator("object.mark_seams_from_uv", text="Mark Seams from UV")
 
 		if context.object is not None:
 			if context.mode == 'OBJECT':
@@ -342,6 +375,7 @@ classes = (
 	Remove_UV,
 	Select_UV,
 	UV_Mover,
+	Mark_Seams_From_UV
 )
 
 

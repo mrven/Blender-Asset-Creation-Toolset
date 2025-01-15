@@ -14,7 +14,9 @@ class Dissolve_Checker_Loops(bpy.types.Operator):
 	def execute(self, context):
 		start_time = datetime.now()
 		if tuple(bpy.context.scene.tool_settings.mesh_select_mode) != (False, True, False):
-			utils.Show_Message_Box("Change Selection Mode to EDGE first")
+			utils.Show_Message_Box("Change Selection Mode to EDGE first",
+								   "Invalid Selection Mode",
+								   'ERROR')
 			return {'CANCELLED'}
 		else:
 			selected_obj = bpy.context.selected_objects
@@ -28,7 +30,9 @@ class Dissolve_Checker_Loops(bpy.types.Operator):
 			bpy.ops.object.mode_set(mode='EDIT')
 
 			if selected_edges != 1:
-				utils.Show_Message_Box("Select only one Edge")
+				utils.Show_Message_Box("Select only one Edge",
+									   "Wrong Selection",
+									   'ERROR')
 				return {'CANCELLED'}
 
 		bpy.ops.mesh.loop_multi_select(ring=True)
@@ -50,7 +54,9 @@ class Collapse_Checker_Edges(bpy.types.Operator):
 	def execute(self, context):
 		start_time = datetime.now()
 		if tuple(bpy.context.scene.tool_settings.mesh_select_mode) != (False, True, False):
-			utils.Show_Message_Box("Change Selection Mode to EDGE first")
+			utils.Show_Message_Box("Change Selection Mode to EDGE first",
+								   "Invalid Selection Mode",
+								   'ERROR')
 			return {'CANCELLED'}
 		else:
 			selected_obj = bpy.context.selected_objects
@@ -64,14 +70,16 @@ class Collapse_Checker_Edges(bpy.types.Operator):
 			bpy.ops.object.mode_set(mode='EDIT')
 
 			if selected_edges != 1:
-				utils.Show_Message_Box("Select only one Edge")
+				utils.Show_Message_Box("Select only one Edge",
+									   "Wrong Selection",
+									   'ERROR')
 				return {'CANCELLED'}
 
 		bpy.ops.mesh.loop_multi_select(ring=False)
 		bpy.ops.mesh.select_nth(offset=1)
 		bpy.ops.mesh.merge(type='COLLAPSE')
 
-		utils.Print_Execution_Time("Collapse  Checker Edges", start_time)
+		utils.Print_Execution_Time("Collapse Checker Edges", start_time)
 		return {'FINISHED'}
 
 

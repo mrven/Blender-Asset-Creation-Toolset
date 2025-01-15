@@ -28,7 +28,9 @@ class Palette_Create(bpy.types.Operator):
 
 		# Check blend file is saved and get export folder path
 		if len(bpy.data.filepath) == 0 and not act.custom_save_path:
-			self.report({'INFO'}, 'Blend file is not saved. Try use Custom Save Path')
+			utils.Show_Message_Box( 'Blend file is not saved. Try use Custom Save Path',
+									'Saving Error',
+									'ERROR')
 			return {'CANCELLED'}
 
 		if len(bpy.data.filepath) > 0 or act.custom_save_path:
@@ -37,11 +39,15 @@ class Palette_Create(bpy.types.Operator):
 
 			if act.custom_save_path:
 				if len(act.save_path) == 0:
-					self.report({'INFO'}, 'Save Path can\'t be empty')
+					utils.Show_Message_Box('Save Path can\'t be empty',
+										   'Saving Error',
+										   'ERROR')
 					return {'CANCELLED'}
 
 				if not os.path.exists(os.path.realpath(bpy.path.abspath(act.save_path))):
-					self.report({'INFO'}, 'Directory for saving not exist')
+					utils.Show_Message_Box('Directory for saving not exist',
+										   'Saving Error',
+										   'ERROR')
 					return {'CANCELLED'}
 				else:
 					path = os.path.realpath(bpy.path.abspath(act.save_path)) + '/'
@@ -591,8 +597,8 @@ class Palette_Create(bpy.types.Operator):
 
 		# Show message about incorrect names
 		if len(incorrect_names) > 0:
-			utils.Show_Message_Box("Psllete name has invalid characters. Some chars have been replaced",
-								   "Invalid Palette Name")
+			utils.Show_Message_Box("Palette name has invalid characters. Some chars have been replaced",
+								   "Incorrect Palette Name")
 
 		return {'FINISHED'}
 
@@ -611,7 +617,9 @@ class Open_Save_Dir(bpy.types.Operator):
 		# Try open export directory in OS
 		if not os.path.exists(os.path.realpath(bpy.path.abspath(act.save_path))):
 			act.save_dir = ""
-			self.report({'INFO'}, 'Directory not exist')
+			utils.Show_Message_Box('Directory not exist',
+								   'Wrong Path',
+								   'ERROR')
 
 			return {'CANCELLED'}
 
@@ -621,7 +629,8 @@ class Open_Save_Dir(bpy.types.Operator):
 			except:
 				subprocess.Popen(['xdg-open', act.save_dir])
 		else:
-			self.report({'INFO'}, 'Create Palette\'s before')
+			utils.Show_Message_Box('Create Palette\'s before',
+								   'Info')
 			return {'FINISHED'}
 
 		utils.Print_Execution_Time("Open Textures Export Directory", start_time)

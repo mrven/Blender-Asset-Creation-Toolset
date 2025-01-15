@@ -24,12 +24,16 @@ class Multi_FBX_Export(bpy.types.Operator):
 		if act.fbx_export_mode == 'ALL':
 			if act.set_custom_fbx_name:
 				if len(act.custom_fbx_name) == 0:
-					self.report({'INFO'}, 'Custom Name can\'t be empty')
+					utils.Show_Message_Box('Custom Name can\'t be empty',
+										   'Saving Error',
+										   'ERROR')
 					return {'CANCELLED'}
 
 		# Check saved blend file
 		if len(bpy.data.filepath) == 0 and not act.custom_export_path:
-			self.report({'INFO'}, 'Blend file is not saved. Try use Custom Export Path')
+			utils.Show_Message_Box('Blend file is not saved. Try use Custom Export Path',
+								   'Saving Error',
+								   'ERROR')
 			return {'CANCELLED'}
 
 		if len(bpy.data.filepath) > 0 or act.custom_export_path:
@@ -46,11 +50,15 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 			if act.custom_export_path:
 				if len(act.export_path) == 0:
-					self.report({'INFO'}, 'Export Path can\'t be empty')
+					utils.Show_Message_Box('Export Path can\'t be empty',
+										   'Saving Error',
+										   'ERROR')
 					return {'CANCELLED'}
 
 				if not os.path.exists(os.path.realpath(bpy.path.abspath(act.export_path))):
-					self.report({'INFO'}, 'Directory for export not exist')
+					utils.Show_Message_Box('Directory for export not exist',
+										   'Saving Error',
+										   'ERROR')
 					return {'CANCELLED'}
 				else:
 					path = os.path.realpath(bpy.path.abspath(act.export_path)) + '/'
@@ -536,7 +544,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 		if len(incorrect_names) > 0:
 			utils.Show_Message_Box(
 				"Object(s) has invalid characters in name. Some chars in export name have been replaced",
-				"Invalid Export Names")
+				"Incorrect Export Names")
 
 		utils.Print_Execution_Time("FBX/OBJ Export", start_time)
 		return {'FINISHED'}
@@ -555,7 +563,9 @@ class Open_Export_Dir(bpy.types.Operator):
 
 		if not os.path.exists(os.path.realpath(bpy.path.abspath(act.export_dir))):
 			act.export_dir = ""
-			self.report({'INFO'}, 'Directory not exist')
+			utils.Show_Message_Box('Directory not exist',
+								   'Wrong Path',
+								   'ERROR')
 
 			return {'CANCELLED'}
 
@@ -566,7 +576,8 @@ class Open_Export_Dir(bpy.types.Operator):
 			except:
 				subprocess.Popen(['xdg-open', act.export_dir])
 		else:
-			self.report({'INFO'}, 'Export FBX\'s before')
+			utils.Show_Message_Box('Export FBX\'s before',
+								   'Info')
 			return {'FINISHED'}
 
 		utils.Print_Execution_Time("Open Export Directory", start_time)

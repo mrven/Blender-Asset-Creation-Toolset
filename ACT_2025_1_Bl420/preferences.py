@@ -6,7 +6,7 @@ from bpy.props import (
 	BoolProperty
 )
 
-from . import origin_tools, rename_tools, uv_tools, import_export_tools, material_tools, other_tools
+from . import origin_tools, rename_tools, uv_tools, import_export_tools, material_tools, other_tools, geometry_tools
 
 from .origin_tools import VIEW3D_PT_Origin_Tools_Panel
 from .rename_tools import VIEW3D_PT_Rename_Tools_Panel
@@ -14,6 +14,7 @@ from .uv_tools import UV_PT_UV_Mover_Panel, VIEW3D_PT_UV_Tools_Panel
 from .import_export_tools import VIEW3D_PT_Import_Export_Tools_Panel
 from .material_tools import VIEW3D_PT_Material_Tools_Panel, UV_PT_Material_UV_Tools_Panel
 from .other_tools import VIEW3D_PT_Other_Tools_Panel
+from .geometry_tools import VIEW3D_PT_Geometry_Tools_Panel
 
 
 def update_export_import_panel_category(self, context):
@@ -120,6 +121,19 @@ def update_uv_material_panel_category(self, context):
 	bpy.utils.register_class(UV_PT_Material_UV_Tools_Panel)
 
 
+def update_geometry_panel_category(self, context):
+	is_panel = hasattr(bpy.types, 'VIEW3D_PT_Geometry_Tools_Panel')
+	category = bpy.context.preferences.addons[__package__].preferences.geometry_panel_category
+
+	if is_panel:
+		try:
+			bpy.utils.unregister_class(VIEW3D_PT_Geometry_Tools_Panel)
+		except:
+			pass
+	VIEW3D_PT_Geometry_Tools_Panel.bl_category = category
+	bpy.utils.register_class(VIEW3D_PT_Geometry_Tools_Panel)
+
+
 class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 	bl_idname = __package__
 
@@ -141,6 +155,11 @@ class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 	other_enable: BoolProperty(
 		name="Other Tools",
 		description="Show/Hide Other Tools UI Panel",
+		default=True)
+
+	geometry_enable: BoolProperty(
+		name="Geometry Tools",
+		description="Show/Hide Geometry Tools UI Panel",
 		default=True)
 
 	uv_view3d_enable: BoolProperty(
@@ -190,6 +209,12 @@ class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 		description="Choose a name for the category of the Other panel",
 		default="ACT",
 		update=update_other_panel_category
+	)
+
+	geometry_panel_category: StringProperty(
+		description="Choose a name for the category of the Geometry panel",
+		default="ACT",
+		update=update_geometry_panel_category
 	)
 
 	rename_panel_category: StringProperty(
@@ -265,6 +290,11 @@ class ACT_Addon_Preferences(bpy.types.AddonPreferences):
 		if self.other_enable:
 			row.prop(self, 'other_panel_category', text="Panel")
 
+		row = box.row(align=True)
+		row.prop(self, 'geometry_enable')
+		if self.other_enable:
+			row.prop(self, 'geometry_panel_category', text="Panel")
+
 
 classes = (
 	ACT_Addon_Preferences,
@@ -274,6 +304,7 @@ classes = (
 	VIEW3D_PT_Import_Export_Tools_Panel,
 	VIEW3D_PT_Material_Tools_Panel,
 	VIEW3D_PT_Other_Tools_Panel,
+	VIEW3D_PT_Geometry_Tools_Panel,
 	UV_PT_UV_Mover_Panel,
 	UV_PT_Material_UV_Tools_Panel,
 )
@@ -292,6 +323,7 @@ def register():
 	update_export_import_panel_category(prefs, context)
 	update_material_panel_category(prefs, context)
 	update_other_panel_category(prefs, context)
+	update_geometry_panel_category(prefs, context)
 	update_uv_uv_panel_category(prefs, context)
 	update_uv_material_panel_category(prefs, context)
 

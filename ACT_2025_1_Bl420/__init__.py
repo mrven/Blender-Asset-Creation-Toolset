@@ -20,6 +20,7 @@ from . import uv_tools
 from . import import_export_tools
 from . import material_tools
 from . import other_tools
+from . import geometry_tools
 
 modules_names = (
 	props,
@@ -29,6 +30,7 @@ modules_names = (
 	import_export_tools,
 	material_tools,
 	other_tools,
+	geometry_tools,
 	preferences
 )
 

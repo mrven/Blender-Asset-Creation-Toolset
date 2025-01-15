@@ -399,71 +399,72 @@ class Align_Co(bpy.types.Operator):
 	def execute(self, context):
 		start_time = datetime.now()
 		act = bpy.context.scene.act
-		wrong_align_co = False
 		align_coordinate = 0
 
 		# Check coordinate if check this option
 		try:
 			align_coordinate = float(act.align_co)
 		except:
-			self.report({'INFO'}, 'Coordinate is wrong')
-			wrong_align_co = True
+			utils.Show_Message_Box('Coordinate is wrong',
+								   'Float Error',
+								   'ERROR')
+			return {'CANCELLED'}
 
-		if not wrong_align_co:
-			# Save selected objects and current position of 3D Cursor
-			current_selected_obj = bpy.context.selected_objects
-			current_active_obj = bpy.context.active_object
-			saved_cursor_loc = bpy.context.scene.cursor.location.copy()
-			bpy.ops.object.mode_set(mode='OBJECT')
 
-			# Change individual origin point
-			for x in current_selected_obj:
-				# Select only current object (for setting origin)
-				bpy.ops.object.select_all(action='DESELECT')
-				x.select_set(True)
-				# Save current origin and relocate 3D Cursor
-				saved_origin_loc = x.location.copy()
+		# Save selected objects and current position of 3D Cursor
+		current_selected_obj = bpy.context.selected_objects
+		current_active_obj = bpy.context.active_object
+		saved_cursor_loc = bpy.context.scene.cursor.location.copy()
+		bpy.ops.object.mode_set(mode='OBJECT')
 
-				# Align to coordinate
+		# Change individual origin point
+		for x in current_selected_obj:
+			# Select only current object (for setting origin)
+			bpy.ops.object.select_all(action='DESELECT')
+			x.select_set(True)
+			# Save current origin and relocate 3D Cursor
+			saved_origin_loc = x.location.copy()
+
+			# Align to coordinate
+			if self.align_type == 'X':
+				bpy.context.scene.cursor.location = [align_coordinate, saved_origin_loc[1], saved_origin_loc[2]]
+			if self.align_type == 'Y':
+				bpy.context.scene.cursor.location = [saved_origin_loc[0], align_coordinate, saved_origin_loc[2]]
+			if self.align_type == 'Z':
+				bpy.context.scene.cursor.location = [saved_origin_loc[0], saved_origin_loc[1], align_coordinate]
+
+			if not act.align_geom_to_orig:
+				bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+			else:
 				if self.align_type == 'X':
-					bpy.context.scene.cursor.location = [align_coordinate, saved_origin_loc[1], saved_origin_loc[2]]
+					difference = align_coordinate - saved_origin_loc[0]
+					bpy.ops.transform.translate(
+						value=(difference, 0, 0), constraint_axis=(True, False, False),
+						orient_type='GLOBAL', orient_matrix_type='GLOBAL',
+						mirror=False, use_proportional_edit=False,
+						proportional_edit_falloff='SMOOTH', proportional_size=1)
 				if self.align_type == 'Y':
-					bpy.context.scene.cursor.location = [saved_origin_loc[0], align_coordinate, saved_origin_loc[2]]
+					difference = align_coordinate - saved_origin_loc[1]
+					bpy.ops.transform.translate(
+						value=(0, difference, 0), constraint_axis=(False, True, False),
+						orient_type='GLOBAL', orient_matrix_type='GLOBAL',
+						mirror=False, use_proportional_edit=False,
+						proportional_edit_falloff='SMOOTH', proportional_size=1)
 				if self.align_type == 'Z':
-					bpy.context.scene.cursor.location = [saved_origin_loc[0], saved_origin_loc[1], align_coordinate]
+					difference = align_coordinate - saved_origin_loc[2]
+					bpy.ops.transform.translate(
+						value=(0, 0, difference), constraint_axis=(False, False, True),
+						orient_type='GLOBAL', orient_matrix_type='GLOBAL',
+						mirror=False, use_proportional_edit=False,
+						proportional_edit_falloff='SMOOTH', proportional_size=1)
+			# Reset 3D Cursor position
+			bpy.context.scene.cursor.location = saved_cursor_loc
 
-				if not act.align_geom_to_orig:
-					bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
-				else:
-					if self.align_type == 'X':
-						difference = align_coordinate - saved_origin_loc[0]
-						bpy.ops.transform.translate(
-							value=(difference, 0, 0), constraint_axis=(True, False, False),
-							orient_type='GLOBAL', orient_matrix_type='GLOBAL',
-							mirror=False, use_proportional_edit=False,
-							proportional_edit_falloff='SMOOTH', proportional_size=1)
-					if self.align_type == 'Y':
-						difference = align_coordinate - saved_origin_loc[1]
-						bpy.ops.transform.translate(
-							value=(0, difference, 0), constraint_axis=(False, True, False),
-							orient_type='GLOBAL', orient_matrix_type='GLOBAL',
-							mirror=False, use_proportional_edit=False,
-							proportional_edit_falloff='SMOOTH', proportional_size=1)
-					if self.align_type == 'Z':
-						difference = align_coordinate - saved_origin_loc[2]
-						bpy.ops.transform.translate(
-							value=(0, 0, difference), constraint_axis=(False, False, True),
-							orient_type='GLOBAL', orient_matrix_type='GLOBAL',
-							mirror=False, use_proportional_edit=False,
-							proportional_edit_falloff='SMOOTH', proportional_size=1)
-				# Reset 3D Cursor position  
-				bpy.context.scene.cursor.location = saved_cursor_loc
+		# Select again objects
+		for j in current_selected_obj:
+			j.select_set(True)
 
-			# Select again objects
-			for j in current_selected_obj:
-				j.select_set(True)
-
-			bpy.context.view_layer.objects.active = current_active_obj
+		bpy.context.view_layer.objects.active = current_active_obj
 
 		utils.Print_Execution_Time("Align Origin to Coordinate", start_time)
 		return {'FINISHED'}

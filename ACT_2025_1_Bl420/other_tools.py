@@ -207,7 +207,9 @@ class Merge_Bones(bpy.types.Operator):
 
 		# Cancel if select only one bone
 		if len(selected_bones_name) == 0:
-			self.report({'INFO'}, 'Select more than one bone')
+			utils.Show_Message_Box('Select more than one bone',
+								   "Wrong Selection",
+									   'ERROR')
 			bpy.ops.object.mode_set(mode='EDIT')
 			return {'CANCELLED'}
 
@@ -220,7 +222,9 @@ class Merge_Bones(bpy.types.Operator):
 							meshes.append(m)
 
 		if len(meshes) == 0:
-			self.report({'INFO'}, 'Armature has no mesh')
+			utils.Show_Message_Box('Armature has no mesh',
+								   "Mesh Error",
+								   'ERROR')
 			bpy.ops.object.mode_set(mode='EDIT')
 			return {'CANCELLED'}
 

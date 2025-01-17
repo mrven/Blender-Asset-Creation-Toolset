@@ -100,6 +100,46 @@ class Numbering(bpy.types.Operator):
 		return {'FINISHED'}
 
 
+# Added LOD Postfix
+class Add_LOD_To_Obj_Name(bpy.types.Operator):
+	"""Add LOD to Obj Name"""
+	bl_idname = "object.lod_to_objname"
+	bl_label = "Add LOD to Obj Name"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		start_time = datetime.now()
+		act = bpy.context.scene.act
+		selected_objects = bpy.context.selected_objects
+
+		for obj in selected_objects:
+			if obj.name[-5:][:-1] == "_LOD":
+				obj.name = obj.name[:-5]
+			obj.name = obj.name + "_LOD" + str(act.lod_level)
+
+		utils.Print_Execution_Time("Add LOD to Obj Name", start_time)
+		return {'FINISHED'}
+
+
+# Remove LOD Postfix
+class Remove_LOD_From_Obj_Name(bpy.types.Operator):
+	"""Remove LOD from Obj Name"""
+	bl_idname = "object.remove_lod_from_objname"
+	bl_label = "Remove LOD from Obj Name"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		start_time = datetime.now()
+		selected_objects = bpy.context.selected_objects
+
+		for obj in selected_objects:
+			if obj.name[-5:][:-1] == "_LOD":
+				obj.name = obj.name[:-5]
+
+		utils.Print_Execution_Time("Remove LOD from Obj Name", start_time)
+		return {'FINISHED'}
+
+
 # Rename bones
 class Rename_Bones(bpy.types.Operator):
 	"""Rename bones"""
@@ -139,22 +179,27 @@ class VIEW3D_PT_Rename_Tools_Panel(bpy.types.Panel):
 
 		if context.object is not None:
 			if context.mode == 'OBJECT':
-				row = layout.row()
+				box = layout.box()
+				row = box.row()
 				row.label(text="Numbering Objects")
-
-				row = layout.row(align=True)
+				row = box.row(align=True)
 				row.label(text="Method:")
 				row.prop(act, 'nums_method', expand=False)
-
-				row = layout.row(align=True)
+				row = box.row(align=True)
 				row.label(text="Format:")
 				row.prop(act, 'nums_format', expand=False)
-
-				row = layout.row()
+				row = box.row()
 				row.prop(act, "delete_prev_nums", text="Delete Previous Nums")
-
-				row = layout.row()
+				row = box.row()
 				row.operator("object.numbering", text="Set Numbering")
+
+				box = layout.box()
+				row = box.row(align=True)
+				row.prop(act, "lod_level", text="LOD Level:")
+				row = box.row(align=True)
+				row.operator("object.lod_to_objname", text="Add LOD to Name")
+				row = box.row(align=True)
+				row.operator("object.remove_lod_from_objname", text="Remove LOD from Name")
 
 			elif context.mode == 'EDIT_ARMATURE':
 				row = layout.row(align=True)
@@ -173,6 +218,8 @@ class VIEW3D_PT_Rename_Tools_Panel(bpy.types.Panel):
 classes = (
 	Numbering,
 	Rename_Bones,
+	Add_LOD_To_Obj_Name,
+	Remove_LOD_From_Obj_Name
 )
 
 

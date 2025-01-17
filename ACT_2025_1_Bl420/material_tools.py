@@ -20,7 +20,6 @@ class Palette_Create(bpy.types.Operator):
 		act.export_dir = ""
 		path = ""
 		incorrect_names = []
-		palette_back_material = (0.5, 0.5, 0.5, 1)
 		# Bake PBR Palette Texture Set (Albedo, Roughness, Metallic, Opacity, Emission) or only Albedo
 		pbr_mode = act.pbr_workflow
 		# Store temporary data for cleanUp
@@ -863,6 +862,57 @@ class Delete_Unused_Materials(bpy.types.Operator):
 		return {'FINISHED'}
 
 
+# Delete duplicated materials
+class Delete_Duplicated_Materials(bpy.types.Operator):
+	"""Delete from Selected Objects Duplicated Materials"""
+	bl_idname = "object.delete_duplicated_materials"
+	bl_label = "Delete Duplicated Materials"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	def execute(self, context):
+		start_time = datetime.now()
+		selected_obj = bpy.context.selected_objects
+
+		# Collect only original materials
+		materials = []
+		for obj in selected_obj:
+			for mesh_mat in obj.data.materials:
+				if mesh_mat.name[:-3][-1:] != '.':
+					mat_in_list = False
+					for mat in materials:
+						if mat == mesh_mat:
+							mat_in_list = True
+					if not mat_in_list:
+						materials.append(mesh_mat)
+
+		if len(materials) == 0:
+			utils.Show_Message_Box("Original Materials is not found",
+									'Material Search',
+									'ERROR')
+			return {'CANCELLED'}
+
+		# Replace duplicated materials
+		materials_for_remove = []
+		for obj in selected_obj:
+			for mesh_mat_slot in obj.material_slots:
+				if mesh_mat_slot.material and mesh_mat_slot.name[:-3][-1:] == '.':
+					for mat in materials:
+						if mat.name == mesh_mat_slot.name[:-4]:
+							materials_for_remove.append(mesh_mat_slot.material)
+							mesh_mat_slot.material = mat
+
+		# Cleanup
+		for mat in materials_for_remove:
+			bpy.data.materials.remove(mat)
+
+		utils.Show_Message_Box("Replaced " + str(len(materials_for_remove)) + \
+							   " duplicate(s) with " + str(len(materials)) + " original material(s)",
+							   'Materials Replaced')
+
+		utils.Print_Execution_Time("Delete Duplicated Materials", start_time)
+		return {'FINISHED'}
+
+
 # Select texture in UV Editor from active material (See Select_Texture_Menu)
 class Texture_From_Active_Material(bpy.types.Operator):
 	"""Select Texture In UV Editor From Active Material"""
@@ -989,6 +1039,9 @@ class VIEW3D_PT_Material_Tools_Panel(bpy.types.Panel):
 				row = layout.row()
 				row.operator("object.delete_unused_materials", text="Delete Unused Materials")
 
+				row = layout.row()
+				row.operator("object.delete_duplicated_materials", text="Cleanup Duplicated Materials")
+
 				box = layout.box()
 				row = box.row()
 				row.prop(act, "pbr_workflow", text="PBR Workflow")
@@ -1049,6 +1102,7 @@ classes = (
 	Clear_Viewport_Color,
 	Random_Viewport_Color,
 	Delete_Unused_Materials,
+	Delete_Duplicated_Materials,
 	Texture_From_Active_Material,
 	Select_Texture_Menu,
 	Call_Select_Texture_Menu_View3D,

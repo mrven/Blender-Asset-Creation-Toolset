@@ -22,7 +22,7 @@ class Clear_Normals(bpy.types.Operator):
 		for x in selected_obj:
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
-			if x.type == 'MESH':
+			if x.type == 'MESH' and x.data.has_custom_normals:
 				bpy.context.view_layer.objects.active = x
 				bpy.ops.mesh.customdata_custom_splitnormals_clear()
 				# Enable Auto Smooth with angle 180 degrees
@@ -328,21 +328,21 @@ class Select_Negative_Scaled_Objects(bpy.types.Operator):
 	def execute(self, context):
 		start_time = datetime.now()
 		negative_scaled_obj = []
-		bpy.ops.object.select_all(action='DESELECT')
 
 		for obj in bpy.data.objects:
 			if min(obj.scale.x, min(obj.scale.y, obj.scale.z)) < 0:
 				negative_scaled_obj.append(obj)
 
 		if len(negative_scaled_obj) > 0:
+			bpy.ops.object.select_all(action='DESELECT')
+
 			for obj in negative_scaled_obj:
 				obj.select_set(True)
 
 			bpy.context.view_layer.objects.active = negative_scaled_obj[0]
-
 			utils.Show_Message_Box("Selected " + str(len(negative_scaled_obj)) + " objects", "Negative Scaled Objects")
 		else:
-			utils.Show_Message_Box("Objects with negative scale not found", "Negative Scaled Objects")
+			utils.Show_Message_Box("No objects with negative scale found", "Negative Scaled Objects")
 		utils.Print_Execution_Time("Select Objects with Negative Scale", start_time)
 		return {'FINISHED'}
 
@@ -357,9 +357,11 @@ class Cleanup_Empties(bpy.types.Operator):
 		start_time = datetime.now()
 		act = bpy.context.scene.act
 		selected_objects = bpy.context.selected_objects
+		active_object = bpy.context.active_object
+		is_active_object_deleted = False
 		bpy.ops.object.select_all(action='DESELECT')
 
-		for obj in selected_objects:
+		for obj in reversed(selected_objects):
 			if obj.type == 'EMPTY' \
 					or (act.delete_empty_meshes and obj.type == "MESH" and len(obj.data.vertices) == 0):
 				empty_branch = True
@@ -370,9 +372,21 @@ class Cleanup_Empties(bpy.types.Operator):
 						empty_branch = False
 
 				if empty_branch or len(obj.children) == 0:
+					selected_objects.remove(obj)
 					obj.select_set(True)
+					if obj == active_object:
+						is_active_object_deleted = True
 
 		bpy.ops.object.delete()
+
+		for obj in selected_objects:
+			obj.select_set(True)
+
+		if is_active_object_deleted:
+			bpy.context.view_layer.objects.active = selected_objects[0]
+		else:
+			bpy.context.view_layer.objects.active = active_object
+
 		utils.Print_Execution_Time("Cleanup Empties", start_time)
 		return {'FINISHED'}
 

@@ -242,6 +242,13 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		('ONE_ZERO', '_0X, _XX, _XXX', ''),
 		('TWO_ZEROS', '_00X, _0XX, _XXX', ''))
 	nums_format: EnumProperty(name="", items=nums_format_items)
+
+	lod_level: IntProperty(
+        name="LOD Level",
+        description="LOD Level",
+        default=0,
+        min=0,
+        max=9)
 #endregion
 
 #region Origin tools props

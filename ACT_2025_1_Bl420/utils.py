@@ -195,3 +195,38 @@ def Cycles_Is_Enabled():
 			is_cycles_enabled = True
 
 	return is_cycles_enabled
+
+
+# Get Mesh Selection
+def Get_Mesh_Selection(obj):
+	selection = []
+	start_object_mode = bpy.context.object.mode
+	bpy.ops.object.mode_set(mode='OBJECT')
+	if bpy.context.scene.tool_settings.mesh_select_mode[2]:
+		selection_source = obj.data.polygons
+	elif bpy.context.scene.tool_settings.mesh_select_mode[1]:
+		selection_source = obj.data.edges
+	else:
+		selection_source = obj.data.vertices
+
+	for i in range(len(selection_source)):
+		if selection_source[i].select:
+			selection.append(i)
+	bpy.ops.object.mode_set(mode=start_object_mode)
+
+	return selection
+
+# Set Mesh Selection
+def Set_Mesh_Selection(obj, selection):
+	start_object_mode = bpy.context.object.mode
+	bpy.ops.object.mode_set(mode='OBJECT')
+	if bpy.context.scene.tool_settings.mesh_select_mode[2]:
+		for item in selection:
+			obj.data.polygons[item].select = True
+	elif bpy.context.scene.tool_settings.mesh_select_mode[1]:
+		for item in selection:
+			obj.data.edges[item].select = True
+	else:
+		for item in selection:
+			obj.data.vertices[item].select = True
+	bpy.ops.object.mode_set(mode=start_object_mode)

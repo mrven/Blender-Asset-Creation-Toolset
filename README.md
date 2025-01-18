@@ -6,6 +6,8 @@
 
 **ACT** is Many Tools for Game Asset Creation (Batch Export FBXs/GLTF for Unity/UE/Godot, Origin Aligment Tool, Renaming, UV Tools, Low-Poly Art workflow tools, etc.) for Blender.
 
+[<img src="https://api.gitsponsors.com/api/badge/img?id=190054403" height="50">](https://api.gitsponsors.com/api/badge/link?p=R7W5zpiWrH5vKtok3kziskOzBnSDKorI5wOcmiIPBzz9i28hZmWFBXmcyJL/atWR9JoicfSKTaNSfh+Mfp0bcA==)
+
 ***Download latest version:***
 
 * ***[(2024.2) Blender 4.2+ (from Blender Extensions)](https://extensions.blender.org/add-ons/act-game-asset-creation-toolset/)***

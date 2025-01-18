@@ -231,8 +231,9 @@ class Mark_Seams_From_UV(bpy.types.Operator):
 	def execute(self, context):
 		start_time = datetime.now()
 		current_area = bpy.context.area.type
-		bpy.ops.mesh.reveal()
-		bpy.ops.mesh.select_all(action='SELECT')
+		restore_selected = bpy.context.selected_objects[:]
+		selected_obj = utils.selected_obj_with_unique_data()
+		active_obj = bpy.context.active_object
 
 		# Switch active area to Image Editor
 		bpy.context.area.type = 'IMAGE_EDITOR'
@@ -246,9 +247,28 @@ class Mark_Seams_From_UV(bpy.types.Operator):
 		if bpy.context.space_data.mode != 'UV':
 			bpy.context.space_data.mode = 'UV'
 
-		bpy.ops.uv.select_all(action='SELECT')
-		bpy.ops.uv.seams_from_islands()
+		for x in selected_obj:
+			bpy.ops.object.select_all(action='DESELECT')
+			x.select_set(True)
+			bpy.context.view_layer.objects.active = x
+
+			if len(x.data.uv_layers) > 0:
+				bpy.ops.object.mode_set(mode='EDIT')
+				selection = utils.Get_Mesh_Selection(x)
+				bpy.ops.mesh.reveal()
+				bpy.ops.mesh.select_all(action='SELECT')
+				bpy.ops.uv.select_all(action='SELECT')
+				bpy.ops.uv.seams_from_islands()
+				bpy.ops.mesh.select_all(action='DESELECT')
+				utils.Set_Mesh_Selection(x, selection)
+				bpy.ops.object.mode_set(mode='OBJECT')
+
+		# Select again objects
+		for j in restore_selected:
+			j.select_set(True)
+
 		bpy.context.area.type = current_area
+		bpy.context.view_layer.objects.active = active_obj
 		utils.Print_Execution_Time("Mark Seams from UV", start_time)
 		return {'FINISHED'}
 
@@ -327,7 +347,6 @@ class VIEW3D_PT_UV_Tools_Panel(bpy.types.Panel):
 		if context.object is not None:
 			if context.object.mode == 'EDIT':
 				row = layout.row()
-				row.operator("object.mark_seams_from_uv", text="Mark Seams from UV")
 
 		if context.object is not None:
 			if context.mode == 'OBJECT':
@@ -363,10 +382,10 @@ class VIEW3D_PT_UV_Tools_Panel(bpy.types.Panel):
 					row.prop(act, "uv_packing_lightmap_quality", text="Quality:")
 					row = box.row()
 					row.prop(act, "uv_packing_lightmap_margin", text="Margin:")
-
 				row = layout.row()
 				row.operator("object.uv_clear", text="Clear UV Maps")
-
+				row = layout.row()
+				row.operator("object.mark_seams_from_uv", text="Mark Seams from UV")
 
 classes = (
 	Clear_UV,

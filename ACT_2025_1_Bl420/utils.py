@@ -63,14 +63,8 @@ def Prefilter_Export_Name(name):
 def Export_Model(path, name):
 	act = bpy.context.scene.act
 
-	if act.fbx_flip_x:
-		forward_axis = 'Y'
-		space_transform = True
-	else:
-		forward_axis = '-Y'
-		space_transform = False
-
 	if act.export_custom_options:
+		# Scale Defaults
 		apply_scale_options_value = 'FBX_SCALE_NONE'
 		global_scale_value = 1.0
 		if act.export_format == 'FBX' and act.export_target_engine == 'UNITY':
@@ -83,6 +77,24 @@ def Export_Model(path, name):
 			apply_scale_options_value = 'FBX_SCALE_CUSTOM'
 			global_scale_value = act.custom_export_scale_value
 
+		# Axes Defaults
+		forward_axis = '-Z'
+		up_axis = 'Y'
+		if act.export_format == 'FBX' and act.export_target_engine == 'UNITY2023':
+			forward_axis = '-Y'
+			up_axis = 'Z'
+		if act.export_format == 'OBJ':
+			forward_axis = 'NEGATIVE_Z'
+
+		# Custom Axes Option
+		if act.use_custom_export_axes:
+			forward_axis = act.custom_export_forward_axis
+			up_axis = act.custom_export_up_axis
+
+			if act.export_format == 'OBJ':
+				forward_axis = forward_axis.replace('-', 'NEGATIVE_')
+				up_axis = up_axis.replace('-', 'NEGATIVE_')
+
 		if act.export_format == 'FBX':
 			if act.export_target_engine == 'UNITY':
 				bpy.ops.export_scene.fbx(
@@ -93,7 +105,7 @@ def Export_Model(path, name):
 					add_leaf_bones=act.export_add_leaf_bones,
 					use_armature_deform_only=act.export_only_deform_bones,
 					colors_type=act.export_vc_color_space, use_custom_props=act.export_custom_props,
-					global_scale=global_scale_value)
+					global_scale=global_scale_value, axis_forward=forward_axis, axis_up=up_axis)
 			elif act.export_target_engine == 'UNREAL':
 				bpy.ops.export_scene.fbx(
 					filepath=str(path + name + '.fbx'), use_selection=True,
@@ -103,17 +115,18 @@ def Export_Model(path, name):
 					add_leaf_bones=act.export_add_leaf_bones,
 					use_armature_deform_only=act.export_only_deform_bones,
 					colors_type=act.export_vc_color_space, use_custom_props=act.export_custom_props,
-					global_scale=global_scale_value)
+					global_scale=global_scale_value, axis_forward=forward_axis, axis_up=up_axis)
 			elif act.export_target_engine == 'UNITY2023':
 				bpy.ops.export_scene.fbx(
 					filepath=str(path + name + '.fbx'), use_selection=True,
 					apply_scale_options=apply_scale_options_value,
 					use_mesh_modifiers=True, mesh_smooth_type=act.export_smoothing,
 					use_mesh_edges=act.export_loose_edges, use_tspace=act.export_tangent_space,
-					global_scale=global_scale_value, axis_forward=forward_axis, axis_up='Z', add_leaf_bones=act.export_add_leaf_bones,
+					global_scale=global_scale_value, axis_forward=forward_axis, axis_up=up_axis,
+					add_leaf_bones=act.export_add_leaf_bones,
 					use_armature_deform_only=act.export_only_deform_bones,
 					colors_type=act.export_vc_color_space, use_custom_props=act.export_custom_props,
-					use_space_transform=space_transform)
+					use_space_transform=False)
 
 		if act.export_format == 'OBJ':
 			bpy.ops.wm.obj_export(
@@ -121,7 +134,7 @@ def Export_Model(path, name):
 				export_smooth_groups=act.obj_export_smooth_groups, export_normals=True, export_uv=True,
 				export_materials=True, export_triangulated_mesh=act.triangulate_before_export,
 				export_object_groups=True, export_material_groups=act.obj_separate_by_materials,
-				global_scale=global_scale_value, path_mode='AUTO', forward_axis='NEGATIVE_Z', up_axis='Y')
+				global_scale=global_scale_value, path_mode='AUTO', forward_axis=forward_axis, up_axis=up_axis)
 
 		if act.export_format == 'GLTF':
 			bpy.ops.export_scene.gltf(
@@ -145,9 +158,9 @@ def Export_Model(path, name):
 			elif act.export_target_engine == 'UNITY2023':
 				bpy.ops.export_scene.fbx(
 					filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options='FBX_SCALE_NONE',
-					global_scale=0.01, colors_type='LINEAR', axis_forward=forward_axis, axis_up='Z',
+					global_scale=0.01, colors_type='LINEAR', axis_forward='-Y', axis_up='Z',
 					add_leaf_bones=False,
-					use_custom_props=True, use_space_transform=space_transform)
+					use_custom_props=True, use_space_transform=False)
 
 		if act.export_format == 'OBJ':
 			bpy.ops.wm.obj_export(
@@ -215,6 +228,7 @@ def Get_Mesh_Selection(obj):
 	bpy.ops.object.mode_set(mode=start_object_mode)
 
 	return selection
+
 
 # Set Mesh Selection
 def Set_Mesh_Selection(obj, selection):

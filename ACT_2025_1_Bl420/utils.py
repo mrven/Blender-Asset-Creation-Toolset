@@ -80,9 +80,11 @@ def Export_Model(path, name):
 		# Axes Defaults
 		forward_axis = '-Z'
 		up_axis = 'Y'
+		use_transform = True
 		if act.export_format == 'FBX' and act.export_target_engine == 'UNITY2023':
 			forward_axis = '-Y'
 			up_axis = 'Z'
+			use_transform = False
 		if act.export_format == 'OBJ':
 			forward_axis = 'NEGATIVE_Z'
 
@@ -90,7 +92,7 @@ def Export_Model(path, name):
 		if act.use_custom_export_axes:
 			forward_axis = act.custom_export_forward_axis
 			up_axis = act.custom_export_up_axis
-
+			use_transform = False
 			if act.export_format == 'OBJ':
 				forward_axis = forward_axis.replace('-', 'NEGATIVE_')
 				up_axis = up_axis.replace('-', 'NEGATIVE_')
@@ -105,7 +107,8 @@ def Export_Model(path, name):
 					add_leaf_bones=act.export_add_leaf_bones,
 					use_armature_deform_only=act.export_only_deform_bones,
 					colors_type=act.export_vc_color_space, use_custom_props=act.export_custom_props,
-					global_scale=global_scale_value, axis_forward=forward_axis, axis_up=up_axis)
+					global_scale=global_scale_value, axis_forward=forward_axis, axis_up=up_axis,
+					use_space_transform=use_transform)
 			elif act.export_target_engine == 'UNREAL':
 				bpy.ops.export_scene.fbx(
 					filepath=str(path + name + '.fbx'), use_selection=True,
@@ -115,7 +118,8 @@ def Export_Model(path, name):
 					add_leaf_bones=act.export_add_leaf_bones,
 					use_armature_deform_only=act.export_only_deform_bones,
 					colors_type=act.export_vc_color_space, use_custom_props=act.export_custom_props,
-					global_scale=global_scale_value, axis_forward=forward_axis, axis_up=up_axis)
+					global_scale=global_scale_value, axis_forward=forward_axis, axis_up=up_axis,
+					use_space_transform=use_transform)
 			elif act.export_target_engine == 'UNITY2023':
 				bpy.ops.export_scene.fbx(
 					filepath=str(path + name + '.fbx'), use_selection=True,
@@ -126,7 +130,7 @@ def Export_Model(path, name):
 					add_leaf_bones=act.export_add_leaf_bones,
 					use_armature_deform_only=act.export_only_deform_bones,
 					colors_type=act.export_vc_color_space, use_custom_props=act.export_custom_props,
-					use_space_transform=False)
+					use_space_transform=use_transform)
 
 		if act.export_format == 'OBJ':
 			bpy.ops.wm.obj_export(

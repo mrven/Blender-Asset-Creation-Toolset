@@ -10,6 +10,39 @@ from bpy.props import (
 )
 
 
+# region Update Functions
+def update_custom_forward_axis(self, context):
+	act = bpy.context.scene.act
+	if act.custom_export_forward_axis == act.custom_export_up_axis:
+		# Get Current item index
+		index = 0
+		for i in range(len(act.custom_export_axis_items)):
+			if act.custom_export_up_axis == act.custom_export_axis_items[i][0]:
+				index = i
+
+		if index < len(act.custom_export_axis_items) - 1:
+			index += 1
+		else:
+			index = 0
+		act.custom_export_up_axis = act.custom_export_axis_items[index][0]
+
+
+def update_custom_up_axis(self, context):
+	act = bpy.context.scene.act
+	if act.custom_export_forward_axis == act.custom_export_up_axis:
+		# Get Current item index
+		index = 0
+		for i in range(len(act.custom_export_axis_items)):
+			if act.custom_export_forward_axis == act.custom_export_axis_items[i][0]:
+				index = i
+
+		if index < len(act.custom_export_axis_items) - 1:
+			index += 1
+		else:
+			index = 0
+		act.custom_export_forward_axis = act.custom_export_axis_items[index][0]
+# endregion
+
 class ACT_Addon_Props(bpy.types.PropertyGroup):
 # region Palette props
 	save_dir: StringProperty(
@@ -111,11 +144,6 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		description="Apply Location for Exported Models",
 		default=True)
 
-	fbx_flip_x: BoolProperty(
-		name="Flip X-Axis (2023 Back Compatibility)",
-		description="Flip X-Axis (2023 Back Compatibility)",
-		default=False)
-
 	set_custom_fbx_name: BoolProperty(
 		name="Set Custom Name for FBX",
 		description="Set Custom Name for FBX",
@@ -216,6 +244,31 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 		min=0.00001,
 		max=9999,
 		step=1)
+
+	# Use Custom Forward/Up Axes
+	use_custom_export_axes: BoolProperty(
+		name="Custom Axes",
+		description="Set custom Forward/Up axes",
+		default=False)
+
+	custom_export_axis_items = (
+		('X', 'X', ''),
+		('Y', 'Y', ''),
+		('Z', 'Z', ''),
+		('-X', '-X', ''),
+		('-Y', '-Y', ''),
+		('-Z', '-Z', ''))
+
+	# Custom Forward Axis
+	custom_export_forward_axis: EnumProperty(name="",
+											 default="-Z",
+											 items=custom_export_axis_items,
+											 update=update_custom_forward_axis)
+	# Custom Up Axis
+	custom_export_up_axis: EnumProperty(name="",
+										default="Y",
+										items=custom_export_axis_items,
+										update=update_custom_up_axis)
 #endregion
 
 #region Rename props

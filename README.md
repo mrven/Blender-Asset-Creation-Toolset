@@ -10,18 +10,21 @@
 * ***[(2025.1) Blender 4.2+ (from Blender Extensions)](https://extensions.blender.org/add-ons/act-game-asset-creation-toolset/)***
 * ***[(2025.1) Blender 4.2+ (from GitHub)](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/ACT_2025_1_Bl420.zip)***
 * ***[ACT Unity Editor Script (for Unity 2022+)](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Unity_Plugin/Releases/ACT_Unity_Plugin.unitypackage)***
+-----------------------------------------------
+* ***[Previous Releases](/Previous_Releases.md)***
 
 # Documentation
 ***[Watch Features Overview (Youtube Playlist)](https://www.youtube.com/playlist?list=PLmXnsUZu0CRpLoJD79MC6AQf_phyXP62b)***
 
 # Sponsorship
-If you want to support me you can buy this addon on **[Blender Market](https://blendermarket.com/products/asset-creation-toolset-2024)**
+If you want to support me you can buy this addon on **[Blender Market](https://blendermarket.com/products/asset-creation-toolset-2024)**\
+
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/mrven)
 
 # Features
 ## Origin Tools
-
-[![Origin Tools Overview](https://img.youtube.com/vi/cxcSM-HvMH8/0.jpg)](https://www.youtube.com/watch?v=cxcSM-HvMH8)
+![Origin Tools](/images/pngs/2025/01_Origin_Tools.png)\
+[![Origin Tools Overview](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=cxcSM-HvMH8)
 
 ### Origin Align Tool
 Aligment Origin Point to:

@@ -8,7 +8,7 @@ from datetime import datetime
 
 
 # Find min and max vertex coordinates
-def Find_Min_Max_Verts(obj, coord_index, min_or_max):
+def find_min_max_verts(obj, coord_index, min_or_max):
 	bpy.ops.mesh.reveal()
 
 	# Get bmesh from active object
@@ -36,7 +36,7 @@ def Find_Min_Max_Verts(obj, coord_index, min_or_max):
 
 
 # Check string is a number
-def Str_Is_Int(s):
+def str_is_int(s):
 	try:
 		int(s)
 		return True
@@ -45,7 +45,7 @@ def Str_Is_Int(s):
 
 
 # Message Box
-def Show_Message_Box(message="", title="Message Box", icon='INFO'):
+def show_message_box(message="", title="Message Box", icon='INFO'):
 	def draw(self, context):
 		self.layout.label(text=message)
 
@@ -53,14 +53,14 @@ def Show_Message_Box(message="", title="Message Box", icon='INFO'):
 
 
 # Prefilter Export Name
-def Prefilter_Export_Name(name):
-	result = re.sub("[#%&{}\<>\\\*?/'\":`|]", "_", name)
+def prefilter_export_name(name):
+	result = re.sub("[#%&{}<>\\\*?/'\":`|]", "_", name)
 
 	return result
 
 
 # Export Model
-def Export_Model(path, name):
+def export_model(path, name):
 	act = bpy.context.scene.act
 
 	if act.export_custom_options:
@@ -182,7 +182,7 @@ def Export_Model(path, name):
 
 
 # Execution Time
-def Print_Execution_Time(function_name, start_time):
+def print_execution_time(function_name, start_time):
 	act = bpy.context.scene.act
 
 	if act.debug:
@@ -204,7 +204,7 @@ def selected_obj_with_unique_data(obj_type='MESH'):
 
 
 # Check Cycles Addon is Enabled or Not
-def Cycles_Is_Enabled():
+def cycles_is_enabled():
 	is_cycles_enabled = False
 
 	for module_name in bpy.context.preferences.addons.keys():
@@ -215,7 +215,7 @@ def Cycles_Is_Enabled():
 
 
 # Get Mesh Selection
-def Get_Mesh_Selection(obj):
+def get_mesh_selection(obj):
 	selection = []
 	start_object_mode = bpy.context.object.mode
 	bpy.ops.object.mode_set(mode='OBJECT')
@@ -235,7 +235,7 @@ def Get_Mesh_Selection(obj):
 
 
 # Set Mesh Selection
-def Set_Mesh_Selection(obj, selection):
+def set_mesh_selection(obj, selection):
 	start_object_mode = bpy.context.object.mode
 	bpy.ops.object.mode_set(mode='OBJECT')
 	if bpy.context.scene.tool_settings.mesh_select_mode[2]:

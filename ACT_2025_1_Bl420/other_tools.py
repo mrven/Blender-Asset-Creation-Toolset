@@ -1,14 +1,12 @@
 import bpy
-import math
 
-from bpy.props import StringProperty
 from collections import defaultdict
 from . import utils
 from datetime import datetime
 
 
 # Clear custom split normals
-class Clear_Normals(bpy.types.Operator):
+class ClearNormals(bpy.types.Operator):
 	"""Clear Custom Split Normals"""
 	bl_idname = "object.clear_normals"
 	bl_label = "Clear Custom Split Normals"
@@ -34,12 +32,12 @@ class Clear_Normals(bpy.types.Operator):
 
 		bpy.context.view_layer.objects.active = active_obj
 
-		utils.Print_Execution_Time("Clear Custom Normals", start_time)
+		utils.print_execution_time("Clear Custom Normals", start_time)
 		return {'FINISHED'}
 
 
 # Recalculate normals
-class Calc_Normals(bpy.types.Operator):
+class CalcNormals(bpy.types.Operator):
 	"""Recalculate Normals"""
 	bl_idname = "object.calc_normals"
 	bl_label = "Flip/Calculate Normals"
@@ -73,12 +71,12 @@ class Calc_Normals(bpy.types.Operator):
 
 		bpy.context.view_layer.objects.active = active_obj
 
-		utils.Print_Execution_Time("Calculate Normals", start_time)
+		utils.print_execution_time("Calculate Normals", start_time)
 		return {'FINISHED'}
 
 
 # Object name to data name
-def Obj_Name_To_Data_Name():
+def obj_name_to_data_name():
 	obj_dict = defaultdict(list)
 
 	for obj in bpy.context.selected_objects:
@@ -94,24 +92,24 @@ def Obj_Name_To_Data_Name():
 				break
 
 
-class Obj_Name_To_Mesh_Name(bpy.types.Operator):
+class ObjNameToMeshName(bpy.types.Operator):
 	"""Obj Name to Data Name"""
-	bl_idname = "object.objname_to_meshname"
+	bl_idname = "object.obj_name_to_mesh_name"
 	bl_label = "Obj Name to Data Name"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
 		start_time = datetime.now()
-		Obj_Name_To_Data_Name()
+		obj_name_to_data_name()
 
-		utils.Print_Execution_Time("Object Name to Mesh Name", start_time)
+		utils.print_execution_time("Object Name to Mesh Name", start_time)
 		return {'FINISHED'}
 
 
 # Collection Name to Object Name
-class Col_Name_To_Obj_Name(bpy.types.Operator):
+class CollectionNameToObjName(bpy.types.Operator):
 	"""Col Name to Obj Name"""
-	bl_idname = "object.colname_to_objname"
+	bl_idname = "object.collection_name_to_obj_name"
 	bl_label = "Col Name to Obj Name"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -128,7 +126,7 @@ class Col_Name_To_Obj_Name(bpy.types.Operator):
 			if obj_count_len == 1:
 				obj_count_len = 2
 
-			# Subdiv collections by object types
+			# Subdivision collections by object types
 			obj_types = {x.type for x in bpy_obj}
 
 			for object_type in obj_types:
@@ -171,14 +169,14 @@ class Col_Name_To_Obj_Name(bpy.types.Operator):
 						else:
 							obj.name = obj.name + '_' + col_name
 
-		Obj_Name_To_Data_Name()
+		obj_name_to_data_name()
 
-		utils.Print_Execution_Time("Collection Name to Object Name", start_time)
+		utils.print_execution_time("Collection Name to Object Name", start_time)
 		return {'FINISHED'}
 
 
 # Merge bones
-class Merge_Bones(bpy.types.Operator):
+class MergeBones(bpy.types.Operator):
 	"""Merge Selected Bones to Active"""
 	bl_idname = "object.merge_bones"
 	bl_label = "Merge Selected Bones to Active"
@@ -195,7 +193,6 @@ class Merge_Bones(bpy.types.Operator):
 		armature = bpy.context.active_object
 		active_bone_name = armature.data.bones.active.name
 		selected_bones_name = []
-		parent_mesh = None
 		meshes = []
 
 		bpy.ops.object.mode_set(mode='OBJECT')
@@ -207,7 +204,7 @@ class Merge_Bones(bpy.types.Operator):
 
 		# Cancel if select only one bone
 		if len(selected_bones_name) == 0:
-			utils.Show_Message_Box('Select more than one bone',
+			utils.show_message_box('Select more than one bone',
 								   "Wrong Selection",
 									   'ERROR')
 			bpy.ops.object.mode_set(mode='EDIT')
@@ -222,7 +219,7 @@ class Merge_Bones(bpy.types.Operator):
 							meshes.append(m)
 
 		if len(meshes) == 0:
-			utils.Show_Message_Box('Armature has no mesh',
+			utils.show_message_box('Armature has no mesh',
 								   "Mesh Error",
 								   'ERROR')
 			bpy.ops.object.mode_set(mode='EDIT')
@@ -293,15 +290,15 @@ class Merge_Bones(bpy.types.Operator):
 			armature.data.bones[active_bone_name].select = True
 		bpy.ops.object.mode_set(mode='EDIT')
 
-		utils.Print_Execution_Time("Merge Bones", start_time)
+		utils.print_execution_time("Merge Bones", start_time)
 		return {'FINISHED'}
 
 
 # Weight paint brush mode invert
-class Weight_Paint_Brush_Invert(bpy.types.Operator):
-	"""Weight Paint Brush Substract Mode"""
-	bl_idname = "paint.weigth_paint_brush_invert"
-	bl_label = "Weight Paint Brush Substract Mode"
+class InvertWeightPaintBrush(bpy.types.Operator):
+	"""Weight Paint Brush Subtract Mode"""
+	bl_idname = "paint.weight_paint_brush_invert"
+	bl_label = "Weight Paint Brush Subtract Mode"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -319,7 +316,7 @@ class Weight_Paint_Brush_Invert(bpy.types.Operator):
 
 
 # Select Objects with Negative Scale
-class Select_Negative_Scaled_Objects(bpy.types.Operator):
+class SelectNegativeScaledObjects(bpy.types.Operator):
 	"""Select Objects with Negative Scale"""
 	bl_idname = "object.select_negative_scaled_objects"
 	bl_label = "Select Objects with Negative Scale"
@@ -340,14 +337,14 @@ class Select_Negative_Scaled_Objects(bpy.types.Operator):
 				obj.select_set(True)
 
 			bpy.context.view_layer.objects.active = negative_scaled_obj[0]
-			utils.Show_Message_Box("Selected " + str(len(negative_scaled_obj)) + " objects", "Negative Scaled Objects")
+			utils.show_message_box("Selected " + str(len(negative_scaled_obj)) + " objects", "Negative Scaled Objects")
 		else:
-			utils.Show_Message_Box("No objects with negative scale found", "Negative Scaled Objects")
-		utils.Print_Execution_Time("Select Objects with Negative Scale", start_time)
+			utils.show_message_box("No objects with negative scale found", "Negative Scaled Objects")
+		utils.print_execution_time("Select Objects with Negative Scale", start_time)
 		return {'FINISHED'}
 
 
-class Cleanup_Empties(bpy.types.Operator):
+class CleanupEmpties(bpy.types.Operator):
 	"""Delete empties without any child"""
 	bl_idname = "object.cleanup_empties"
 	bl_label = "Cleanup Empties"
@@ -387,11 +384,11 @@ class Cleanup_Empties(bpy.types.Operator):
 		else:
 			bpy.context.view_layer.objects.active = active_object
 
-		utils.Print_Execution_Time("Cleanup Empties", start_time)
+		utils.print_execution_time("Cleanup Empties", start_time)
 		return {'FINISHED'}
 
 # Panels
-class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
+class VIEW3D_PT_other_tools_panel(bpy.types.Panel):
 	bl_label = "Other Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -416,7 +413,7 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 		if context.object is not None:
 			if context.mode == 'OBJECT':
 				row = layout.row()
-				row.operator("object.objname_to_meshname", text="Obj Name -> Data Name")
+				row.operator("object.obj_name_to_mesh_name", text="Obj Name -> Data Name")
 
 				box = layout.box()
 				row = box.row(align=True)
@@ -431,7 +428,7 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 					row.label(text=" Style of Type ")
 					row.prop(act, "col_name_type_style", expand=False)
 				row = box.row()
-				row.operator("object.colname_to_objname", text="Collection Name -> Obj Name")
+				row.operator("object.collection_name_to_obj_name", text="Collection Name -> Obj Name")
 
 				row = layout.row()
 				row.operator("object.clear_normals", text="Clear Custom Normals")
@@ -475,18 +472,18 @@ class VIEW3D_PT_Other_Tools_Panel(bpy.types.Panel):
 				row.label(text="Current Mode:")
 				row.label(text=bpy.context.scene.tool_settings.weight_paint.brush.blend)
 				row = box.row()
-				row.operator("paint.weigth_paint_brush_invert", text="Invert Brush")
+				row.operator("paint.weight_paint_brush_invert", text="Invert Brush")
 
 
 classes = (
-	Clear_Normals,
-	Calc_Normals,
-	Obj_Name_To_Mesh_Name,
-	Col_Name_To_Obj_Name,
-	Merge_Bones,
-	Weight_Paint_Brush_Invert,
-	Select_Negative_Scaled_Objects,
-	Cleanup_Empties
+	ClearNormals,
+	CalcNormals,
+	ObjNameToMeshName,
+	CollectionNameToObjName,
+	MergeBones,
+	InvertWeightPaintBrush,
+	SelectNegativeScaledObjects,
+	CleanupEmpties
 )
 
 

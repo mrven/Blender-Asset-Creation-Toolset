@@ -21,19 +21,19 @@ class Numbering(bpy.types.Operator):
 			for obj in selected_obj:
 				ob_name = obj.name
 
-				if utils.Str_Is_Int(ob_name[-1:]):
-					unds_pos = len(ob_name) - 2
-					if ob_name[unds_pos] == '_':
+				if utils.str_is_int(ob_name[-1:]):
+					underscore_pos = len(ob_name) - 2
+					if ob_name[underscore_pos] == '_':
 						ob_name = ob_name[:-2]
 
-				if utils.Str_Is_Int(ob_name[-2:]):
-					unds_pos = len(ob_name) - 3
-					if ob_name[unds_pos] == '_':
+				if utils.str_is_int(ob_name[-2:]):
+					underscore_pos = len(ob_name) - 3
+					if ob_name[underscore_pos] == '_':
 						ob_name = ob_name[:-3]
 
-				if utils.Str_Is_Int(ob_name[-3:]):
-					unds_pos = len(ob_name) - 4
-					if ob_name[unds_pos] == '_':
+				if utils.str_is_int(ob_name[-3:]):
+					underscore_pos = len(ob_name) - 4
+					if ob_name[underscore_pos] == '_':
 						ob_name = ob_name[:-4]
 
 				obj.name = ob_name
@@ -55,7 +55,7 @@ class Numbering(bpy.types.Operator):
 
 		# Sort list
 		if act.nums_method != 'SIMPLE':
-			objects_list.sort(key=lambda object: object[1])
+			objects_list.sort(key=lambda obj_sort: obj_sort[1])
 
 		# Preprocess delete Blender numbers and add new numbers
 		for y in range(len(objects_list)):
@@ -63,7 +63,7 @@ class Numbering(bpy.types.Operator):
 
 			# Delete Blender numbers (.001, .002, etc.)
 			ob_name = current_obj.name
-			if utils.Str_Is_Int(ob_name[-3:]):
+			if utils.str_is_int(ob_name[-3:]):
 				dot_pos = len(ob_name) - 4
 				if ob_name[dot_pos] == '.':
 					ob_name = ob_name[:-4]
@@ -96,12 +96,12 @@ class Numbering(bpy.types.Operator):
 			else:
 				objects_list[y][0].name = ob_name + '_' + num_str
 
-		utils.Print_Execution_Time("Numbering", start_time)
+		utils.print_execution_time("Numbering", start_time)
 		return {'FINISHED'}
 
 
 # Added LOD Postfix
-class Add_LOD_To_Obj_Name(bpy.types.Operator):
+class AddLODToObjName(bpy.types.Operator):
 	"""Add LOD to Obj Name"""
 	bl_idname = "object.lod_to_objname"
 	bl_label = "Add LOD to Obj Name"
@@ -117,12 +117,12 @@ class Add_LOD_To_Obj_Name(bpy.types.Operator):
 				obj.name = obj.name[:-5]
 			obj.name = obj.name + "_LOD" + str(act.lod_level)
 
-		utils.Print_Execution_Time("Add LOD to Obj Name", start_time)
+		utils.print_execution_time("Add LOD to Obj Name", start_time)
 		return {'FINISHED'}
 
 
 # Remove LOD Postfix
-class Remove_LOD_From_Obj_Name(bpy.types.Operator):
+class RemoveLODFromObjName(bpy.types.Operator):
 	"""Remove LOD from Obj Name"""
 	bl_idname = "object.remove_lod_from_objname"
 	bl_label = "Remove LOD from Obj Name"
@@ -136,12 +136,12 @@ class Remove_LOD_From_Obj_Name(bpy.types.Operator):
 			if obj.name[-5:][:-1] == "_LOD":
 				obj.name = obj.name[:-5]
 
-		utils.Print_Execution_Time("Remove LOD from Obj Name", start_time)
+		utils.print_execution_time("Remove LOD from Obj Name", start_time)
 		return {'FINISHED'}
 
 
 # Rename bones
-class Rename_Bones(bpy.types.Operator):
+class RenameBones(bpy.types.Operator):
 	"""Rename bones"""
 	bl_idname = "object.rename_bones"
 	bl_label = "Rename bones"
@@ -156,12 +156,12 @@ class Rename_Bones(bpy.types.Operator):
 		for x in selected_bones:
 			x.name = x.name + self.Value
 
-		utils.Print_Execution_Time("Rename Bones", start_time)
+		utils.print_execution_time("Rename Bones", start_time)
 		return {'FINISHED'}
 
 
 # Rename Tools UI Panel
-class VIEW3D_PT_Rename_Tools_Panel(bpy.types.Panel):
+class VIEW3D_PT_rename_tools_panel(bpy.types.Panel):
 	bl_label = "Renaming Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -217,9 +217,9 @@ class VIEW3D_PT_Rename_Tools_Panel(bpy.types.Panel):
 
 classes = (
 	Numbering,
-	Rename_Bones,
-	Add_LOD_To_Obj_Name,
-	Remove_LOD_From_Obj_Name
+	RenameBones,
+	AddLODToObjName,
+	RemoveLODFromObjName
 )
 
 

@@ -8,7 +8,7 @@ from datetime import datetime
 
 
 # Palette texture creator
-class Palette_Create(bpy.types.Operator):
+class CreatePalette(bpy.types.Operator):
 	"""Palette Texture Creator"""
 	bl_idname = "object.palette_creator"
 	bl_label = "Palette Texture Creator"
@@ -27,7 +27,7 @@ class Palette_Create(bpy.types.Operator):
 
 		# Check blend file is saved and get export folder path
 		if len(bpy.data.filepath) == 0 and not act.custom_save_path:
-			utils.Show_Message_Box( 'Blend file is not saved. Try use Custom Save Path',
+			utils.show_message_box('Blend file is not saved. Try use Custom Save Path',
 									'Saving Error',
 									'ERROR')
 			return {'CANCELLED'}
@@ -38,13 +38,13 @@ class Palette_Create(bpy.types.Operator):
 
 			if act.custom_save_path:
 				if len(act.save_path) == 0:
-					utils.Show_Message_Box('Save Path can\'t be empty',
+					utils.show_message_box('Save Path can\'t be empty',
 										   'Saving Error',
 										   'ERROR')
 					return {'CANCELLED'}
 
 				if not os.path.exists(os.path.realpath(bpy.path.abspath(act.save_path))):
-					utils.Show_Message_Box('Directory for saving not exist',
+					utils.show_message_box('Directory for saving not exist',
 										   'Saving Error',
 										   'ERROR')
 					return {'CANCELLED'}
@@ -89,7 +89,7 @@ class Palette_Create(bpy.types.Operator):
 		prefilter_add_name_palette = bpy.context.active_object.name
 
 		# Replace invalid chars
-		add_name_palette = utils.Prefilter_Export_Name(prefilter_add_name_palette)
+		add_name_palette = utils.prefilter_export_name(prefilter_add_name_palette)
 
 		if add_name_palette != prefilter_add_name_palette:
 			incorrect_names.append(prefilter_add_name_palette)
@@ -150,12 +150,10 @@ class Palette_Create(bpy.types.Operator):
 
 		# Add materials to palette plane (only unique)
 		mat_offset = len(me)
-		i = 0
 		for i in range(mat_offset):
 			flag_non = False
 			palette_mat = pln.data.materials
 			palette_mat_len = len(palette_mat)
-			j = 0
 
 			for j in range(palette_mat_len):
 				if palette_mat[j] == me[i]:
@@ -168,26 +166,26 @@ class Palette_Create(bpy.types.Operator):
 		palette_mat = pln.data.materials
 		palette_mat_len = len(palette_mat)
 		# Number of materials without background material
-		palette_mat_wobg = palette_mat_len - 1
-		number_of_subdiv = 0
+		palette_mat_wo_bg = palette_mat_len - 1
+		number_of_subdivision = 0
 
-		if palette_mat_wobg > 1 and palette_mat_wobg <= 4:
-			number_of_subdiv = 1
+		if 1 < palette_mat_wo_bg <= 4:
+			number_of_subdivision = 1
 
-		if palette_mat_wobg > 4 and palette_mat_wobg <= 16:
-			number_of_subdiv = 2
+		if 4 < palette_mat_wo_bg <= 16:
+			number_of_subdivision = 2
 
-		if palette_mat_wobg > 16 and palette_mat_wobg <= 64:
-			number_of_subdiv = 3
+		if 16 < palette_mat_wo_bg <= 64:
+			number_of_subdivision = 3
 
-		if palette_mat_wobg > 64 and palette_mat_wobg <= 256:
-			number_of_subdiv = 4
+		if 64 < palette_mat_wo_bg <= 256:
+			number_of_subdivision = 4
 
 		# Subdivide palette plane
 		bpy.ops.object.mode_set(mode='EDIT')
 		bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
 
-		for n in range(number_of_subdiv):
+		for n in range(number_of_subdivision):
 			bpy.ops.mesh.subdivide(smoothness=0)
 
 		# Create texture and unwrap
@@ -377,7 +375,6 @@ class Palette_Create(bpy.types.Operator):
 		# Create collection materials with (mat_name, uv_x_mat, uv_y_mat)
 		# This is UV coordinates for baked materials
 		mat_coll_array = []
-		collect_uv_mat = 1
 		current_area = bpy.context.area.type
 
 		for collect_uv_mat in range(palette_mat_len - 1):
@@ -592,18 +589,18 @@ class Palette_Create(bpy.types.Operator):
 		# Restore render engine
 		bpy.context.scene.render.engine = current_engine
 
-		utils.Print_Execution_Time("Create Palette Texture", start_time)
+		utils.print_execution_time("Create Palette Texture", start_time)
 
 		# Show message about incorrect names
 		if len(incorrect_names) > 0:
-			utils.Show_Message_Box("Palette name has invalid characters. Some chars have been replaced",
+			utils.show_message_box("Palette name has invalid characters. Some chars have been replaced",
 								   "Incorrect Palette Name")
 
 		return {'FINISHED'}
 
 
 # Open textures export directory
-class Open_Save_Dir(bpy.types.Operator):
+class OpenSaveDir(bpy.types.Operator):
 	"""Open Save Directory in OS"""
 	bl_idname = "object.open_save_dir"
 	bl_label = "Open Save Directory in OS"
@@ -616,7 +613,7 @@ class Open_Save_Dir(bpy.types.Operator):
 		# Try open export directory in OS
 		if not os.path.exists(os.path.realpath(bpy.path.abspath(act.save_path))):
 			act.save_dir = ""
-			utils.Show_Message_Box('Directory not exist',
+			utils.show_message_box('Directory not exist',
 								   'Wrong Path',
 								   'ERROR')
 
@@ -628,16 +625,16 @@ class Open_Save_Dir(bpy.types.Operator):
 			except:
 				subprocess.Popen(['xdg-open', act.save_dir])
 		else:
-			utils.Show_Message_Box('Create Palette\'s before',
+			utils.show_message_box('Create Palette\'s before',
 								   'Info')
 			return {'FINISHED'}
 
-		utils.Print_Execution_Time("Open Textures Export Directory", start_time)
+		utils.print_execution_time("Open Textures Export Directory", start_time)
 		return {'FINISHED'}
 
 
 # Assign materials in multiEdit
-class Assign_Multiedit_Materials(bpy.types.Operator):
+class AssignMultiEditMaterials(bpy.types.Operator):
 	"""Assign Materials for some objects in MultiEdit Mode"""
 	bl_idname = "object.assign_multiedit_materials"
 	bl_label = "Assign Materials for some objects"
@@ -691,12 +688,12 @@ class Assign_Multiedit_Materials(bpy.types.Operator):
 		bpy.context.view_layer.objects.active = active_obj
 		bpy.ops.object.mode_set(mode='EDIT')
 
-		utils.Print_Execution_Time("Assign Material in Multi-Edit Mode", start_time)
+		utils.print_execution_time("Assign Material in Multi-Edit Mode", start_time)
 		return {'FINISHED'}
 
 
 # Clear vertex colors
-class Clear_Vertex_Colors(bpy.types.Operator):
+class ClearVertexColors(bpy.types.Operator):
 	"""Clear Vertex Colors"""
 	bl_idname = "object.clear_vc"
 	bl_label = "# Clear Vertex Colors"
@@ -719,12 +716,12 @@ class Clear_Vertex_Colors(bpy.types.Operator):
 			x.select_set(True)
 		bpy.context.view_layer.objects.active = current_active_obj
 
-		utils.Print_Execution_Time("Clear Vertex Colors", start_time)
+		utils.print_execution_time("Clear Vertex Colors", start_time)
 		return {'FINISHED'}
 
 
 # Material color to viewport color
-class Material_To_Viewport(bpy.types.Operator):
+class MaterialToViewport(bpy.types.Operator):
 	"""Material Color to Viewport Color"""
 	bl_idname = "object.material_to_viewport"
 	bl_label = "Material Color to Viewport Color"
@@ -752,12 +749,12 @@ class Material_To_Viewport(bpy.types.Operator):
 
 		bpy.context.view_layer.objects.active = active_obj
 
-		utils.Print_Execution_Time("Material Color to Viewport", start_time)
+		utils.print_execution_time("Material Color to Viewport", start_time)
 		return {'FINISHED'}
 
 
 # Random material viewport color
-class Random_Viewport_Color(bpy.types.Operator):
+class RandomViewportColor(bpy.types.Operator):
 	"""Random Material Viewport Color"""
 	bl_idname = "object.random_viewport_color"
 	bl_label = "Random Material Viewport Color"
@@ -791,12 +788,12 @@ class Random_Viewport_Color(bpy.types.Operator):
 
 		bpy.context.view_layer.objects.active = active_obj
 
-		utils.Print_Execution_Time("Random Color to Viewport", start_time)
+		utils.print_execution_time("Random Color to Viewport", start_time)
 		return {'FINISHED'}
 
 
 # Clear viewport color
-class Clear_Viewport_Color(bpy.types.Operator):
+class ClearViewportColor(bpy.types.Operator):
 	"""Clear Viewport Color"""
 	bl_idname = "object.clear_viewport_color"
 	bl_label = "Clear Viewport Color"
@@ -827,12 +824,12 @@ class Clear_Viewport_Color(bpy.types.Operator):
 
 		bpy.context.view_layer.objects.active = active_obj
 
-		utils.Print_Execution_Time("Clear Viewport Color", start_time)
+		utils.print_execution_time("Clear Viewport Color", start_time)
 		return {'FINISHED'}
 
 
 # Delete unused materials
-class Delete_Unused_Materials(bpy.types.Operator):
+class DeleteUnusedMaterials(bpy.types.Operator):
 	"""Delete from Objects Unused Materials and Slots"""
 	bl_idname = "object.delete_unused_materials"
 	bl_label = "Delete Unused Materials"
@@ -858,12 +855,12 @@ class Delete_Unused_Materials(bpy.types.Operator):
 
 		bpy.context.view_layer.objects.active = active_obj
 
-		utils.Print_Execution_Time("Delete Unused Materials", start_time)
+		utils.print_execution_time("Delete Unused Materials", start_time)
 		return {'FINISHED'}
 
 
 # Delete duplicated materials
-class Delete_Duplicated_Materials(bpy.types.Operator):
+class DeleteDuplicatedMaterials(bpy.types.Operator):
 	"""Delete from Selected Objects Duplicated Materials"""
 	bl_idname = "object.delete_duplicated_materials"
 	bl_label = "Delete Duplicated Materials"
@@ -893,7 +890,6 @@ class Delete_Duplicated_Materials(bpy.types.Operator):
 		# Try to get materials with these names
 		materials = []
 		for name in material_names:
-			scene_material = None
 			try:
 				scene_material = bpy.data.materials[name]
 			except:
@@ -907,7 +903,7 @@ class Delete_Duplicated_Materials(bpy.types.Operator):
 				materials.append(scene_material)
 
 		if len(materials) == 0:
-			utils.Show_Message_Box("Original Materials is not found",
+			utils.show_message_box("Original Materials (or duplicates) is not found",
 									'Material Search',
 									'ERROR')
 			return {'CANCELLED'}
@@ -928,16 +924,16 @@ class Delete_Duplicated_Materials(bpy.types.Operator):
 		for material in materials_for_remove:
 			bpy.data.materials.remove(material)
 
-		utils.Show_Message_Box("Replaced " + str(len(materials_for_remove)) + \
+		utils.show_message_box("Replaced " + str(len(materials_for_remove)) + \
 							   " duplicate(s) with " + str(len(materials)) + " original material(s)",
 							   'Materials Replaced')
 
-		utils.Print_Execution_Time("Delete Duplicated Materials", start_time)
+		utils.print_execution_time("Delete Duplicated Materials", start_time)
 		return {'FINISHED'}
 
 
 # Select texture in UV Editor from active material (See Select_Texture_Menu)
-class Texture_From_Active_Material(bpy.types.Operator):
+class TextureFromActiveMaterial(bpy.types.Operator):
 	"""Select Texture In UV Editor From Active Material"""
 	bl_idname = "object.texture_from_material"
 	bl_label = "Select Texture In UV Editor From Active Material"
@@ -950,12 +946,12 @@ class Texture_From_Active_Material(bpy.types.Operator):
 			if area.type == "IMAGE_EDITOR":
 				area.spaces[0].image = bpy.data.images[self.texture_name]
 
-		utils.Print_Execution_Time("Select Texture in UV Editor", start_time)
+		utils.print_execution_time("Select Texture in UV Editor", start_time)
 		return {'FINISHED'}
 
 
 # Menu for select texture In UV Editor from active material
-class Select_Texture_Menu(bpy.types.Menu):
+class SelectTextureMenu(bpy.types.Menu):
 	bl_idname = "OBJECT_MT_select_texture_menu"
 	bl_label = "Select Texture"
 
@@ -1002,7 +998,7 @@ class Select_Texture_Menu(bpy.types.Menu):
 
 
 # Call menu for select texture In UV Editor from active material
-class Call_Select_Texture_Menu_View3D(bpy.types.Operator):
+class CallSelectTextureMenuView3D(bpy.types.Operator):
 	"""Select Texture In UV Editor From Active Material"""
 	bl_idname = "view3d.call_select_texture_menu"
 	bl_label = "Select Texture In 3D View From Active Material"
@@ -1015,7 +1011,7 @@ class Call_Select_Texture_Menu_View3D(bpy.types.Operator):
 
 
 #  Call menu for select texture in UV Editor from active material
-class Call_Select_Texture_Menu_Image_Editor(bpy.types.Operator):
+class CallSelectTextureMenuImageEditor(bpy.types.Operator):
 	"""Select Texture In UV Editor From Active Material"""
 	bl_idname = "image.call_select_texture_menu"
 	bl_label = "Select Texture In UV Editor From Active Material"
@@ -1028,7 +1024,7 @@ class Call_Select_Texture_Menu_Image_Editor(bpy.types.Operator):
 
 
 # Material tools UI panel in 3D View
-class VIEW3D_PT_Material_Tools_Panel(bpy.types.Panel):
+class VIEW3D_PT_material_tools_panel(bpy.types.Panel):
 	bl_label = "Material/Texture Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -1085,7 +1081,7 @@ class VIEW3D_PT_Material_Tools_Panel(bpy.types.Panel):
 
 
 # Material tools UI panel in UV Editor
-class UV_PT_Material_UV_Tools_Panel(bpy.types.Panel):
+class UV_PT_material_uv_tools_panel(bpy.types.Panel):
 	bl_label = "Material/Texture Tools"
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = "UI"
@@ -1098,8 +1094,6 @@ class UV_PT_Material_UV_Tools_Panel(bpy.types.Panel):
 					context.mode == 'OBJECT' or context.mode == 'EDIT_MESH')) and preferences.uv_material_enable
 
 	def draw(self, context):
-		act = bpy.context.scene.act
-
 		layout = self.layout
 		if context.object is not None:
 			row = layout.row()
@@ -1107,7 +1101,7 @@ class UV_PT_Material_UV_Tools_Panel(bpy.types.Panel):
 
 
 # Material assign UI panel
-def Material_Menu_Panel(self, context):
+def material_menu_panel(self, context):
 	preferences = bpy.context.preferences.addons[__package__].preferences
 	if context.object is not None and preferences.material_properties_enable:
 		if context.object.mode == 'EDIT' and len(context.selected_objects) > 1:
@@ -1117,19 +1111,19 @@ def Material_Menu_Panel(self, context):
 
 
 classes = (
-	Palette_Create,
-	Open_Save_Dir,
-	Assign_Multiedit_Materials,
-	Clear_Vertex_Colors,
-	Material_To_Viewport,
-	Clear_Viewport_Color,
-	Random_Viewport_Color,
-	Delete_Unused_Materials,
-	Delete_Duplicated_Materials,
-	Texture_From_Active_Material,
-	Select_Texture_Menu,
-	Call_Select_Texture_Menu_View3D,
-	Call_Select_Texture_Menu_Image_Editor,
+	CreatePalette,
+	OpenSaveDir,
+	AssignMultiEditMaterials,
+	ClearVertexColors,
+	MaterialToViewport,
+	ClearViewportColor,
+	RandomViewportColor,
+	DeleteUnusedMaterials,
+	DeleteDuplicatedMaterials,
+	TextureFromActiveMaterial,
+	SelectTextureMenu,
+	CallSelectTextureMenuView3D,
+	CallSelectTextureMenuImageEditor,
 )
 
 
@@ -1137,20 +1131,20 @@ def register():
 	for cls in classes:
 		bpy.utils.register_class(cls)
 
-	if utils.Cycles_Is_Enabled():
-		bpy.types.CYCLES_PT_context_material.prepend(Material_Menu_Panel)
-	bpy.types.EEVEE_MATERIAL_PT_context_material.prepend(Material_Menu_Panel)
+	if utils.cycles_is_enabled():
+		bpy.types.CYCLES_PT_context_material.prepend(material_menu_panel)
+	bpy.types.EEVEE_MATERIAL_PT_context_material.prepend(material_menu_panel)
 
 
 def unregister():
-	if utils.Cycles_Is_Enabled():
+	if utils.cycles_is_enabled():
 		try:
-			bpy.types.CYCLES_PT_context_material.remove(Material_Menu_Panel)
+			bpy.types.CYCLES_PT_context_material.remove(material_menu_panel)
 		except AttributeError as err:
 			print(err)
 
 	try:
-		bpy.types.EEVEE_MATERIAL_PT_context_material.remove(Material_Menu_Panel)
+		bpy.types.EEVEE_MATERIAL_PT_context_material.remove(material_menu_panel)
 	except AttributeError as err:
 		print(err)
 

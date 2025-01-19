@@ -2,15 +2,14 @@ import bpy
 import os
 import subprocess
 import math
-from bpy_extras.io_utils import ImportHelper
 from . import utils
 from datetime import datetime
 
 
 # FBX/OBJ/GLTF export
-class Multi_FBX_Export(bpy.types.Operator):
+class MultiExport(bpy.types.Operator):
 	"""Export FBXs/OBJs/GLTFs to Unity/UE/Godot"""
-	bl_idname = "object.multi_fbx_export"
+	bl_idname = "object.multi_export"
 	bl_label = "Export FBXs/OBJs/GLTFs"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -24,14 +23,14 @@ class Multi_FBX_Export(bpy.types.Operator):
 		if act.fbx_export_mode == 'ALL':
 			if act.set_custom_fbx_name:
 				if len(act.custom_fbx_name) == 0:
-					utils.Show_Message_Box('Custom Name can\'t be empty',
+					utils.show_message_box('Custom Name can\'t be empty',
 										   'Saving Error',
 										   'ERROR')
 					return {'CANCELLED'}
 
 		# Check saved blend file
 		if len(bpy.data.filepath) == 0 and not act.custom_export_path:
-			utils.Show_Message_Box('Blend file is not saved. Try use Custom Export Path',
+			utils.show_message_box('Blend file is not saved. Try use Custom Export Path',
 								   'Saving Error',
 								   'ERROR')
 			return {'CANCELLED'}
@@ -50,13 +49,13 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 			if act.custom_export_path:
 				if len(act.export_path) == 0:
-					utils.Show_Message_Box('Export Path can\'t be empty',
+					utils.show_message_box('Export Path can\'t be empty',
 										   'Saving Error',
 										   'ERROR')
 					return {'CANCELLED'}
 
 				if not os.path.exists(os.path.realpath(bpy.path.abspath(act.export_path))):
-					utils.Show_Message_Box('Directory for export not exist',
+					utils.show_message_box('Directory for export not exist',
 										   'Saving Error',
 										   'ERROR')
 					return {'CANCELLED'}
@@ -277,13 +276,13 @@ class Multi_FBX_Export(bpy.types.Operator):
 					prefilter_name = name
 
 				# Replace invalid chars
-				name = utils.Prefilter_Export_Name(prefilter_name)
+				name = utils.prefilter_export_name(prefilter_name)
 
 				if name != prefilter_name:
 					incorrect_names.append(prefilter_name)
 
 				# Export FBX/OBJ/GLTF
-				utils.Export_Model(path, name)
+				utils.export_model(path, name)
 
 			# Individual Export
 			if act.fbx_export_mode == 'INDIVIDUAL':
@@ -309,13 +308,13 @@ class Multi_FBX_Export(bpy.types.Operator):
 					prefilter_name = x.name
 
 					# Replace invalid chars
-					name = utils.Prefilter_Export_Name(prefilter_name)
+					name = utils.prefilter_export_name(prefilter_name)
 
 					if name != prefilter_name:
 						incorrect_names.append(prefilter_name)
 
 					# Export FBX/OBJ/GLTF
-					utils.Export_Model(path, name)
+					utils.export_model(path, name)
 
 					# Restore object location
 					if act.apply_loc:
@@ -416,7 +415,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 					bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
 
 					# Replace invalid chars
-					name = utils.Prefilter_Export_Name(prefilter_name)
+					name = utils.prefilter_export_name(prefilter_name)
 
 					if name != prefilter_name:
 						incorrect_names.append(prefilter_name)
@@ -427,7 +426,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 							combined_meshes.append(obj)
 
 					# Export FBX/OBJ/GLTF
-					utils.Export_Model(path, name)
+					utils.export_model(path, name)
 					bpy.ops.object.select_all(action='DESELECT')
 					current_parent.select_set(True)
 
@@ -484,7 +483,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 								bpy.data.objects.remove(obj, do_unlink=True)
 
 					# Replace invalid chars
-					name = utils.Prefilter_Export_Name(c)
+					name = utils.prefilter_export_name(c)
 
 					if name != c:
 						incorrect_names.append(c)
@@ -495,7 +494,7 @@ class Multi_FBX_Export(bpy.types.Operator):
 							combined_meshes.append(obj)
 
 					# Export FBX/OBJ/GLTF
-					utils.Export_Model(path, name)
+					utils.export_model(path, name)
 
 				bpy.ops.object.select_all(action='DESELECT')
 
@@ -542,16 +541,16 @@ class Multi_FBX_Export(bpy.types.Operator):
 
 		# Show message about incorrect names
 		if len(incorrect_names) > 0:
-			utils.Show_Message_Box(
+			utils.show_message_box(
 				"Object(s) has invalid characters in name. Some chars in export name have been replaced",
 				"Incorrect Export Names")
 
-		utils.Print_Execution_Time("FBX/OBJ Export", start_time)
+		utils.print_execution_time("FBX/OBJ Export", start_time)
 		return {'FINISHED'}
 
 
 # Open Export Directory
-class Open_Export_Dir(bpy.types.Operator):
+class OpenExportDir(bpy.types.Operator):
 	"""Open Export Directory in OS"""
 	bl_idname = "object.open_export_dir"
 	bl_label = "Open Export Directory in OS"
@@ -563,7 +562,7 @@ class Open_Export_Dir(bpy.types.Operator):
 
 		if not os.path.exists(os.path.realpath(bpy.path.abspath(act.export_dir))):
 			act.export_dir = ""
-			utils.Show_Message_Box('Directory not exist',
+			utils.show_message_box('Directory not exist',
 								   'Wrong Path',
 								   'ERROR')
 
@@ -576,16 +575,16 @@ class Open_Export_Dir(bpy.types.Operator):
 			except:
 				subprocess.Popen(['xdg-open', act.export_dir])
 		else:
-			utils.Show_Message_Box('Export FBX\'s before',
+			utils.show_message_box('Export FBX\'s before',
 								   'Info')
 			return {'FINISHED'}
 
-		utils.Print_Execution_Time("Open Export Directory", start_time)
+		utils.print_execution_time("Open Export Directory", start_time)
 		return {'FINISHED'}
 
 
 # Import Export UI Panel
-class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
+class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 	bl_label = "Export Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -761,13 +760,13 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 				row = layout.row()
 				if act.export_format == 'FBX':
 					if act.export_target_engine == 'UNITY' or act.export_target_engine == 'UNITY2023':
-						row.operator("object.multi_fbx_export", text="Export FBX to Unity")
+						row.operator("object.multi_export", text="Export FBX to Unity")
 					else:
-						row.operator("object.multi_fbx_export", text="Export FBX to Unreal")
+						row.operator("object.multi_export", text="Export FBX to Unreal")
 				if act.export_format == 'OBJ':
-					row.operator("object.multi_fbx_export", text="Export OBJ")
+					row.operator("object.multi_export", text="Export OBJ")
 				if act.export_format == 'GLTF':
-					row.operator("object.multi_fbx_export", text="Export GLTF")
+					row.operator("object.multi_export", text="Export GLTF")
 
 				if len(act.export_dir) > 0:
 					row = layout.row()
@@ -779,8 +778,8 @@ class VIEW3D_PT_Import_Export_Tools_Panel(bpy.types.Panel):
 
 
 classes = (
-	Multi_FBX_Export,
-	Open_Export_Dir
+	MultiExport,
+	OpenExportDir
 )
 
 

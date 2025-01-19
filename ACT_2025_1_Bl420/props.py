@@ -43,7 +43,7 @@ def update_custom_up_axis(self, context):
 		act.custom_export_forward_axis = act.custom_export_axis_items[index][0]
 # endregion
 
-class ACT_Addon_Props(bpy.types.PropertyGroup):
+class ACTAddonProps(bpy.types.PropertyGroup):
 # region Palette props
 	save_dir: StringProperty(
 		name="",
@@ -434,7 +434,7 @@ class ACT_Addon_Props(bpy.types.PropertyGroup):
 #endregion
 
 classes = (
-	ACT_Addon_Props,
+	ACTAddonProps,
 )
 
 
@@ -442,7 +442,7 @@ def register():
 	for cls in classes:
 		bpy.utils.register_class(cls)
 
-	bpy.types.Scene.act = PointerProperty(type=ACT_Addon_Props)
+	bpy.types.Scene.act = PointerProperty(type=ACTAddonProps)
 
 
 def unregister():

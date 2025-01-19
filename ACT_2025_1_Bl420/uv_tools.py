@@ -5,10 +5,10 @@ import math
 
 
 # UV remover
-class Clear_UV(bpy.types.Operator):
+class ClearUV(bpy.types.Operator):
 	"""Clear UV layers"""
 	bl_idname = "object.uv_clear"
-	bl_label = "Claer UV layers"
+	bl_label = "Clear UV layers"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -29,12 +29,12 @@ class Clear_UV(bpy.types.Operator):
 
 		bpy.context.view_layer.objects.active = active_obj
 
-		utils.Print_Execution_Time("Clear UV", start_time)
+		utils.print_execution_time("Clear UV", start_time)
 		return {'FINISHED'}
 
 
 # Rename UV
-class Rename_UV(bpy.types.Operator):
+class RenameUV(bpy.types.Operator):
 	"""Rename UV"""
 	bl_idname = "object.uv_rename"
 	bl_label = "Rename UV"
@@ -54,12 +54,12 @@ class Rename_UV(bpy.types.Operator):
 				if uv_index < len(x.data.uv_layers):
 					x.data.uv_layers[uv_index].name = uv_name
 
-		utils.Print_Execution_Time("Rename UV", start_time)
+		utils.print_execution_time("Rename UV", start_time)
 		return {'FINISHED'}
 
 
 # Add UV
-class Add_UV(bpy.types.Operator):
+class AddUV(bpy.types.Operator):
 	"""Add UV"""
 	bl_idname = "object.uv_add"
 	bl_label = "Add UV"
@@ -99,12 +99,12 @@ class Add_UV(bpy.types.Operator):
 
 		bpy.context.view_layer.objects.active = active_obj
 
-		utils.Print_Execution_Time("Add UV", start_time)
+		utils.print_execution_time("Add UV", start_time)
 		return {'FINISHED'}
 
 
 # Remove UV
-class Remove_UV(bpy.types.Operator):
+class RemoveUV(bpy.types.Operator):
 	"""Add UV"""
 	bl_idname = "object.uv_remove"
 	bl_label = "Remove UV"
@@ -134,12 +134,12 @@ class Remove_UV(bpy.types.Operator):
 
 		bpy.context.view_layer.objects.active = active_obj
 
-		utils.Print_Execution_Time("Remove UV", start_time)
+		utils.print_execution_time("Remove UV", start_time)
 		return {'FINISHED'}
 
 
 # Select UV
-class Select_UV(bpy.types.Operator):
+class SelectUV(bpy.types.Operator):
 	"""Add UV"""
 	bl_idname = "object.uv_select"
 	bl_label = "Set Active UV"
@@ -157,12 +157,12 @@ class Select_UV(bpy.types.Operator):
 					x.data.uv_layers[uv_index].active_render = True
 					x.data.uv_layers[uv_index].active = True
 
-		utils.Print_Execution_Time("Select UV", start_time)
+		utils.print_execution_time("Select UV", start_time)
 		return {'FINISHED'}
 
 
 # UV mover
-class UV_Mover(bpy.types.Operator):
+class UVMover(bpy.types.Operator):
 	"""UV Mover"""
 	bl_idname = "uv.uv_mover"
 	bl_label = "Move and Scale UV islands"
@@ -218,11 +218,12 @@ class UV_Mover(bpy.types.Operator):
 
 		bpy.context.space_data.pivot_point = start_pivot_mode
 
-		utils.Print_Execution_Time("UV Mover", start_time)
+		utils.print_execution_time("UV Mover", start_time)
 		return {'FINISHED'}
 
+
 #Mark Seams from UV
-class Mark_Seams_From_UV(bpy.types.Operator):
+class MarkSeamsFromUV(bpy.types.Operator):
 	"""Mark Seams from UV"""
 	bl_idname = "object.mark_seams_from_uv"
 	bl_label = "Mark Seams from UV"
@@ -254,13 +255,13 @@ class Mark_Seams_From_UV(bpy.types.Operator):
 
 			if len(x.data.uv_layers) > 0:
 				bpy.ops.object.mode_set(mode='EDIT')
-				selection = utils.Get_Mesh_Selection(x)
+				selection = utils.get_mesh_selection(x)
 				bpy.ops.mesh.reveal()
 				bpy.ops.mesh.select_all(action='SELECT')
 				bpy.ops.uv.select_all(action='SELECT')
 				bpy.ops.uv.seams_from_islands()
 				bpy.ops.mesh.select_all(action='DESELECT')
-				utils.Set_Mesh_Selection(x, selection)
+				utils.set_mesh_selection(x, selection)
 				bpy.ops.object.mode_set(mode='OBJECT')
 
 		# Select again objects
@@ -269,12 +270,12 @@ class Mark_Seams_From_UV(bpy.types.Operator):
 
 		bpy.context.area.type = current_area
 		bpy.context.view_layer.objects.active = active_obj
-		utils.Print_Execution_Time("Mark Seams from UV", start_time)
+		utils.print_execution_time("Mark Seams from UV", start_time)
 		return {'FINISHED'}
 
 
 # UV mover UI panel
-class UV_PT_UV_Mover_Panel(bpy.types.Panel):
+class UV_PT_uv_mover_panel(bpy.types.Panel):
 	bl_label = "UV Mover"
 	bl_space_type = 'IMAGE_EDITOR'
 	bl_region_type = "UI"
@@ -326,7 +327,7 @@ class UV_PT_UV_Mover_Panel(bpy.types.Panel):
 
 
 # UV tools UI panels
-class VIEW3D_PT_UV_Tools_Panel(bpy.types.Panel):
+class VIEW3D_PT_uv_tools_panel(bpy.types.Panel):
 	bl_label = "UV Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -388,13 +389,13 @@ class VIEW3D_PT_UV_Tools_Panel(bpy.types.Panel):
 				row.operator("object.mark_seams_from_uv", text="Mark Seams from UV")
 
 classes = (
-	Clear_UV,
-	Rename_UV,
-	Add_UV,
-	Remove_UV,
-	Select_UV,
-	UV_Mover,
-	Mark_Seams_From_UV
+	ClearUV,
+	RenameUV,
+	AddUV,
+	RemoveUV,
+	SelectUV,
+	UVMover,
+	MarkSeamsFromUV
 )
 
 

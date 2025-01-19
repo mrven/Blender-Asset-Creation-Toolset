@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 # Align origin to min
-class Align_Min(bpy.types.Operator):
+class AlignToMin(bpy.types.Operator):
 	"""Origin To Min """
 	bl_idname = "object.align_min"
 	bl_label = "Origin To Min"
@@ -37,15 +37,15 @@ class Align_Min(bpy.types.Operator):
 
 				# Find of minimal point of object's geometry
 				if self.align_type == 'X':
-					min_co = utils.Find_Min_Max_Verts(x, 0, 0)
+					min_co = utils.find_min_max_verts(x, 0, 0)
 					if min_co is None:
 						min_co = saved_origin_loc[0]
 				if self.align_type == 'Y':
-					min_co = utils.Find_Min_Max_Verts(x, 1, 0)
+					min_co = utils.find_min_max_verts(x, 1, 0)
 					if min_co is None:
 						min_co = saved_origin_loc[1]
 				if self.align_type == 'Z':
-					min_co = utils.Find_Min_Max_Verts(x, 2, 0)
+					min_co = utils.find_min_max_verts(x, 2, 0)
 					if min_co is None:
 						min_co = saved_origin_loc[2]
 
@@ -70,10 +70,12 @@ class Align_Min(bpy.types.Operator):
 				if act.align_geom_to_orig:
 					if self.align_type == 'X':
 						difference = saved_origin_loc[0] - min_co
-					if self.align_type == 'Y':
+					elif self.align_type == 'Y':
 						difference = saved_origin_loc[1] - min_co
-					if self.align_type == 'Z':
+					elif self.align_type == 'Z':
 						difference = saved_origin_loc[2] - min_co
+					else:
+						difference = 0
 
 					bpy.ops.mesh.reveal()
 					bpy.ops.mesh.select_all(action='SELECT')
@@ -104,12 +106,12 @@ class Align_Min(bpy.types.Operator):
 
 		bpy.context.view_layer.objects.active = current_active_obj
 
-		utils.Print_Execution_Time("Align Origin to Min", start_time)
+		utils.print_execution_time("Align Origin to Min", start_time)
 		return {'FINISHED'}
 
 
 # Align origin to max
-class Align_Max(bpy.types.Operator):
+class AlignToMax(bpy.types.Operator):
 	"""Origin To Max """
 	bl_idname = "object.align_max"
 	bl_label = "Origin To Max"
@@ -141,15 +143,15 @@ class Align_Max(bpy.types.Operator):
 
 				# Find of maximal point of object's geometry
 				if self.align_type == 'X':
-					max_co = utils.Find_Min_Max_Verts(x, 0, 1)
+					max_co = utils.find_min_max_verts(x, 0, 1)
 					if max_co is None:
 						max_co = saved_origin_loc[0]
 				if self.align_type == 'Y':
-					max_co = utils.Find_Min_Max_Verts(x, 1, 1)
+					max_co = utils.find_min_max_verts(x, 1, 1)
 					if max_co is None:
 						max_co = saved_origin_loc[1]
 				if self.align_type == 'Z':
-					max_co = utils.Find_Min_Max_Verts(x, 2, 1)
+					max_co = utils.find_min_max_verts(x, 2, 1)
 					if max_co is None:
 						max_co = saved_origin_loc[2]
 
@@ -173,10 +175,12 @@ class Align_Max(bpy.types.Operator):
 				if act.align_geom_to_orig:
 					if self.align_type == 'X':
 						difference = saved_origin_loc[0] - max_co
-					if self.align_type == 'Y':
+					elif self.align_type == 'Y':
 						difference = saved_origin_loc[1] - max_co
-					if self.align_type == 'Z':
+					elif self.align_type == 'Z':
 						difference = saved_origin_loc[2] - max_co
+					else:
+						difference = 0
 
 					bpy.ops.mesh.reveal()
 					bpy.ops.mesh.select_all(action='SELECT')
@@ -207,12 +211,12 @@ class Align_Max(bpy.types.Operator):
 
 		bpy.context.view_layer.objects.active = current_active_obj
 
-		utils.Print_Execution_Time("Align Origin to Max", start_time)
+		utils.print_execution_time("Align Origin to Max", start_time)
 		return {'FINISHED'}
 
 
 # Align Origin To Mid
-class Align_Mid(bpy.types.Operator):
+class AlignToMiddle(bpy.types.Operator):
 	"""Origin To Mid """
 	bl_idname = "object.align_mid"
 	bl_label = "Origin To Mid"
@@ -232,39 +236,39 @@ class Align_Mid(bpy.types.Operator):
 		for x in current_selected_obj:
 			# Select only current object (for setting origin)
 			bpy.ops.object.select_all(action='DESELECT')
-			x.select_set(True);
+			x.select_set(True)
 			bpy.context.view_layer.objects.active = x
 			# Save current origin and relocate 3D Cursor
 			saved_origin_loc = x.location.copy()
 			if x.type == 'MESH':
 				bpy.ops.object.mode_set(mode='EDIT')
-
+				mid_co = 0
 				if self.align_type == 'X':
-					min_co = utils.Find_Min_Max_Verts(x, 0, 0)
-					if min_co == None:
+					min_co = utils.find_min_max_verts(x, 0, 0)
+					if min_co is None:
 						min_co = saved_origin_loc[0]
-					max_co = utils.Find_Min_Max_Verts(x, 0, 1)
-					if max_co == None:
+					max_co = utils.find_min_max_verts(x, 0, 1)
+					if max_co is None:
 						max_co = saved_origin_loc[0]
 					mid_co = (max_co + min_co) / 2
-				if self.align_type == 'Y':
-					min_co = utils.Find_Min_Max_Verts(x, 1, 0)
-					if min_co == None:
+				elif self.align_type == 'Y':
+					min_co = utils.find_min_max_verts(x, 1, 0)
+					if min_co is None:
 						min_co = saved_origin_loc[1]
-					max_co = utils.Find_Min_Max_Verts(x, 1, 1)
-					if max_co == None:
+					max_co = utils.find_min_max_verts(x, 1, 1)
+					if max_co is None:
 						max_co = saved_origin_loc[1]
 					mid_co = (max_co + min_co) / 2
-				if self.align_type == 'Z':
-					min_co = utils.Find_Min_Max_Verts(x, 2, 0)
-					if min_co == None:
+				elif self.align_type == 'Z':
+					min_co = utils.find_min_max_verts(x, 2, 0)
+					if min_co is None:
 						min_co = saved_origin_loc[2]
-					max_co = utils.Find_Min_Max_Verts(x, 2, 1)
-					if max_co == None:
+					max_co = utils.find_min_max_verts(x, 2, 1)
+					if max_co is None:
 						max_co = saved_origin_loc[2]
 					mid_co = (max_co + min_co) / 2
 
-				if act.align_geom_to_orig == False:
+				if not act.align_geom_to_orig:
 					bpy.ops.object.mode_set(mode='OBJECT')
 					if self.align_type == 'X':
 						bpy.context.scene.cursor.location = [mid_co, saved_origin_loc[1], saved_origin_loc[2]]
@@ -278,13 +282,15 @@ class Align_Mid(bpy.types.Operator):
 					# Reset 3D Cursor position
 					bpy.context.scene.cursor.location = saved_cursor_loc
 
-				if act.align_geom_to_orig == True:
+				if act.align_geom_to_orig:
 					if self.align_type == 'X':
 						difference = saved_origin_loc[0] - mid_co
-					if self.align_type == 'Y':
+					elif self.align_type == 'Y':
 						difference = saved_origin_loc[1] - mid_co
-					if self.align_type == 'Z':
+					elif self.align_type == 'Z':
 						difference = saved_origin_loc[2] - mid_co
+					else:
+						difference = 0
 
 					bpy.ops.mesh.reveal()
 					bpy.ops.mesh.select_all(action='SELECT')
@@ -308,16 +314,16 @@ class Align_Mid(bpy.types.Operator):
 
 		# Select again objects
 		for j in current_selected_obj:
-			j.select_set(True);
+			j.select_set(True)
 
 		bpy.context.view_layer.objects.active = current_active_obj
 
-		utils.Print_Execution_Time("Align Origin to Middle", start_time)
+		utils.print_execution_time("Align Origin to Middle", start_time)
 		return {'FINISHED'}
 
 
 # Align cursor
-class Align_Cur(bpy.types.Operator):
+class AlignToCursor(bpy.types.Operator):
 	"""Origin Align To Cursor"""
 	bl_idname = "object.align_cur"
 	bl_label = "Origin To Cursor"
@@ -384,12 +390,12 @@ class Align_Cur(bpy.types.Operator):
 
 		bpy.context.view_layer.objects.active = current_active_obj
 
-		utils.Print_Execution_Time("Align Origin to Cursor", start_time)
+		utils.print_execution_time("Align Origin to Cursor", start_time)
 		return {'FINISHED'}
 
 
 # Align coordinate
-class Align_Co(bpy.types.Operator):
+class AlignToCoordinate(bpy.types.Operator):
 	"""Origin Align To Spec Coordinate"""
 	bl_idname = "object.align_co"
 	bl_label = "Origin Align To Spec Coordinate"
@@ -399,17 +405,15 @@ class Align_Co(bpy.types.Operator):
 	def execute(self, context):
 		start_time = datetime.now()
 		act = bpy.context.scene.act
-		align_coordinate = 0
 
 		# Check coordinate if check this option
 		try:
 			align_coordinate = float(act.align_co)
 		except:
-			utils.Show_Message_Box('Coordinate is wrong',
+			utils.show_message_box('Coordinate is wrong',
 								   'Float Error',
 								   'ERROR')
 			return {'CANCELLED'}
-
 
 		# Save selected objects and current position of 3D Cursor
 		current_selected_obj = bpy.context.selected_objects
@@ -466,12 +470,12 @@ class Align_Co(bpy.types.Operator):
 
 		bpy.context.view_layer.objects.active = current_active_obj
 
-		utils.Print_Execution_Time("Align Origin to Coordinate", start_time)
+		utils.print_execution_time("Align Origin to Coordinate", start_time)
 		return {'FINISHED'}
 
 
 # Set origin to selection in edit mode
-class Set_Origin_To_Select(bpy.types.Operator):
+class OriginToSelection(bpy.types.Operator):
 	"""Set Origin To Selection"""
 	bl_idname = "object.set_origin_to_select"
 	bl_label = "Set Origin To Selection"
@@ -488,12 +492,12 @@ class Set_Origin_To_Select(bpy.types.Operator):
 		bpy.context.scene.cursor.location = saved_cursor_loc
 		bpy.ops.object.mode_set(mode='EDIT')
 
-		utils.Print_Execution_Time("Set Origin to Selection", start_time)
+		utils.print_execution_time("Set Origin to Selection", start_time)
 		return {'FINISHED'}
 
 
 # Origin tools UI panel
-class VIEW3D_PT_Origin_Tools_Panel(bpy.types.Panel):
+class VIEW3D_PT_origin_tools_panel(bpy.types.Panel):
 	bl_label = "Origin Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -567,12 +571,12 @@ class VIEW3D_PT_Origin_Tools_Panel(bpy.types.Panel):
 
 
 classes = (
-	Align_Min,
-	Align_Max,
-	Align_Mid,
-	Align_Cur,
-	Align_Co,
-	Set_Origin_To_Select,
+	AlignToMin,
+	AlignToMax,
+	AlignToMiddle,
+	AlignToCursor,
+	AlignToCoordinate,
+	OriginToSelection,
 )
 
 

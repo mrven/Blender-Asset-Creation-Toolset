@@ -14,10 +14,10 @@
 * ***[Previous Releases](/Previous_Releases.md)***
 
 # Documentation
-***[Watch Features Overview (Youtube Playlist)](https://www.youtube.com/playlist?list=PLmXnsUZu0CRpLoJD79MC6AQf_phyXP62b)***
+[![ACT Playlist](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/playlist?list=PLmXnsUZu0CRpLoJD79MC6AQf_phyXP62b)
 
 # Sponsorship
-If you want to support me you can buy this addon on **[Blender Market](https://blendermarket.com/products/asset-creation-toolset-2024)**\
+If you want to support me you can buy this addon on **[Blender Market](https://blendermarket.com/products/asset-creation-toolset-2024)**
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/mrven)
 
@@ -37,8 +37,8 @@ Set Origin Point to Selected Element(s)
 
 
 ## Renaming Tools
-
-[![Renaming Tools Overview](https://img.youtube.com/vi/pqz-mSK8n90/0.jpg)](https://www.youtube.com/watch?v=pqz-mSK8n90)
+![Renaming Tools](/images/pngs/2025/02_Renaming_Tools.png)\
+[![Renaming Tools Overview](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=pqz-mSK8n90)
 
 ### Numbering Objects
 Delete Blender's default numbering and add new numbering by Axis/Outliner order with pattern:

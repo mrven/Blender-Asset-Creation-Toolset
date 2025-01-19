@@ -873,17 +873,38 @@ class Delete_Duplicated_Materials(bpy.types.Operator):
 		start_time = datetime.now()
 		selected_obj = bpy.context.selected_objects
 
-		# Collect only original materials
-		materials = []
+		# Collect original materials names
+		material_names = []
+
 		for obj in selected_obj:
-			for mesh_mat in obj.data.materials:
-				if mesh_mat.name[:-3][-1:] != '.':
-					mat_in_list = False
-					for mat in materials:
-						if mat == mesh_mat:
-							mat_in_list = True
-					if not mat_in_list:
-						materials.append(mesh_mat)
+			if obj.type == 'MESH':
+				for slot_material in obj.data.materials:
+					if slot_material:
+						material_clean_name = slot_material.name
+						if material_clean_name[:-3][-1:] == '.':
+							material_clean_name = material_clean_name[:-4]
+							name_in_list = False
+							for name in material_names:
+								if name == material_clean_name:
+									name_in_list = True
+							if not name_in_list:
+								material_names.append(material_clean_name)
+
+		# Try to get materials with these names
+		materials = []
+		for name in material_names:
+			scene_material = None
+			try:
+				scene_material = bpy.data.materials[name]
+			except:
+				continue
+
+			mat_in_list = False
+			for material in materials:
+				if scene_material == material:
+					mat_in_list = True
+			if not mat_in_list:
+				materials.append(scene_material)
 
 		if len(materials) == 0:
 			utils.Show_Message_Box("Original Materials is not found",
@@ -894,16 +915,18 @@ class Delete_Duplicated_Materials(bpy.types.Operator):
 		# Replace duplicated materials
 		materials_for_remove = []
 		for obj in selected_obj:
-			for mesh_mat_slot in obj.material_slots:
-				if mesh_mat_slot.material and mesh_mat_slot.name[:-3][-1:] == '.':
-					for mat in materials:
-						if mat.name == mesh_mat_slot.name[:-4]:
-							materials_for_remove.append(mesh_mat_slot.material)
-							mesh_mat_slot.material = mat
+			for material_slot in obj.material_slots:
+				if material_slot.material and material_slot.name[:-3][-1:] == '.':
+					for material in materials:
+						if material.name == material_slot.name[:-4]:
+							old_material = material_slot.material
+							material_slot.material = material
+							if old_material.users == 0:
+								materials_for_remove.append(old_material)
 
 		# Cleanup
-		for mat in materials_for_remove:
-			bpy.data.materials.remove(mat)
+		for material in materials_for_remove:
+			bpy.data.materials.remove(material)
 
 		utils.Show_Message_Box("Replaced " + str(len(materials_for_remove)) + \
 							   " duplicate(s) with " + str(len(materials)) + " original material(s)",

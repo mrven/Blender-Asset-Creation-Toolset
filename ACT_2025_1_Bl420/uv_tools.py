@@ -336,18 +336,11 @@ class VIEW3D_PT_uv_tools_panel(bpy.types.Panel):
 	@classmethod
 	def poll(self, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is not None and (context.mode == 'OBJECT' or context.mode == 'EDIT_MESH')) \
-			and preferences.uv_view3d_enable
+		return (context.object is not None and context.mode == 'OBJECT') and preferences.uv_view3d_enable
 
 	def draw(self, context):
 		act = bpy.context.scene.act
-
 		layout = self.layout
-		row = layout.row()
-
-		if context.object is not None:
-			if context.object.mode == 'EDIT':
-				row = layout.row()
 
 		if context.object is not None:
 			if context.mode == 'OBJECT':

@@ -17,7 +17,7 @@
 [![ACT Playlist](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/playlist?list=PLmXnsUZu0CRpLoJD79MC6AQf_phyXP62b)
 
 # Sponsorship
-If you want to support me you can buy this addon on **[Blender Market](https://blendermarket.com/products/asset-creation-toolset-2024)**
+If you want to support me you can buy this addon on **[Blender Market](https://blendermarket.com/products/act)**
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/mrven)
 

@@ -23,17 +23,17 @@ If you want to support me you can buy this addon on **[Blender Market](https://b
 
 # Features
 ## What's new in ACT 2025?
-[NEW] Add/Remove LOD to Name
-[NEW] Assign Seams from UV
-[NEW] Export Tool: Custom Scale and Axes for FBX/OBJ
-[NEW] Cleanup Duplicated Materials
-[NEW] Select Objects with Negative Scale
-[NEW] Cleanup Empties
-[NEW] Dissolve Checker Loops
-[NEW] Collapse Checker Edges
-[FIX] Fix addon installation error if Cycles is disabled
-[FIX] Clear Custom Normals apply on meshes with custom normal data only
-[IMPROVEMENT] Rename UV: Set Default name for UV when "Name" Field is empty
+[NEW] Add/Remove LOD to Name \
+[NEW] Assign Seams from UV \
+[NEW] Export Tool: Custom Scale and Axes for FBX/OBJ \
+[NEW] Cleanup Duplicated Materials \
+[NEW] Select Objects with Negative Scale \
+[NEW] Cleanup Empties \
+[NEW] Dissolve Checker Loops \
+[NEW] Collapse Checker Edges \
+[FIX] Fix addon installation error if Cycles is disabled \
+[FIX] Clear Custom Normals apply on meshes with custom normal data only \
+[IMPROVEMENT] Rename UV: Set Default name for UV when "Name" Field is empty \
 
 ## Origin Tools
 ![Origin Tools](/images/pngs/2025/01_Origin_Tools.png)\

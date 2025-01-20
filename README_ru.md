@@ -6,31 +6,39 @@
 
 **ACT** аддон для Blender, который содержит в себе набор инструментов, помогающих при создании низкополигональных ассетов для Blender.
 
-[<img src="https://api.gitsponsors.com/api/badge/img?id=190054403" height="50">](https://api.gitsponsors.com/api/badge/link?p=R7W5zpiWrH5vKtok3kziskOzBnSDKorI5wOcmiIPBzz9i28hZmWFBXmcyJL/atWR9JoicfSKTaNSfh+Mfp0bcA==)
 
-***Скачать последнюю версию:***
+# Загрузка
+* ***[(2025.1) Blender 4.2+ (с Blender Extensions)](https://extensions.blender.org/add-ons/act-game-asset-creation-toolset/)***
+* ***[(2025.1) Blender 4.2+ (с GitHub)](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/ACT_2025_1_Bl420.zip)***
+* ***[ACT Unity Editor Script (для Unity 2022+)](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Unity_Plugin/Releases/ACT_Unity_Plugin.unitypackage)***
+-----------------------------------------------
+* ***[Предыдущие версии](/Previous_Releases.md)***
 
-* ***[(2024.2) Blender 4.2+ (с Blender Extensions)](https://extensions.blender.org/add-ons/act-game-asset-creation-toolset/)***
-* ***[(2024.2) Blender 4.1+](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2024_2_Bl410.zip)***
-* ***[(2023.2) Blender 4.0+](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2023_2_Bl400.zip)***
-* ***[(2023.1) Blender 3.6+](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2023_1_Bl361.zip)***
-* ***[ACT Unity Editor Скрипт (для ACT 2023.1+)](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Unity_Plugin/Releases/ACT_2023_1_Unity_Plugin.unitypackage)***
------------------------------------------------------
-* ***[(3.3) Blender 3.4+](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_3_341.zip)***
-* ***[(3.1.5) Blender 2.90 - 3.0](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_5_290.zip)***
-* ***[(3.1.2) Blender 2.83](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_3_1_2_283.zip)***
-* ***[(2.4.1) Blender 2.79](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/Releases/Asset_Creation_Toolset_2_4_1_279.zip)***
+# Документация
+[![ACT Playlist](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/playlist?list=PLmXnsUZu0CRpLoJD79MC6AQf_phyXP62b)
 
-Если вы хотите поддержать меня, то можете купить аддон на следующих площадках:
-* ***[Blender Market](https://blendermarket.com/products/asset-creation-toolset-2024)***
+# Спонсорство
+Если вы хотите поддержать меня, то можете купить аддон на **[Blender Market](https://blendermarket.com/products/asset-creation-toolset-2024)**
 
-
-***[Смотреть обзор всех функций (плейлист Youtube)](https://www.youtube.com/playlist?list=PLmXnsUZu0CRpLoJD79MC6AQf_phyXP62b)***
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/mrven)
 
 # Функции
-## Origin Tools
+## Что нового в ACT 2025?
+[NEW] Добавление/замена/удаление постфикса \_LOD\* с заданным уровнем LOD'а \
+[NEW] Пакетное назначение швов развёртки на модели по UV непосредственно из Object Mode \
+[NEW] Export Tool: Возможность задавать пользовательские масштаб и оси при экспорте FBX или OBJ \
+[NEW] Удаление дубликатов материалов \
+[NEW] Выделение объектов с отрицательным масштабом \
+[NEW] Удаление пустышек, под которыми нет объектов и мешей без геометрии \
+[NEW] Удаление лупов через один (начиная с выделенной грани) \
+[NEW] Схлопывание граней по одному (по длине лупа) \
+[FIX] Исправлена ошибка установки аддона, если отключен Cycles \
+[FIX] Clear Custom Normals применяется только к объектам, у которых есть custom normal data \
+[IMPROVEMENT] Устанавливать дефолтное имя для UV когда поле "Name" пустое \
 
-[![Origin Tools Overview](https://img.youtube.com/vi/cxcSM-HvMH8/0.jpg)](https://www.youtube.com/watch?v=cxcSM-HvMH8)
+## Origin Tools
+![Origin Tools](/images/pngs/2025/01_Origin_Tools.png)\
+[![Origin Tools Overview](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=cxcSM-HvMH8)
 
 ### Origin Align Tool
 Выравнивание Origin Point объекта. Позволяет выровнять Origin по заданной оси по максимальной/минимальной/средней точки объекта, 3D-курсору или заданной координате.
@@ -38,32 +46,42 @@
 ### Set Origin to Selected (Edit Mode)
 Выравнивание Origin по выделенным элементам. Является автоматизацией шагов: перемещение 3D-курсора к выделенному, переключение в объектный режим, установка Origin по 3D-курсору и возврат в режим редактирования.
 
+## Renaming Tools
+![Renaming Tools](/images/pngs/2025/02_Renaming_Tools.png)\
+[![Renaming Tools Overview](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=pqz-mSK8n90)
+
 ### Numbering Objects
 Удаляет стандартную нумерацию блендера и добавляет свою собственную нумерацию вдоль оси или по порядку аутлайнера:
 * xxx_1, xxx_10, xxx_100
 * xxx_01, xxx_10, xxx_100
 * xxx_001, xxx_010, xxx_100
 
+### Add/Remove LOD to Name
+Добавление/замена/удаление постфикса \_LOD\* с заданным уровнем LOD'а.
+
 ### Add .L or .R suffix to Bones
 Быстрое добавление суффикса .L или .R к выделенным костям.
 
 
 ## UV Tools
-
-[![UV Tools Overview](https://img.youtube.com/vi/ble4bwOJwjQ/0.jpg)](https://www.youtube.com/watch?v=ble4bwOJwjQ)
+![UV Tools](/images/pngs/2025/03_UV_Tools.png)\
+[![UV Tools Overview](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=ble4bwOJwjQ)
 
 * Переименовывание UV-развёртку выделенных объектов по заданному индексу (каналу) развёртки. Например, у объектов, импортированных из 3Ds Max название развёртки UVChannel_1, а у объектов, созданных в Blender UVMap. Таким образом при объединении объектов вместо объединения развёрток они разбросаются по двум каналам. Также удобно задавать имя для канала Lightmap и т.п.
 * Добавление нового UV-канала c заданным именем на выделенные объекты (с копированием UV  активного канала или автоматической развёрткой (Smart/Lightmap))
 * Удаление UV-канала по индексу с выделенных объектов
 * Выбор активного UV-канала в 3D View и Image/UV Editor по индексу
 
+### Assign Seams from UV
+Пакетное назначение швов развёртки на модели по UV непосредственно из Object Mode.
+
 ### UV Mover (UV Image Editor)
 Инструмент, облегчающий масштабирование и перемещение островов с заданным шагом при паковке текстурных атласов.
 
 
 ## Export Tools
-
-[![Export Tools Overview](https://img.youtube.com/vi/XTyvRZLvVUg/0.jpg)](https://www.youtube.com/watch?v=XTyvRZLvVUg)
+![Export Tools](/images/pngs/2025/04_Export.png)\
+[![Export Tools Overview](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=XTyvRZLvVUg)
 
 ### Export OBJ/FBX/GLTF to Unity/UE/Godot
 Пакетный экспорт выделенных объектов в FBX/OBJ/GLTF с корректным масштабом и поворотом. Рядом с файлом .Blend будет создана папка, в которую будут экспортированы объекты. Каждый объект/группа/коллекция будет экспортирован(а) в отдельный файл.
@@ -91,8 +109,8 @@ Unity editor ACT скрипт поставляется вместе с ACT Blend
 
 
 ## Material/Texture Tools
-
-[![Material Tools Overview](https://img.youtube.com/vi/WY9vJja1nqw/0.jpg)](https://www.youtube.com/watch?v=WY9vJja1nqw)
+![Material Tools](/images/pngs/2025/05_Material_Tools.png)\
+[![Material Tools Overview](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=WY9vJja1nqw)
 
 ### Material -> Viewport Color / Random Material Viewport Colors
 Копирование Base Color материала в Viewport Color для режима отображения Solid View. Или назначение случайных цветов для материалов во Viewport.
@@ -111,10 +129,13 @@ Unity editor ACT скрипт поставляется вместе с ACT Blend
 ### Active Material -> Selected
 Назначить активный материал на выделенные полигоны в режиме MultiEdit.
 
+### Cleanup Duplicated Materials
+Удаление дубликатов материалов (по имени). Полезно, когда импортируется много моделей с одинаковыми материалами, но из разных файлов. В этом случае Blender создаёт множество копий материалов. Данная функция позволяет найти и назначить исходные материалы на все модели.
+
 
 ## Other Tools
-
-[![Other Tools Overview](https://img.youtube.com/vi/n8ZBI3KZ47Y/0.jpg)](https://www.youtube.com/watch?v=n8ZBI3KZ47Y)
+![Other Tools](/images/pngs/2025/06_Other_Tools.png)\
+[![Other Tools Overview](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=n8ZBI3KZ47Y)
 
 ### Obj Name -> Data Name
 Назначение имени меша/шрифта и т.п. по имени объекта.
@@ -133,6 +154,22 @@ Unity editor ACT скрипт поставляется вместе с ACT Blend
 
 ### Merge Bones Tool
 Инструмент для упрощения скелета: Удаление выделенных костей (кроме активной) и перенос весов на активную кость.
+
+### Select Objects with Negative Scale
+Функция выделения объектов с отрицательным масштабом. В игровой разработке следует избегать объекты с отрицательным масштабом (особенно если это касается коллайдеров и других физических объектов). Данный инструмент позволяет найти такие объекты.
+
+### Cleanup Empties
+Удаление пустышек, под которыми нет объектов и мешей без геометрии.
+
+
+## Geometry Tools
+![Geometry Tools](/images/pngs/2025/07_Geometry_Tools.png)
+
+### Dissolve Checker Loops
+Удаление лупов через один (начиная с выделенной грани). Идеально для упрощения цилиндрических моделей.
+
+### Collapse Checker Edges
+Схлопывание граней по одному (по длине лупа). Идеально для упрощения сферических объектов.
 
 
 ## Addon Preferences

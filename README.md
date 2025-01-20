@@ -33,7 +33,7 @@ If you want to support me you can buy this addon on **[Blender Market](https://b
 [NEW] Collapse Checker Edges \
 [FIX] Fix addon installation error if Cycles is disabled \
 [FIX] Clear Custom Normals apply on meshes with custom normal data only \
-[IMPROVEMENT] Rename UV: Set Default name for UV when "Name" Field is empty \
+[IMPROVEMENT] Rename UV: Set Default name for UV when "Name" Field is empty
 
 ## Origin Tools
 ![Origin Tools](/images/pngs/2025/01_Origin_Tools.png)\

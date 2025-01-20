@@ -22,6 +22,19 @@ If you want to support me you can buy this addon on **[Blender Market](https://b
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/mrven)
 
 # Features
+## What's new in ACT 2025?
+[NEW] Add/Remove LOD to Name
+[NEW] Assign Seams from UV
+[NEW] Export Tool: Custom Scale and Axes for FBX/OBJ
+[NEW] Cleanup Duplicated Materials
+[NEW] Select Objects with Negative Scale
+[NEW] Cleanup Empties
+[NEW] Dissolve Checker Loops
+[NEW] Collapse Checker Edges
+[FIX] Fix addon installation error if Cycles is disabled
+[FIX] Clear Custom Normals apply on meshes with custom normal data only
+[IMPROVEMENT] Rename UV: Set Default name for UV when "Name" Field is empty
+
 ## Origin Tools
 ![Origin Tools](/images/pngs/2025/01_Origin_Tools.png)\
 [![Origin Tools Overview](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=cxcSM-HvMH8)
@@ -61,6 +74,9 @@ Quick add suffix .L or .R to Selected Bones.
 * Batch Add UV with custom name (copy UV from active, smart projection or lightmap uv)
 * Batch Remove UV by Index
 * Set Active UV Layer for Selected Objects in 3D View and Image/UV Editor by UV Index
+
+### Assign Seams from UV
+Batch assignment of UV seams to models directly from Object Mode.
 
 ### UV Mover (UV Image Editor)
 Tool for easier Atlas Packing.
@@ -122,6 +138,9 @@ Create Palette Textures (32x32px) for Selected Objects painted with colored mate
 ### Active Material -> Selected
 Assign active material to selected faces in MultiEdit Mode.
 
+### Cleanup Duplicated Materials
+Remove duplicate materials (by name). Useful when importing many models with the same materials but from different files. In this case, Blender creates many copies of the materials. This function allows you to find and assign the original materials to all models.
+
 
 ## Other Tools
 ![Export Tools](/images/pngs/2025/06_Other_Tools.png)\
@@ -145,10 +164,27 @@ Flip or Recalculate Normals for Selected Objects in Object Mode.
 ### Merge Bones Tool
 Tool For Easy Simplifying Armature: Delete (or Dissolve) Selected Bones (Exclude Active) and Transfer Vertex Weights to Active Bone.
 
+### Select Objects with Negative Scale
+In game development, objects with negative scale should be avoided (especially colliders or other physical objects). This tool allows you to find such objects.
+
+### Cleanup Empties
+Removing empty spaces under which there are no objects and meshes without geometry.
+
+
+## Geometry Tools
+![Geometry Tools](/images/pngs/2025/07_Geometry_Tools.png)\
+
+### Dissolve Checker Loops
+Remove stitches one by one (starting from the selected edge). Perfect for simplifying cylindrical geometry.
+
+### Collapse Checker Edges
+Collapses edges one by one (along the loop). Perfect for simplifying spherical geometry.
+
+
 ## Addon Preferences
 * Show/Hide UI Panels via Addon Preferences
 * Changing Category for each Panel from Preferences
 
 ![Addon Preferences](/images/pngs/01_Addon_Prefs.png)
 
-[<img src="https://api.gitsponsors.com/api/badge/img?id=190054403" height="20">](https://api.gitsponsors.com/api/badge/link?p=R7W5zpiWrH5vKtok3kziskOzBnSDKorI5wOcmiIPBzz9i28hZmWFBXmcyJL/atWR9JoicfSKTaNSfh+Mfp0bcA==)
+[<img src="https://api.gitsponsors.com/api/badge/img?id=190054403" height="20">](https://api.gitsponsors.com/api/badge/link?p=R7W5zpiWrH5vKtok3kzishcHSm+vXLZUisxg1E+mz6+XIavgMaeedIgSiO/Pg8qJqY/tYxmwupuzjsP75azNlSy4YbYlJdL3ENeRkPjkRrmotBAe8wjwLaG/9IT0ejm234ouL7ohak0h8SewxjZpPA==)

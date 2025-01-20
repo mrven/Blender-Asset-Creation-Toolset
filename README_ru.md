@@ -34,7 +34,7 @@
 [NEW] Схлопывание граней по одному (по длине лупа) \
 [FIX] Исправлена ошибка установки аддона, если отключен Cycles \
 [FIX] Clear Custom Normals применяется только к объектам, у которых есть custom normal data \
-[IMPROVEMENT] Устанавливать дефолтное имя для UV когда поле "Name" пустое \
+[IMPROVEMENT] Устанавливать дефолтное имя для UV когда поле "Name" пустое
 
 ## Origin Tools
 ![Origin Tools](/images/pngs/2025/01_Origin_Tools.png)\

@@ -118,7 +118,7 @@ But you can also use previous algorithm: This algorithm doesn't require addition
 
 
 ## Material/Texture Tools
-![Export Tools](/images/pngs/2025/05_Material_Tools.png)\
+![Material Tools](/images/pngs/2025/05_Material_Tools.png)\
 [![Material Tools Overview](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=WY9vJja1nqw)
 
 ### Material -> Viewport Color / Random Material Viewport Colors
@@ -143,7 +143,7 @@ Remove duplicate materials (by name). Useful when importing many models with the
 
 
 ## Other Tools
-![Export Tools](/images/pngs/2025/06_Other_Tools.png)\
+![Other Tools](/images/pngs/2025/06_Other_Tools.png)\
 [![Other Tools Overview](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=n8ZBI3KZ47Y)
 
 ### Obj Name -> Data Name
@@ -172,7 +172,7 @@ Removing empty spaces under which there are no objects and meshes without geomet
 
 
 ## Geometry Tools
-![Geometry Tools](/images/pngs/2025/07_Geometry_Tools.png)\
+![Geometry Tools](/images/pngs/2025/07_Geometry_Tools.png)
 
 ### Dissolve Checker Loops
 Remove stitches one by one (starting from the selected edge). Perfect for simplifying cylindrical geometry.

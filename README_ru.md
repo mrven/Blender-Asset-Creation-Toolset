@@ -177,3 +177,5 @@ Unity editor ACT скрипт поставляется вместе с ACT Blend
 * Возможность изменять категорию для каждой панели через настройки аддона
 
 ![Addon Preferences](/images/pngs/01_Addon_Prefs.png)
+
+[<img src="https://api.gitsponsors.com/api/badge/img?id=190054403" height="20">](https://api.gitsponsors.com/api/badge/link?p=R7W5zpiWrH5vKtok3kzishcHSm+vXLZUisxg1E+mz6+XIavgMaeedIgSiO/Pg8qJqY/tYxmwupuzjsP75azNlSy4YbYlJdL3ENeRkPjkRrmotBAe8wjwLaG/9IT0ejm234ouL7ohak0h8SewxjZpPA==)

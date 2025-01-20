@@ -46,13 +46,16 @@ Delete Blender's default numbering and add new numbering by Axis/Outliner order 
 * xxx_01, xxx_10, xxx_100
 * xxx_001, xxx_010, xxx_100
 
+### Add/Remove LOD to Name
+Add/replace/remove postfix \_LOD\* with a selected LOD level.
+
 ### Add .L or .R suffix to Bones
 Quick add suffix .L or .R to Selected Bones.
 
 
 ## UV Tools
-
-[![UV Tools Overview](https://img.youtube.com/vi/ble4bwOJwjQ/0.jpg)](https://www.youtube.com/watch?v=ble4bwOJwjQ)
+![UV Tools](/images/pngs/2025/03_UV_Tools.png)\
+[![UV Tools Overview](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=ble4bwOJwjQ)
 
 * Batch Renaming UV by Index (example, Lightmap - second uv channel)
 * Batch Add UV with custom name (copy UV from active, smart projection or lightmap uv)
@@ -66,8 +69,8 @@ Tool for easier Atlas Packing.
 
 
 ## Export Tools
-
-[![Export Tools Overview](https://img.youtube.com/vi/XTyvRZLvVUg/0.jpg)](https://www.youtube.com/watch?v=XTyvRZLvVUg)
+![Export Tools](/images/pngs/2025/04_Export.png)\
+[![Export Tools Overview](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=XTyvRZLvVUg)
 
 ### Export OBJ/FBX/GLTF to Unity/UE/Godot
 Batch Export Selected Objects for Unity, UE or Godot. Available some modes:
@@ -99,8 +102,8 @@ But you can also use previous algorithm: This algorithm doesn't require addition
 
 
 ## Material/Texture Tools
-
-[![Material Tools Overview](https://img.youtube.com/vi/WY9vJja1nqw/0.jpg)](https://www.youtube.com/watch?v=WY9vJja1nqw)
+![Export Tools](/images/pngs/2025/05_Material_Tools.png)\
+[![Material Tools Overview](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=WY9vJja1nqw)
 
 ### Material -> Viewport Color / Random Material Viewport Colors
 Transfer Material Base Color to Viewport Color for Solid View Mode. Or Generate Random Colors for Materials for Viewport.
@@ -121,8 +124,8 @@ Assign active material to selected faces in MultiEdit Mode.
 
 
 ## Other Tools
-
-[![Other Tools Overview](https://img.youtube.com/vi/n8ZBI3KZ47Y/0.jpg)](https://www.youtube.com/watch?v=n8ZBI3KZ47Y)
+![Export Tools](/images/pngs/2025/06_Other_Tools.png)\
+[![Other Tools Overview](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=n8ZBI3KZ47Y)
 
 ### Obj Name -> Data Name
 Copy Object Name to Mesh/Font/Etc.(Data-Block) Name.

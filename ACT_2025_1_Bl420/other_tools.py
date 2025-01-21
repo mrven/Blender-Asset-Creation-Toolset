@@ -364,8 +364,8 @@ class CleanupEmpties(bpy.types.Operator):
 				empty_branch = True
 
 				for child in obj.children_recursive:
-					if child.type != 'EMPTY' \
-							or (act.delete_empty_meshes and obj.type == "MESH" and len(obj.data.vertices) > 0):
+					if not (child.type == 'EMPTY' or
+							(act.delete_empty_meshes and child.type == "MESH" and len(child.data.vertices) == 0)):
 						empty_branch = False
 
 				if empty_branch or len(obj.children) == 0:

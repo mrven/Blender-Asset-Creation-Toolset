@@ -13,7 +13,7 @@ class DissolveCheckerLoops(bpy.types.Operator):
 
 	def execute(self, context):
 		start_time = datetime.now()
-		if bpy.context.scene.tool_settings.mesh_select_mode[1]:
+		if not bpy.context.scene.tool_settings.mesh_select_mode[1]:
 			utils.show_message_box("Change Selection Mode to EDGE first",
 								   "Invalid Selection Mode",
 								   'ERROR')
@@ -53,7 +53,7 @@ class CollapseCheckerEdges(bpy.types.Operator):
 
 	def execute(self, context):
 		start_time = datetime.now()
-		if bpy.context.scene.tool_settings.mesh_select_mode[1]:
+		if not bpy.context.scene.tool_settings.mesh_select_mode[1]:
 			utils.show_message_box("Change Selection Mode to EDGE first",
 								   "Invalid Selection Mode",
 								   'ERROR')

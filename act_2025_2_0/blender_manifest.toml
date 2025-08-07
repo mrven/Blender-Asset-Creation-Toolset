@@ -1,0 +1,21 @@
+schema_version = "1.0.0"
+
+id = "act_game_asset_creation_toolset"
+version = "2025.2.0"
+name = "ACT: Game Asset Creation Toolset"
+tagline = "Tools for easy create and export low-poly game assets"
+maintainer = "Ivan Vostrikov <mrven1989@gmail.com>"
+type = "add-on"
+
+website = "https://github.com/mrven/Blender-Asset-Creation-Toolset"
+
+tags = ["3D View", "Object", "UV", "Mesh", "Import-Export", "Modeling"]
+
+blender_version_min = "4.2.0"
+
+license = [
+  "SPDX:GPL-3.0-or-later",
+]
+
+[permissions]
+files = "Export FBX/OBJ/GLTF to disk"

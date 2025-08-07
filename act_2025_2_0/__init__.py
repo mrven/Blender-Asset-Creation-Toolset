@@ -5,15 +5,14 @@ bl_info = {
 	"wiki_url": "https://github.com/mrven/Blender-Asset-Creation-Toolset#readme",
 	"tracker_url": "https://github.com/mrven/Blender-Asset-Creation-Toolset/issues",
 	"doc_url": "https://github.com/mrven/Blender-Asset-Creation-Toolset#readme",
-	"version": (2025, 1, 1),
-	"blender": (4, 2, 0),
+	"version": (2025, 2, 0),
+	"blender": (3, 0, 0),
 	"location": "3D View > Toolbox > ACT",
 	"category": "Object",
 }
 
 from . import props
 from . import preferences
-from . import utils
 from . import origin_tools
 from . import rename_tools
 from . import uv_tools

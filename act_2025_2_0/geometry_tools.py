@@ -1,25 +1,24 @@
 import bpy
-
-from . import utils
 from datetime import datetime
 
+from . import utils
 
 # Dissolve Checker Loops
 class DissolveCheckerLoops(bpy.types.Operator):
 	"""Dissolve Checker Loops"""
-	bl_idname = "object.dissolve_checker_loops"
+	bl_idname = "act.dissolve_checker_loops"
 	bl_label = "Dissolve Checker Loops"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
 		start_time = datetime.now()
-		if not bpy.context.scene.tool_settings.mesh_select_mode[1]:
+		if not context.scene.tool_settings.mesh_select_mode[1]:
 			utils.show_message_box("Change Selection Mode to EDGE first",
 								   "Invalid Selection Mode",
 								   'ERROR')
 			return {'CANCELLED'}
 		else:
-			selected_obj = bpy.context.selected_objects
+			selected_obj = context.selected_objects
 			selected_edges = 0
 			bpy.ops.object.mode_set(mode='OBJECT')
 
@@ -47,19 +46,19 @@ class DissolveCheckerLoops(bpy.types.Operator):
 # Collapse  Checker Edges
 class CollapseCheckerEdges(bpy.types.Operator):
 	"""Collapse  Checker Edges"""
-	bl_idname = "object.collapse_checker_edges"
-	bl_label = "Collapse  Checker Edges"
+	bl_idname = "act.collapse_checker_edges"
+	bl_label = "Collapse Checker Edges"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
 		start_time = datetime.now()
-		if not bpy.context.scene.tool_settings.mesh_select_mode[1]:
+		if not context.scene.tool_settings.mesh_select_mode[1]:
 			utils.show_message_box("Change Selection Mode to EDGE first",
 								   "Invalid Selection Mode",
 								   'ERROR')
 			return {'CANCELLED'}
 		else:
-			selected_obj = bpy.context.selected_objects
+			selected_obj = context.selected_objects
 			selected_edges = 0
 			bpy.ops.object.mode_set(mode='OBJECT')
 
@@ -91,23 +90,16 @@ class VIEW3D_PT_geometry_tools_panel(bpy.types.Panel):
 	bl_category = "ACT"
 
 	@classmethod
-	def poll(self, context):
-		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is not None and context.mode == 'EDIT_MESH') and preferences.geometry_enable
+	def poll(cls, context):
+		prefs = context.preferences.addons[__package__].preferences
+		return (context.object is not None and context.active_object is not None and context.mode == 'EDIT_MESH') and prefs.geometry_enable
 
-	def draw(self, context):
+	def draw(self, _):
 		layout = self.layout
-
-		if context.object is not None:
-			if context.object.mode == 'OBJECT':
-				row = layout.row()
-
-		if context.object is not None:
-			if context.object.mode == 'EDIT':
-				row = layout.row()
-				row.operator("object.dissolve_checker_loops", text="Dissolve Checker Loops")
-				row = layout.row()
-				row.operator("object.collapse_checker_edges", text="Collapse  Checker Edges")
+		row = layout.row()
+		row.operator(DissolveCheckerLoops.bl_idname)
+		row = layout.row()
+		row.operator(CollapseCheckerEdges.bl_idname)
 
 
 classes = (

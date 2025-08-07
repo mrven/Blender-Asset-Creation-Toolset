@@ -3,15 +3,15 @@ import random
 import colorsys
 import os
 import subprocess
-from . import utils
 from datetime import datetime
 
+from . import utils
 
 # Palette texture creator
 class CreatePalette(bpy.types.Operator):
 	"""Palette Texture Creator"""
-	bl_idname = "object.palette_creator"
-	bl_label = "Palette Texture Creator"
+	bl_idname = "act.create_palette"
+	bl_label = "Create Palette Texture"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -724,7 +724,7 @@ class ClearVertexColors(bpy.types.Operator):
 class MaterialToViewport(bpy.types.Operator):
 	"""Material Color to Viewport Color"""
 	bl_idname = "object.material_to_viewport"
-	bl_label = "Material Color to Viewport Color"
+	bl_label = "Material -> Viewport Colors"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -1031,10 +1031,10 @@ class VIEW3D_PT_material_tools_panel(bpy.types.Panel):
 	bl_category = "ACT"
 
 	@classmethod
-	def poll(self, context):
-		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is not None and (
-					context.mode == 'OBJECT' or context.mode == 'EDIT_MESH')) and preferences.material_enable
+	def poll(cls, context):
+		prefs = bpy.context.preferences.addons[__package__].preferences
+		return (context.object is not None and context.active_object is not None
+		        and context.mode in {'OBJECT', 'EDIT_MESH'} and prefs.material_enable)
 
 	def draw(self, context):
 		act = bpy.context.scene.act
@@ -1044,22 +1044,22 @@ class VIEW3D_PT_material_tools_panel(bpy.types.Panel):
 			if context.mode == 'OBJECT':
 				box = layout.box()
 				row = box.row()
-				row.operator("object.material_to_viewport", text="Material -> Viewport Colors")
+				row.operator(MaterialToViewport.bl_idname)
 
 				row = box.row()
-				row.operator("object.random_viewport_color", text="Random Material Viewport Colors")
+				row.operator(RandomViewportColor.bl_idname, text="Random Material Viewport Colors")
 
 				row = box.row()
-				row.operator("object.clear_viewport_color", text="Clear Viewport Colors")
+				row.operator(ClearViewportColor.bl_idname, text="Clear Viewport Colors")
 
 				row = layout.row()
-				row.operator("object.clear_vc", text="Clear Vertex Colors")
+				row.operator(ClearVertexColors.bl_idname, text="Clear Vertex Colors")
 
 				row = layout.row()
-				row.operator("object.delete_unused_materials", text="Delete Unused Materials")
+				row.operator(DeleteUnusedMaterials.bl_idname, text="Delete Unused Materials")
 
 				row = layout.row()
-				row.operator("object.delete_duplicated_materials", text="Cleanup Duplicated Materials")
+				row.operator(DeleteDuplicatedMaterials.bl_idname, text="Cleanup Duplicated Materials")
 
 				box = layout.box()
 				row = box.row()
@@ -1071,13 +1071,13 @@ class VIEW3D_PT_material_tools_panel(bpy.types.Panel):
 					row.label(text="Save Path:")
 					row.prop(act, "save_path")
 				row = box.row()
-				row.operator("object.palette_creator", text="Create Palette Texture")
+				row.operator(CreatePalette.bl_idname)
 				if len(act.save_dir) > 0:
 					row = box.row()
-					row.operator("object.open_save_dir", text="Open Save Directory")
+					row.operator(OpenSaveDir.bl_idname, text="Open Save Directory")
 
 			row = layout.row()
-			row.operator("view3d.call_select_texture_menu", text="Open Texture in UV Editor")
+			row.operator(CallSelectTextureMenuView3D.bl_idname, text="Open Texture in UV Editor")
 
 
 # Material tools UI panel in UV Editor
@@ -1088,26 +1088,26 @@ class UV_PT_material_uv_tools_panel(bpy.types.Panel):
 	bl_category = "ACT"
 
 	@classmethod
-	def poll(self, context):
-		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is not None and (
-					context.mode == 'OBJECT' or context.mode == 'EDIT_MESH')) and preferences.uv_material_enable
+	def poll(cls, context):
+		prefs = bpy.context.preferences.addons[__package__].preferences
+		return (context.object is not None and context.active_object is not None
+		        and context.mode in {'OBJECT', 'EDIT_MESH'} and prefs.uv_material_enable)
 
 	def draw(self, context):
 		layout = self.layout
 		if context.object is not None:
 			row = layout.row()
-			row.operator("image.call_select_texture_menu", text="Open Texture in UV Editor")
+			row.operator(CallSelectTextureMenuImageEditor.bl_idname, text="Open Texture in UV Editor")
 
 
 # Material assign UI panel
 def material_menu_panel(self, context):
-	preferences = bpy.context.preferences.addons[__package__].preferences
-	if context.object is not None and preferences.material_properties_enable:
+	prefs = bpy.context.preferences.addons[__package__].preferences
+	if context.object is not None and prefs.material_properties_enable:
 		if context.object.mode == 'EDIT' and len(context.selected_objects) > 1:
 			layout = self.layout
 			row = layout.row()
-			row.operator("object.assign_multiedit_materials", text="Active Material -> Selected")
+			row.operator(AssignMultiEditMaterials.bl_idname, text="Active Material -> Selected")
 
 
 classes = (

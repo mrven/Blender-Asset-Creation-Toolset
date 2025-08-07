@@ -2,31 +2,30 @@ import bpy
 import os
 import subprocess
 import math
-from . import utils
 from datetime import datetime
 
+from . import utils
 
 # FBX/OBJ/GLTF export
-class MultiExport(bpy.types.Operator):
+class ACTExport(bpy.types.Operator):
 	"""Export FBXs/OBJs/GLTFs to Unity/UE/Godot"""
-	bl_idname = "object.multi_export"
+	bl_idname = "act.export"
 	bl_label = "Export FBXs/OBJs/GLTFs"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
 		start_time = datetime.now()
-		act = bpy.context.scene.act
+		act = context.scene.act
 		act.export_dir = ""
 		incorrect_names = []
 
 		# Check custom name
 		if act.fbx_export_mode == 'ALL':
-			if act.set_custom_fbx_name:
-				if len(act.custom_fbx_name) == 0:
-					utils.show_message_box('Custom Name can\'t be empty',
-										   'Saving Error',
-										   'ERROR')
-					return {'CANCELLED'}
+			if act.set_custom_fbx_name and len(act.custom_fbx_name) == 0:
+				utils.show_message_box('Custom Name can\'t be empty',
+									   'Saving Error',
+									   'ERROR')
+				return {'CANCELLED'}
 
 		# Check saved blend file
 		if len(bpy.data.filepath) == 0 and not act.custom_export_path:
@@ -67,28 +66,28 @@ class MultiExport(bpy.types.Operator):
 				os.makedirs(path)
 
 			# Save selected objects and active object
-			start_selected_obj = bpy.context.selected_objects
-			start_active_obj = bpy.context.active_object
-			current_selected_obj = bpy.context.selected_objects
+			start_selected_obj = context.selected_objects
+			start_active_obj = context.active_object
+			current_selected_obj = context.selected_objects
 
 			# Check "Pivot Point Align" option, save start state and disable it
-			current_pivot_point_align = bpy.context.scene.tool_settings.use_transform_pivot_point_align
+			current_pivot_point_align = context.scene.tool_settings.use_transform_pivot_point_align
 			if current_pivot_point_align:
-				bpy.context.scene.tool_settings.use_transform_pivot_point_align = False
+				context.scene.tool_settings.use_transform_pivot_point_align = False
 
 			# Save cursor location and pivot point mode
-			saved_cursor_loc = bpy.context.scene.cursor.location.copy()
-			current_pivot_point = bpy.context.scene.tool_settings.transform_pivot_point
+			saved_cursor_loc = context.scene.cursor.location.copy()
+			current_pivot_point = context.scene.tool_settings.transform_pivot_point
 
 			# Name for FBX is active object name (by default)
-			name = bpy.context.active_object.name
+			name = context.active_object.name
 
 			# Filtering selected objects. Exclude all not meshes, empties, armatures, curves and text
 			bpy.ops.object.select_all(action='DESELECT')
 			for x in current_selected_obj:
 				if x.type == 'MESH' or x.type == 'EMPTY' or x.type == 'ARMATURE' or x.type == 'CURVE' or x.type == 'FONT':
 					x.select_set(True)
-			current_selected_obj = bpy.context.selected_objects
+			current_selected_obj = context.selected_objects
 
 			# Added suffix _ex to all selected objects. Also add _ex to mesh data and armature name
 			for obj in current_selected_obj:
@@ -98,7 +97,7 @@ class MultiExport(bpy.types.Operator):
 
 			# Make copies. These copies will be exported
 			bpy.ops.object.duplicate()
-			exp_objects = bpy.context.selected_objects
+			exp_objects = context.selected_objects
 
 			if act.export_target_engine == 'UNITY2023' and act.export_format == 'FBX':
 				if act.export_combine_meshes:
@@ -110,7 +109,7 @@ class MultiExport(bpy.types.Operator):
 			for obj in exp_objects:
 				bpy.ops.object.select_all(action='DESELECT')
 				obj.select_set(True)
-				bpy.context.view_layer.objects.active = obj
+				context.view_layer.objects.active = obj
 
 				# Remove disabled modifiers
 				if obj.type != 'EMPTY':
@@ -127,7 +126,7 @@ class MultiExport(bpy.types.Operator):
 							if modifier.type != 'ARMATURE':
 								try:
 									bpy.ops.object.modifier_apply(modifier=modifier.name)
-								except:
+								except Exception:
 									bpy.ops.object.modifier_remove(modifier=modifier.name)
 					elif obj.type != 'EMPTY':
 						bpy.ops.object.convert(target='MESH')
@@ -137,7 +136,7 @@ class MultiExport(bpy.types.Operator):
 							if modifier.type != 'ARMATURE':
 								try:
 									bpy.ops.object.modifier_apply(modifier=modifier.name)
-								except:
+								except Exception:
 									bpy.ops.object.modifier_remove(modifier=modifier.name)
 					elif obj.type != 'EMPTY':
 						bpy.ops.object.convert(target='MESH')
@@ -150,25 +149,26 @@ class MultiExport(bpy.types.Operator):
 
 			# Delete all materials (Optional)
 			if act.delete_mats_before_export:
-				for o in exp_objects:
-					if o.type == 'MESH' and len(o.data.materials) > 0:
-						for q in reversed(range(len(o.data.materials))):
-							bpy.context.object.active_material_index = q
-							o.data.materials.pop(index=q)
+				for obj in exp_objects:
+					if obj.type == 'MESH' and len(obj.data.materials) > 0:
+						for q in reversed(range(len(obj.data.materials))):
+							context.object.active_material_index = q
+							obj.data.materials.pop(index=q)
 
 			# Triangulate meshes (Optional)
 			if act.triangulate_before_export:
-				for o in exp_objects:
-					if o.type == 'MESH':
-						bpy.ops.object.select_all(action='DESELECT')
-						o.select_set(True)
-						bpy.context.view_layer.objects.active = o
-						bpy.ops.object.mode_set(mode='EDIT')
-						bpy.ops.mesh.reveal()
-						bpy.ops.mesh.select_all(action='SELECT')
-						bpy.ops.mesh.quads_convert_to_tris(quad_method='BEAUTY', ngon_method='BEAUTY')
-						bpy.ops.mesh.select_all(action='DESELECT')
-						bpy.ops.object.mode_set(mode='OBJECT')
+				for obj in exp_objects:
+					if obj.type != 'MESH':
+						continue
+					bpy.ops.object.select_all(action='DESELECT')
+					obj.select_set(True)
+					context.view_layer.objects.active = obj
+					bpy.ops.object.mode_set(mode='EDIT')
+					bpy.ops.mesh.reveal()
+					bpy.ops.mesh.select_all(action='SELECT')
+					bpy.ops.mesh.quads_convert_to_tris(quad_method='BEAUTY', ngon_method='BEAUTY')
+					bpy.ops.mesh.select_all(action='DESELECT')
+					bpy.ops.object.mode_set(mode='OBJECT')
 
 			# Select all exported objects
 			for obj in exp_objects:
@@ -177,20 +177,20 @@ class MultiExport(bpy.types.Operator):
 			# Apply Scale and Rotation for UNITY2023 Export or GLTF
 			# Processing only objects without linked data
 			if (act.export_target_engine == 'UNITY2023' and act.export_format == 'FBX') or act.export_format == 'GLTF':
-				current_active = bpy.context.view_layer.objects.active
+				current_active = context.view_layer.objects.active
 				bpy.ops.object.select_all(action='DESELECT')
 				for x in exp_objects:
 					if (x.type == 'MESH' and x.data.users < 2) or x.type != 'MESH':
-						bpy.context.view_layer.objects.active = x
+						context.view_layer.objects.active = x
 						x.select_set(True)
 				bpy.ops.object.transform_apply(location=False, rotation=act.apply_rot, scale=act.apply_scale)
-				bpy.context.view_layer.objects.active = current_active
+				context.view_layer.objects.active = current_active
 			else:
 				# Apply scale
 				bpy.ops.object.transform_apply(location=False, rotation=False, scale=act.apply_scale)
 				# Rotation Fix. Rotate X -90, Apply, Rotate X 90
 				if act.apply_rot:
-					bpy.context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
+					context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
 
 					# Operate only with higher level parents
 					for x in exp_objects:
@@ -198,13 +198,13 @@ class MultiExport(bpy.types.Operator):
 
 						if x.parent is None:
 							x.select_set(True)
-							bpy.context.view_layer.objects.active = x
+							context.view_layer.objects.active = x
 
 							# Check object has any rotation
 							# for option "Apply for Rotated Objects"
 							child_rotated = False
 							bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
-							for y in bpy.context.selected_objects:
+							for y in context.selected_objects:
 								if abs(y.rotation_euler.x) + abs(y.rotation_euler.y) + abs(y.rotation_euler.z) > 0.017:
 									child_rotated = True
 
@@ -255,19 +255,19 @@ class MultiExport(bpy.types.Operator):
 					# If parent object is mesh
 					# combine all children to parent object
 					if start_active_obj.type == 'MESH':
-						bpy.context.view_layer.objects.active = start_active_obj
+						context.view_layer.objects.active = start_active_obj
 						bpy.ops.object.join()
 					# If  parent is empty
 					else:
-						current_active = bpy.context.view_layer.objects.active
+						current_active = context.view_layer.objects.active
 						# Combine all child meshes to first in list
 						for obj in exp_objects:
 							if obj.type == 'MESH':
-								bpy.context.view_layer.objects.active = obj
+								context.view_layer.objects.active = obj
 						bpy.ops.object.join()
-						bpy.context.view_layer.objects.active = current_active
+						context.view_layer.objects.active = current_active
 
-					exp_objects = bpy.context.selected_objects
+					exp_objects = context.selected_objects
 
 				# Set custom fbx/obj name (Optional)
 				if act.set_custom_fbx_name:
@@ -288,23 +288,23 @@ class MultiExport(bpy.types.Operator):
 			if act.fbx_export_mode == 'INDIVIDUAL':
 				for x in exp_objects:
 					object_loc = (0.0, 0.0, 0.0)
-					bpy.context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
+					context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
 					# Select only current object
 					bpy.ops.object.select_all(action='DESELECT')
 					x.select_set(True)
-					bpy.context.view_layer.objects.active = x
+					context.view_layer.objects.active = x
 
 					# Apply Location - Center of fbx is origin of object (Optional)
 					if act.apply_loc:
 						# Copy object location
 						bpy.ops.view3d.snap_cursor_to_selected()
-						object_loc = bpy.context.scene.cursor.location.copy()
+						object_loc = context.scene.cursor.location.copy()
 						# Move object to center of world
 						bpy.ops.object.location_clear(clear_delta=False)
 					# Center of fbx is center of the world
 					else:
 						bpy.ops.view3d.snap_cursor_to_center()
-						bpy.context.scene.tool_settings.transform_pivot_point = 'CURSOR'
+						context.scene.tool_settings.transform_pivot_point = 'CURSOR'
 					prefilter_name = x.name
 
 					# Replace invalid chars
@@ -318,7 +318,7 @@ class MultiExport(bpy.types.Operator):
 
 					# Restore object location
 					if act.apply_loc:
-						bpy.context.scene.cursor.location = object_loc
+						context.scene.cursor.location = object_loc
 						bpy.ops.view3d.snap_selected_to_cursor(use_offset=True)
 
 			combined_meshes = []
@@ -332,11 +332,11 @@ class MultiExport(bpy.types.Operator):
 					if x.parent is None:
 						x.select_set(True)
 
-				parent_objs = bpy.context.selected_objects
+				parent_objs = context.selected_objects
 
 				for x in parent_objs:
 					bpy.ops.object.select_all(action='DESELECT')
-					bpy.context.view_layer.objects.active = x
+					context.view_layer.objects.active = x
 					x.select_set(True)
 					# Combine All Meshes (Optional)
 					if act.export_combine_meshes:
@@ -347,39 +347,39 @@ class MultiExport(bpy.types.Operator):
 							bpy.ops.object.join()
 
 							# CleanUp Empties without Children
-							selected_objects_for_cleanup = bpy.context.selected_objects
+							selected_objects_for_cleanup = context.selected_objects
 							for obj in selected_objects_for_cleanup:
 								if obj.type == "EMPTY" and len(obj.children) == 0:
 									bpy.data.objects.remove(obj, do_unlink=True)
 
 						# If  parent is not Mesh
 						else:
-							current_active = bpy.context.view_layer.objects.active
+							current_active = context.view_layer.objects.active
 							parent_loc = current_active.location.copy()
 							parent_name = current_active.name
 
 							# Select all children
 							bpy.ops.object.select_grouped(extend=False, type='CHILDREN_RECURSIVE')
-							group_selected_objects = bpy.context.selected_objects
+							group_selected_objects = context.selected_objects
 
 							# Combine all child meshes to first in list
 							for obj in group_selected_objects:
 								if obj.type == 'MESH':
-									bpy.context.view_layer.objects.active = obj
+									context.view_layer.objects.active = obj
 							bpy.ops.object.join()
 
-							bpy.context.view_layer.objects.active.name = parent_name + '_Mesh'
+							context.view_layer.objects.active.name = parent_name + '_Mesh'
 
 							# Parent Combined mesh back
 							current_active.select_set(True)
-							bpy.context.view_layer.objects.active = current_active
+							context.view_layer.objects.active = current_active
 							bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
 
-							selected_objects_for_cleanup = bpy.context.selected_objects
+							selected_objects_for_cleanup = context.selected_objects
 
 							# Move Origin to Parent
-							bpy.context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
-							bpy.context.scene.cursor.location = parent_loc
+							context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
+							context.scene.cursor.location = parent_loc
 							bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
 
 							# CleanUp Empties without Children
@@ -387,27 +387,27 @@ class MultiExport(bpy.types.Operator):
 								if obj.type == "EMPTY" and len(obj.children) == 0:
 									bpy.data.objects.remove(obj, do_unlink=True)
 
-							bpy.context.view_layer.objects.active = current_active
+							context.view_layer.objects.active = current_active
 
-					current_parent = bpy.context.view_layer.objects.active
+					current_parent = context.view_layer.objects.active
 
 					object_loc = (0.0, 0.0, 0.0)
-					bpy.context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
+					context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
 					# Select only current object
 					bpy.ops.object.select_all(action='DESELECT')
 
 					current_parent.select_set(True)
-					bpy.context.view_layer.objects.active = current_parent
+					context.view_layer.objects.active = current_parent
 
 					if act.apply_loc:
 						# Copy object location
 						bpy.ops.view3d.snap_cursor_to_selected()
-						object_loc = bpy.context.scene.cursor.location.copy()
+						object_loc = context.scene.cursor.location.copy()
 						# Move object to center
 						bpy.ops.object.location_clear(clear_delta=False)
 					else:
 						bpy.ops.view3d.snap_cursor_to_center()
-						bpy.context.scene.tool_settings.transform_pivot_point = 'CURSOR'
+						context.scene.tool_settings.transform_pivot_point = 'CURSOR'
 
 					# Name is name of parent
 					prefilter_name = current_parent.name
@@ -422,7 +422,7 @@ class MultiExport(bpy.types.Operator):
 
 					# Store objects after combine for future cleanup
 					if act.export_combine_meshes:
-						for obj in bpy.context.selected_objects:
+						for obj in context.selected_objects:
 							combined_meshes.append(obj)
 
 					# Export FBX/OBJ/GLTF
@@ -432,14 +432,14 @@ class MultiExport(bpy.types.Operator):
 
 					# Restore object location
 					if act.apply_loc:
-						bpy.context.scene.cursor.location = object_loc
+						context.scene.cursor.location = object_loc
 						bpy.ops.view3d.snap_selected_to_cursor(use_offset=True)
 
 			# Export by collection
 			if act.fbx_export_mode == 'COLLECTION':
 				used_collections = []
 				origin_loc = (0.0, 0.0, 0.0)
-				bpy.context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
+				context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
 				obj_col_dict = {}
 				# Collect used collections for selected objects
 				for x in exp_objects:
@@ -449,7 +449,7 @@ class MultiExport(bpy.types.Operator):
 						if x.users_collection[0].name == c:
 							collection_in_list = True
 
-					if collection_in_list is False:
+					if not collection_in_list:
 						used_collections.append(x.users_collection[0].name)
 
 					obj_col_dict[x] = x.users_collection[0].name
@@ -464,7 +464,7 @@ class MultiExport(bpy.types.Operator):
 						if col_name == c:
 							obj.select_set(True)
 							if obj.type == 'MESH' and not set_active_mesh:
-								bpy.context.view_layer.objects.active = obj
+								context.view_layer.objects.active = obj
 								if act.export_combine_meshes:
 									obj.name = c
 								set_active_mesh = True
@@ -473,11 +473,11 @@ class MultiExport(bpy.types.Operator):
 						bpy.ops.object.join()
 
 						# Move Origin to Parent
-						bpy.context.scene.cursor.location = origin_loc
+						context.scene.cursor.location = origin_loc
 						bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
 
 						# CleanUp Empties without Children
-						selected_objects_for_cleanup = bpy.context.selected_objects
+						selected_objects_for_cleanup = context.selected_objects
 						for obj in selected_objects_for_cleanup:
 							if obj.type == "EMPTY" and len(obj.children) == 0:
 								bpy.data.objects.remove(obj, do_unlink=True)
@@ -490,7 +490,7 @@ class MultiExport(bpy.types.Operator):
 
 					# Store objects after combine for future cleanup
 					if act.export_combine_meshes:
-						for obj in bpy.context.selected_objects:
+						for obj in context.selected_objects:
 							combined_meshes.append(obj)
 
 					# Export FBX/OBJ/GLTF
@@ -527,14 +527,14 @@ class MultiExport(bpy.types.Operator):
 			for i in start_selected_obj:
 				i.select_set(True)
 
-			bpy.context.view_layer.objects.active = start_active_obj
+			context.view_layer.objects.active = start_active_obj
 
 			# Restore "Pivot point align" option
-			bpy.context.scene.tool_settings.use_transform_pivot_point_align = current_pivot_point_align
+			context.scene.tool_settings.use_transform_pivot_point_align = current_pivot_point_align
 
 			# Restore cursor location and pivot point mode
-			bpy.context.scene.cursor.location = saved_cursor_loc
-			bpy.context.scene.tool_settings.transform_pivot_point = current_pivot_point
+			context.scene.cursor.location = saved_cursor_loc
+			context.scene.tool_settings.transform_pivot_point = current_pivot_point
 
 			# Save export dir path for option "Open export dir"
 			act.export_dir = path
@@ -552,13 +552,13 @@ class MultiExport(bpy.types.Operator):
 # Open Export Directory
 class OpenExportDir(bpy.types.Operator):
 	"""Open Export Directory in OS"""
-	bl_idname = "object.open_export_dir"
-	bl_label = "Open Export Directory in OS"
+	bl_idname = "act.open_export_dir"
+	bl_label = "Open Export Directory"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
 		start_time = datetime.now()
-		act = bpy.context.scene.act
+		act = context.scene.act
 
 		if not os.path.exists(os.path.realpath(bpy.path.abspath(act.export_dir))):
 			act.export_dir = ""
@@ -572,7 +572,7 @@ class OpenExportDir(bpy.types.Operator):
 		if len(act.export_dir) > 0:
 			try:
 				os.startfile(act.export_dir)
-			except:
+			except Exception:
 				subprocess.Popen(['xdg-open', act.export_dir])
 		else:
 			utils.show_message_box('Export FBX\'s before',
@@ -591,194 +591,185 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 	bl_category = "ACT"
 
 	@classmethod
-	def poll(self, context):
+	def poll(cls, context):
 		# If this panel not hidden in preferences
-		preferences = bpy.context.preferences.addons[__package__].preferences
-		return (context.object is not None and context.mode == 'OBJECT') and preferences.export_import_enable
+		prefs = context.preferences.addons[__package__].preferences
+		return (context.object is not None and context.active_object is not None and context.mode == 'OBJECT') and prefs.export_import_enable
 
 	def draw(self, context):
-		act = bpy.context.scene.act
+		act = context.scene.act
 		layout = self.layout
 
-		if context.object is not None:
-			if context.mode == 'OBJECT':
-				# Export Mode
-				row = layout.row(align=True)
-				row.label(text="Export Mode:")
-				row.prop(act, 'fbx_export_mode', expand=False)
+		# Export Mode
+		row = layout.row(align=True)
+		row.label(text="Export Mode:")
+		row.prop(act, 'fbx_export_mode', expand=False)
 
-				# Export Format (FBX or OBJ)
-				row = layout.row(align=True)
-				row.label(text="File Format:")
-				row.prop(act, "export_format", expand=False)
+		# Export Format (FBX or OBJ)
+		row = layout.row(align=True)
+		row.label(text="File Format:")
+		row.prop(act, "export_format", expand=False)
 
-				if act.export_format == 'FBX':
-					# Target Engine
-					row = layout.row(align=True)
-					row.label(text="Target Engine:")
-					row.prop(act, "export_target_engine", expand=False)
+		if act.export_format == 'FBX':
+			# Target Engine
+			row = layout.row(align=True)
+			row.label(text="Target Engine:")
+			row.prop(act, "export_target_engine", expand=False)
 
-				if not (act.export_format == 'OBJ' and (
-						act.fbx_export_mode == 'ALL' or act.fbx_export_mode == 'COLLECTION')):
-					# Apply Transforms
-					box = layout.box()
+		if not (act.export_format == 'OBJ' and act.fbx_export_mode in {'ALL', 'COLLECTION'}):
+			# Apply Transforms
+			box = layout.box()
+			row = box.row()
+			row.label(text="Apply:")
+
+			row = box.row(align=True)
+			if act.export_format in {'FBX', 'GLTF'}:
+				if act.apply_rot:
+					row.prop(act, "apply_rot", text="Rotation", icon="CHECKBOX_HLT")
+				else:
+					row.prop(act, "apply_rot", text="Rotation", icon="CHECKBOX_DEHLT")
+				if act.apply_scale:
+					row.prop(act, "apply_scale", text="Scale", icon="CHECKBOX_HLT")
+				else:
+					row.prop(act, "apply_scale", text="Scale", icon="CHECKBOX_DEHLT")
+
+			if act.fbx_export_mode in {'INDIVIDUAL', 'PARENT'}:
+				if act.apply_loc:
+					row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_HLT")
+				else:
+					row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_DEHLT")
+
+			if act.export_format == 'FBX':
+				if act.apply_rot and act.fbx_export_mode == 'PARENT' and act.export_target_engine != 'UNITY2023':
 					row = box.row()
-					row.label(text="Apply:")
+					row.prop(act, "apply_rot_rotated")
 
-					row = box.row(align=True)
-					if act.export_format == 'FBX' or act.export_format == 'GLTF':
-						if act.apply_rot:
-							row.prop(act, "apply_rot", text="Rotation", icon="CHECKBOX_HLT")
-						else:
-							row.prop(act, "apply_rot", text="Rotation", icon="CHECKBOX_DEHLT")
-						if act.apply_scale:
-							row.prop(act, "apply_scale", text="Scale", icon="CHECKBOX_HLT")
-						else:
-							row.prop(act, "apply_scale", text="Scale", icon="CHECKBOX_DEHLT")
+		row = layout.row()
+		row.prop(act, "delete_mats_before_export", text="Delete All Materials")
 
-					if act.fbx_export_mode == 'INDIVIDUAL' or act.fbx_export_mode == 'PARENT':
-						if act.apply_loc:
-							row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_HLT")
-						else:
-							row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_DEHLT")
-
-					if act.export_format == 'FBX':
-						if act.apply_rot and act.fbx_export_mode == 'PARENT' and act.export_target_engine != 'UNITY2023':
-							row = box.row()
-							row.prop(act, "apply_rot_rotated")
-
-				row = layout.row()
-				row.prop(act, "delete_mats_before_export", text="Delete All Materials")
-
-				if act.fbx_export_mode != 'INDIVIDUAL':
-					row = layout.row()
-					row.prop(act, "export_combine_meshes", text="Combine All Meshes")
-
-				row = layout.row()
-				row.prop(act, "triangulate_before_export", text="Triangulate Meshes")
-
-				if act.fbx_export_mode == 'ALL':
-					box = layout.box()
-					row = box.row()
-					row.prop(act, "set_custom_fbx_name", text="Custom Name for File")
-					if act.set_custom_fbx_name:
-						row = box.row(align=True)
-						row.label(text="File Name:")
-						row.prop(act, "custom_fbx_name")
-
-				# Custom Export Options
-				box = layout.box()
-				row = box.row()
-				row.prop(act, "export_custom_options", text="Custom Export Options")
-				if act.export_custom_options:
-					if act.export_format == 'FBX':
-						row = box.row(align=True)
-						row.label(text=" Smoothing")
-						row.prop(act, "export_smoothing", expand=False)
-
-						row = box.row(align=True)
-						row.label(text=" Loose Edges")
-						row.prop(act, "export_loose_edges", text="")
-
-						row = box.row(align=True)
-						row.label(text=" Tangent Space")
-						row.prop(act, "export_tangent_space", text="")
-
-						row = box.row(align=True)
-						row.label(text=" Only Deform Bones")
-						row.prop(act, "export_only_deform_bones", text="")
-
-						row = box.row(align=True)
-						row.label(text=" Add Leaf Bones")
-						row.prop(act, "export_add_leaf_bones", text="")
-
-						row = box.row(align=True)
-						row.label(text=" VC color space")
-						row.prop(act, "export_vc_color_space", expand=False)
-
-						row = box.row(align=True)
-						row.label(text=" Custom Props")
-						row.prop(act, "export_custom_props", text="")
-
-					if act.export_format == 'OBJ':
-						row = box.row(align=True)
-						row.label(text=" Separate By Mats")
-						row.prop(act, "obj_separate_by_materials", text="")
-
-						row = box.row(align=True)
-						row.label(text=" Smooth Groups")
-						row.prop(act, "obj_export_smooth_groups", text="")
-
-					if act.export_format == 'FBX' or act.export_format == 'OBJ':
-						row = box.row(align=True)
-						row.label(text="Use Custom Scale")
-						row.prop(act, "use_custom_export_scale", text="")
-						if act.use_custom_export_scale:
-							row = box.row(align=True)
-							row.prop(act, "custom_export_scale_value", text="Scale")
-						row = box.row(align=True)
-						row.label(text="Use Custom Axes")
-						row.prop(act, "use_custom_export_axes", text="")
-						if act.use_custom_export_axes:
-							row = box.row(align=True)
-							row.label(text=" Forward")
-							row.prop(act, "custom_export_forward_axis", expand=False)
-							row = box.row(align=True)
-							row.label(text=" Up")
-							row.prop(act, "custom_export_up_axis", expand=False)
-
-
-					if act.export_format == 'GLTF':
-						row = box.row(align=True)
-						row.label(text=" Pack Images")
-						row.prop(act, "gltf_export_image_format", text="")
-
-						row = box.row(align=True)
-						row.label(text=" Deform Bones Only")
-						row.prop(act, "gltf_export_deform_bones_only", text="")
-
-						row = box.row(align=True)
-						row.label(text=" Custom Properties")
-						row.prop(act, "gltf_export_custom_properties", text="")
-
-						row = box.row(align=True)
-						row.label(text=" Tangents")
-						row.prop(act, "gltf_export_tangents", text="")
-
-						row = box.row(align=True)
-						row.label(text=" Attributes")
-						row.prop(act, "gltf_export_attributes", text="")
-
-				box = layout.box()
-				row = box.row()
-				row.prop(act, "custom_export_path", text="Custom Export Path")
-				if act.custom_export_path:
-					row = box.row(align=True)
-					row.label(text="Export Path:")
-					row.prop(act, "export_path")
-
-				row = layout.row()
-				if act.export_format == 'FBX':
-					if act.export_target_engine == 'UNITY' or act.export_target_engine == 'UNITY2023':
-						row.operator("object.multi_export", text="Export FBX to Unity")
-					else:
-						row.operator("object.multi_export", text="Export FBX to Unreal")
-				if act.export_format == 'OBJ':
-					row.operator("object.multi_export", text="Export OBJ")
-				if act.export_format == 'GLTF':
-					row.operator("object.multi_export", text="Export GLTF")
-
-				if len(act.export_dir) > 0:
-					row = layout.row()
-					row.operator("object.open_export_dir", text="Open Export Directory")
-
-		else:
+		if act.fbx_export_mode != 'INDIVIDUAL':
 			row = layout.row()
-			row.label(text=" ")
+			row.prop(act, "export_combine_meshes", text="Combine All Meshes")
+
+		row = layout.row()
+		row.prop(act, "triangulate_before_export", text="Triangulate Meshes")
+
+		if act.fbx_export_mode == 'ALL':
+			box = layout.box()
+			row = box.row()
+			row.prop(act, "set_custom_fbx_name", text="Custom Name for File")
+			if act.set_custom_fbx_name:
+				row = box.row(align=True)
+				row.label(text="File Name:")
+				row.prop(act, "custom_fbx_name")
+
+		# Custom Export Options
+		box = layout.box()
+		row = box.row()
+		row.prop(act, "export_custom_options", text="Custom Export Options")
+		if act.export_custom_options:
+			if act.export_format == 'FBX':
+				row = box.row(align=True)
+				row.label(text=" Smoothing")
+				row.prop(act, "export_smoothing", expand=False)
+
+				row = box.row(align=True)
+				row.label(text=" Loose Edges")
+				row.prop(act, "export_loose_edges", text="")
+
+				row = box.row(align=True)
+				row.label(text=" Tangent Space")
+				row.prop(act, "export_tangent_space", text="")
+
+				row = box.row(align=True)
+				row.label(text=" Only Deform Bones")
+				row.prop(act, "export_only_deform_bones", text="")
+
+				row = box.row(align=True)
+				row.label(text=" Add Leaf Bones")
+				row.prop(act, "export_add_leaf_bones", text="")
+
+				row = box.row(align=True)
+				row.label(text=" VC color space")
+				row.prop(act, "export_vc_color_space", expand=False)
+
+				row = box.row(align=True)
+				row.label(text=" Custom Props")
+				row.prop(act, "export_custom_props", text="")
+
+			if act.export_format == 'OBJ':
+				row = box.row(align=True)
+				row.label(text=" Separate By Mats")
+				row.prop(act, "obj_separate_by_materials", text="")
+
+				row = box.row(align=True)
+				row.label(text=" Smooth Groups")
+				row.prop(act, "obj_export_smooth_groups", text="")
+
+			if act.export_format == 'FBX' or act.export_format == 'OBJ':
+				row = box.row(align=True)
+				row.label(text="Use Custom Scale")
+				row.prop(act, "use_custom_export_scale", text="")
+				if act.use_custom_export_scale:
+					row = box.row(align=True)
+					row.prop(act, "custom_export_scale_value", text="Scale")
+				row = box.row(align=True)
+				row.label(text="Use Custom Axes")
+				row.prop(act, "use_custom_export_axes", text="")
+				if act.use_custom_export_axes:
+					row = box.row(align=True)
+					row.label(text=" Forward")
+					row.prop(act, "custom_export_forward_axis", expand=False)
+					row = box.row(align=True)
+					row.label(text=" Up")
+					row.prop(act, "custom_export_up_axis", expand=False)
+
+
+			if act.export_format == 'GLTF':
+				row = box.row(align=True)
+				row.label(text=" Pack Images")
+				row.prop(act, "gltf_export_image_format", text="")
+
+				row = box.row(align=True)
+				row.label(text=" Deform Bones Only")
+				row.prop(act, "gltf_export_deform_bones_only", text="")
+
+				row = box.row(align=True)
+				row.label(text=" Custom Properties")
+				row.prop(act, "gltf_export_custom_properties", text="")
+
+				row = box.row(align=True)
+				row.label(text=" Tangents")
+				row.prop(act, "gltf_export_tangents", text="")
+
+				row = box.row(align=True)
+				row.label(text=" Attributes")
+				row.prop(act, "gltf_export_attributes", text="")
+
+		box = layout.box()
+		row = box.row()
+		row.prop(act, "custom_export_path", text="Custom Export Path")
+		if act.custom_export_path:
+			row = box.row(align=True)
+			row.label(text="Export Path:")
+			row.prop(act, "export_path")
+
+		row = layout.row()
+		if act.export_format == 'FBX':
+			if act.export_target_engine in {'UNITY', 'UNITY2023'}:
+				row.operator(ACTExport.bl_idname, text="Export FBX to Unity")
+			else:
+				row.operator(ACTExport.bl_idname, text="Export FBX to Unreal")
+		if act.export_format in {'OBJ', 'GLTF'}:
+			row.operator(ACTExport.bl_idname, text=f"Export {act.export_format}")
+
+		if len(act.export_dir) > 0:
+			row = layout.row()
+			row.operator(OpenExportDir.bl_idname)
 
 
 classes = (
-	MultiExport,
+	ACTExport,
 	OpenExportDir
 )
 

@@ -2,9 +2,7 @@ import bpy
 
 from bpy.props import (
 	StringProperty,
-	EnumProperty,
-	BoolProperty
-)
+	BoolProperty)
 
 from .origin_tools import VIEW3D_PT_origin_tools_panel
 from .rename_tools import VIEW3D_PT_rename_tools_panel

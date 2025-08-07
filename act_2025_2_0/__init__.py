@@ -37,6 +37,7 @@ def register():
 	for module_name in modules_names:
 		module_name.register()
 
+
 def unregister():
 	for module_name in reversed(modules_names):
 		module_name.unregister()

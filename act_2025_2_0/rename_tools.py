@@ -168,7 +168,7 @@ class VIEW3D_PT_rename_tools_panel(bpy.types.Panel):
 	bl_category = "ACT"
 
 	@classmethod
-	def poll(self, context):
+	def poll(cls, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
 		return (context.object is not None and (
 				context.object.mode == 'OBJECT' or context.mode == 'EDIT_ARMATURE')) and preferences.renaming_enable

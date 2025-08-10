@@ -282,7 +282,7 @@ class UV_PT_uv_mover_panel(bpy.types.Panel):
 	bl_category = "ACT"
 
 	@classmethod
-	def poll(self, context):
+	def poll(cls, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
 		return (context.mode == 'EDIT_MESH') and preferences.uv_uv_enable
 
@@ -334,7 +334,7 @@ class VIEW3D_PT_uv_tools_panel(bpy.types.Panel):
 	bl_category = "ACT"
 
 	@classmethod
-	def poll(self, context):
+	def poll(cls, context):
 		preferences = bpy.context.preferences.addons[__package__].preferences
 		return (context.object is not None and context.mode == 'OBJECT') and preferences.uv_view3d_enable
 

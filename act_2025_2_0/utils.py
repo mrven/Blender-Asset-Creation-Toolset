@@ -3,9 +3,7 @@ import collections
 from collections import defaultdict
 import bpy
 import bmesh
-
 from datetime import datetime
-
 
 # Find min and max vertex coordinates
 def find_min_max_verts(obj, coord_index):

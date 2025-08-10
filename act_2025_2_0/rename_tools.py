@@ -1,19 +1,19 @@
 import bpy
+from datetime import datetime
 
 from . import utils
-from datetime import datetime
 
 # Numbering
 class Numbering(bpy.types.Operator):
 	"""Numbering of Objects"""
-	bl_idname = "object.numbering"
+	bl_idname = "act.numbering"
 	bl_label = "Numbering of Objects"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
 		start_time = datetime.now()
-		act = bpy.context.scene.act
-		selected_obj = bpy.context.selected_objects
+		act = context.scene.act
+		selected_obj = context.selected_objects
 		objects_list = []
 
 		# Delete previous numbers
@@ -38,7 +38,7 @@ class Numbering(bpy.types.Operator):
 
 				obj.name = ob_name
 
-			selected_obj = bpy.context.selected_objects
+			selected_obj = context.selected_objects
 
 		for x in selected_obj:
 			object_class = [x, 0]
@@ -103,14 +103,14 @@ class Numbering(bpy.types.Operator):
 # Added LOD Postfix
 class AddLODToObjName(bpy.types.Operator):
 	"""Add LOD to Obj Name"""
-	bl_idname = "object.lod_to_objname"
+	bl_idname = "act.lod_to_objname"
 	bl_label = "Add LOD to Obj Name"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
 		start_time = datetime.now()
-		act = bpy.context.scene.act
-		selected_objects = bpy.context.selected_objects
+		act = context.scene.act
+		selected_objects = context.selected_objects
 
 		for obj in selected_objects:
 			if obj.name[-5:][:-1] == "_LOD":
@@ -124,13 +124,13 @@ class AddLODToObjName(bpy.types.Operator):
 # Remove LOD Postfix
 class RemoveLODFromObjName(bpy.types.Operator):
 	"""Remove LOD from Obj Name"""
-	bl_idname = "object.remove_lod_from_objname"
+	bl_idname = "act.remove_lod_from_objname"
 	bl_label = "Remove LOD from Obj Name"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
 		start_time = datetime.now()
-		selected_objects = bpy.context.selected_objects
+		selected_objects = context.selected_objects
 
 		for obj in selected_objects:
 			if obj.name[-5:][:-1] == "_LOD":
@@ -143,7 +143,7 @@ class RemoveLODFromObjName(bpy.types.Operator):
 # Rename bones
 class RenameBones(bpy.types.Operator):
 	"""Rename bones"""
-	bl_idname = "object.rename_bones"
+	bl_idname = "act.rename_bones"
 	bl_label = "Rename bones"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -151,7 +151,7 @@ class RenameBones(bpy.types.Operator):
 
 	def execute(self, context):
 		start_time = datetime.now()
-		selected_bones = bpy.context.selected_bones
+		selected_bones = context.selected_bones
 
 		for x in selected_bones:
 			x.name = x.name + self.Value
@@ -169,12 +169,12 @@ class VIEW3D_PT_rename_tools_panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(cls, context):
-		preferences = bpy.context.preferences.addons[__package__].preferences
+		preferences = context.preferences.addons[__package__].preferences
 		return (context.object is not None and (
 				context.object.mode == 'OBJECT' or context.mode == 'EDIT_ARMATURE')) and preferences.renaming_enable
 
 	def draw(self, context):
-		act = bpy.context.scene.act
+		act = context.scene.act
 		layout = self.layout
 
 		if context.object is not None:
@@ -191,20 +191,20 @@ class VIEW3D_PT_rename_tools_panel(bpy.types.Panel):
 				row = box.row()
 				row.prop(act, "delete_prev_nums", text="Delete Previous Nums")
 				row = box.row()
-				row.operator("object.numbering", text="Set Numbering")
+				row.operator(Numbering.bl_idname, text="Set Numbering")
 
 				box = layout.box()
 				row = box.row(align=True)
 				row.prop(act, "lod_level", text="LOD Level:")
 				row = box.row(align=True)
-				row.operator("object.lod_to_objname", text="Add LOD to Name")
+				row.operator(AddLODToObjName.bl_idname, text="Add LOD to Name")
 				row = box.row(align=True)
-				row.operator("object.remove_lod_from_objname", text="Remove LOD from Name")
+				row.operator(RemoveLODFromObjName.bl_idname, text="Remove LOD from Name")
 
 			elif context.mode == 'EDIT_ARMATURE':
 				row = layout.row(align=True)
-				row.operator("object.rename_bones", text="Add .L").Value = ".L"
-				row.operator("object.rename_bones", text="Add .R").Value = ".R"
+				row.operator(RenameBones.bl_idname, text="Add .L").Value = ".L"
+				row.operator(RenameBones.bl_idname, text="Add .R").Value = ".R"
 
 			else:
 				row = layout.row()

@@ -1,25 +1,25 @@
 import bpy
-from . import utils
 from datetime import datetime
 import math
 
+from . import utils
 
 # UV remover
 class ClearUV(bpy.types.Operator):
 	"""Clear UV layers"""
-	bl_idname = "object.uv_clear"
+	bl_idname = "act.uv_clear"
 	bl_label = "Clear UV layers"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
 		start_time = datetime.now()
-		restore_selected = bpy.context.selected_objects[:]
+		restore_selected = context.selected_objects[:]
 		selected_obj = utils.selected_obj_with_unique_data()
-		active_obj = bpy.context.active_object
+		active_obj = context.active_object
 		for x in selected_obj:
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
-			bpy.context.view_layer.objects.active = x
+			context.view_layer.objects.active = x
 			for a in range(len(x.data.uv_layers)):
 				bpy.ops.mesh.uv_texture_remove()
 
@@ -27,7 +27,7 @@ class ClearUV(bpy.types.Operator):
 		for j in restore_selected:
 			j.select_set(True)
 
-		bpy.context.view_layer.objects.active = active_obj
+		context.view_layer.objects.active = active_obj
 
 		utils.print_execution_time("Clear UV", start_time)
 		return {'FINISHED'}
@@ -36,13 +36,13 @@ class ClearUV(bpy.types.Operator):
 # Rename UV
 class RenameUV(bpy.types.Operator):
 	"""Rename UV"""
-	bl_idname = "object.uv_rename"
+	bl_idname = "act.uv_rename"
 	bl_label = "Rename UV"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
 		start_time = datetime.now()
-		act = bpy.context.scene.act
+		act = context.scene.act
 		selected_obj = utils.selected_obj_with_unique_data()
 		uv_index = act.uv_index_rename
 		uv_name = act.uv_name_rename
@@ -61,22 +61,22 @@ class RenameUV(bpy.types.Operator):
 # Add UV
 class AddUV(bpy.types.Operator):
 	"""Add UV"""
-	bl_idname = "object.uv_add"
+	bl_idname = "act.uv_add"
 	bl_label = "Add UV"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
 		start_time = datetime.now()
-		act = bpy.context.scene.act
-		restore_selected = bpy.context.selected_objects[:]
+		act = context.scene.act
+		restore_selected = context.selected_objects[:]
 		selected_obj = utils.selected_obj_with_unique_data()
-		active_obj = bpy.context.active_object
+		active_obj = context.active_object
 		uv_name = act.uv_name_add
 
 		for x in selected_obj:
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
-			bpy.context.view_layer.objects.active = x
+			context.view_layer.objects.active = x
 			bpy.ops.mesh.uv_texture_add()
 			x.data.uv_layers.active.name = uv_name
 			if act.uv_packing_mode == 'SMART':
@@ -97,7 +97,7 @@ class AddUV(bpy.types.Operator):
 		for j in restore_selected:
 			j.select_set(True)
 
-		bpy.context.view_layer.objects.active = active_obj
+		context.view_layer.objects.active = active_obj
 
 		utils.print_execution_time("Add UV", start_time)
 		return {'FINISHED'}
@@ -106,22 +106,22 @@ class AddUV(bpy.types.Operator):
 # Remove UV
 class RemoveUV(bpy.types.Operator):
 	"""Add UV"""
-	bl_idname = "object.uv_remove"
+	bl_idname = "act.uv_remove"
 	bl_label = "Remove UV"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
 		start_time = datetime.now()
-		act = bpy.context.scene.act
-		restore_selected = bpy.context.selected_objects[:]
+		act = context.scene.act
+		restore_selected = context.selected_objects[:]
 		selected_obj = utils.selected_obj_with_unique_data()
-		active_obj = bpy.context.active_object
+		active_obj = context.active_object
 		uv_index = act.uv_index_rename
 
 		for x in selected_obj:
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
-			bpy.context.view_layer.objects.active = x
+			context.view_layer.objects.active = x
 
 			if len(x.data.uv_layers) > 0:
 				if uv_index < len(x.data.uv_layers):
@@ -132,7 +132,7 @@ class RemoveUV(bpy.types.Operator):
 		for j in restore_selected:
 			j.select_set(True)
 
-		bpy.context.view_layer.objects.active = active_obj
+		context.view_layer.objects.active = active_obj
 
 		utils.print_execution_time("Remove UV", start_time)
 		return {'FINISHED'}
@@ -141,13 +141,13 @@ class RemoveUV(bpy.types.Operator):
 # Select UV
 class SelectUV(bpy.types.Operator):
 	"""Add UV"""
-	bl_idname = "object.uv_select"
+	bl_idname = "act.uv_select"
 	bl_label = "Set Active UV"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
 		start_time = datetime.now()
-		act = bpy.context.scene.act
+		act = context.scene.act
 		selected_obj = utils.selected_obj_with_unique_data()
 		uv_index = act.uv_index_rename
 
@@ -171,10 +171,10 @@ class UVMover(bpy.types.Operator):
 
 	def execute(self, context):
 		start_time = datetime.now()
-		act = bpy.context.scene.act
+		act = context.scene.act
 
-		start_pivot_mode = bpy.context.space_data.pivot_point
-		bpy.context.space_data.pivot_point = 'CURSOR'
+		start_pivot_mode = context.space_data.pivot_point
+		context.space_data.pivot_point = 'CURSOR'
 		move_step = 1 / 2 ** int(act.uv_move_factor)
 		if self.move_command == "TL":
 			bpy.ops.uv.cursor_set(location=(0, 1))
@@ -216,7 +216,7 @@ class UVMover(bpy.types.Operator):
 				orient_type='GLOBAL', orient_matrix_type='GLOBAL', use_proportional_edit=False,
 				proportional_edit_falloff='SMOOTH', proportional_size=1)
 
-		bpy.context.space_data.pivot_point = start_pivot_mode
+		context.space_data.pivot_point = start_pivot_mode
 
 		utils.print_execution_time("UV Mover", start_time)
 		return {'FINISHED'}
@@ -225,33 +225,33 @@ class UVMover(bpy.types.Operator):
 #Mark Seams from UV
 class MarkSeamsFromUV(bpy.types.Operator):
 	"""Mark Seams from UV"""
-	bl_idname = "object.mark_seams_from_uv"
+	bl_idname = "act.mark_seams_from_uv"
 	bl_label = "Mark Seams from UV"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
 		start_time = datetime.now()
-		current_area = bpy.context.area.type
-		restore_selected = bpy.context.selected_objects[:]
+		current_area = context.area.type
+		restore_selected = context.selected_objects[:]
 		selected_obj = utils.selected_obj_with_unique_data()
-		active_obj = bpy.context.active_object
+		active_obj = context.active_object
 
 		# Switch active area to Image Editor
-		bpy.context.area.type = 'IMAGE_EDITOR'
+		context.area.type = 'IMAGE_EDITOR'
 
 		# If Image Editor has Render Result, Clean it
-		if bpy.context.area.spaces[0].image is not None:
-			if bpy.context.area.spaces[0].image.name == 'Render Result':
-				bpy.context.area.spaces[0].image = None
+		if context.area.spaces[0].image is not None:
+			if context.area.spaces[0].image.name == 'Render Result':
+				context.area.spaces[0].image = None
 
 		# Switch Image Editor to UV Editor
-		if bpy.context.space_data.mode != 'UV':
-			bpy.context.space_data.mode = 'UV'
+		if context.space_data.mode != 'UV':
+			context.space_data.mode = 'UV'
 
 		for x in selected_obj:
 			bpy.ops.object.select_all(action='DESELECT')
 			x.select_set(True)
-			bpy.context.view_layer.objects.active = x
+			context.view_layer.objects.active = x
 
 			if len(x.data.uv_layers) > 0:
 				bpy.ops.object.mode_set(mode='EDIT')
@@ -268,8 +268,8 @@ class MarkSeamsFromUV(bpy.types.Operator):
 		for j in restore_selected:
 			j.select_set(True)
 
-		bpy.context.area.type = current_area
-		bpy.context.view_layer.objects.active = active_obj
+		context.area.type = current_area
+		context.view_layer.objects.active = active_obj
 		utils.print_execution_time("Mark Seams from UV", start_time)
 		return {'FINISHED'}
 
@@ -283,11 +283,11 @@ class UV_PT_uv_mover_panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(cls, context):
-		preferences = bpy.context.preferences.addons[__package__].preferences
+		preferences = context.preferences.addons[__package__].preferences
 		return (context.mode == 'EDIT_MESH') and preferences.uv_uv_enable
 
 	def draw(self, context):
-		act = bpy.context.scene.act
+		act = context.scene.act
 
 		layout = self.layout
 		if context.object.mode == 'EDIT' and context.area.ui_type == 'UV':
@@ -335,11 +335,11 @@ class VIEW3D_PT_uv_tools_panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(cls, context):
-		preferences = bpy.context.preferences.addons[__package__].preferences
+		preferences = context.preferences.addons[__package__].preferences
 		return (context.object is not None and context.mode == 'OBJECT') and preferences.uv_view3d_enable
 
 	def draw(self, context):
-		act = bpy.context.scene.act
+		act = context.scene.act
 		layout = self.layout
 
 		if context.object is not None:
@@ -351,18 +351,18 @@ class VIEW3D_PT_uv_tools_panel(bpy.types.Panel):
 
 				row = box.row(align=True)
 				row.prop(act, "uv_name_rename")
-				row.operator("object.uv_rename", text="Rename UV")
+				row.operator(RenameUV.bl_idname, text="Rename UV")
 
 				row = box.row()
-				row.operator("object.uv_remove", text="Remove UV")
+				row.operator(RemoveUV.bl_idname, text="Remove UV")
 
 				row = box.row()
-				row.operator("object.uv_select", text="Set Active UV")
+				row.operator(SelectUV.bl_idname, text="Set Active UV")
 
 				box = layout.box()
 				row = box.row(align=True)
 				row.prop(act, "uv_name_add")
-				row.operator("object.uv_add", text="Add UV")
+				row.operator(AddUV.bl_idname, text="Add UV")
 				row = box.row(align=True)
 				row.label(text="Packing:")
 				row.prop(act, "uv_packing_mode", expand=False)
@@ -377,9 +377,9 @@ class VIEW3D_PT_uv_tools_panel(bpy.types.Panel):
 					row = box.row()
 					row.prop(act, "uv_packing_lightmap_margin", text="Margin:")
 				row = layout.row()
-				row.operator("object.uv_clear", text="Clear UV Maps")
+				row.operator(ClearUV.bl_idname, text="Clear UV Maps")
 				row = layout.row()
-				row.operator("object.mark_seams_from_uv", text="Mark Seams from UV")
+				row.operator(MarkSeamsFromUV.bl_idname, text="Mark Seams from UV")
 
 classes = (
 	ClearUV,

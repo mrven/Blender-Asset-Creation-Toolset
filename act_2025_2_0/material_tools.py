@@ -998,22 +998,9 @@ class SelectTextureMenu(bpy.types.Menu):
 
 
 # Call menu for select texture In UV Editor from active material
-class CallSelectTextureMenuView3D(bpy.types.Operator):
+class CallSelectTextureMenu(bpy.types.Operator):
 	"""Select Texture In UV Editor From Active Material"""
-	bl_idname = "act.call_select_texture_menu_view3d"
-	bl_label = "Open Texture in UV Editor"
-	bl_options = {'REGISTER', 'UNDO'}
-
-	def execute(self, _):
-		bpy.ops.wm.call_menu(name=SelectTextureMenu.bl_idname)
-
-		return {'FINISHED'}
-
-
-#  Call menu for select texture in UV Editor from active material
-class CallSelectTextureMenuImageEditor(bpy.types.Operator):
-	"""Select Texture In UV Editor From Active Material"""
-	bl_idname = "act.call_select_texture_menu_uv_editor"
+	bl_idname = "act.call_select_texture_menu"
 	bl_label = "Open Texture in UV Editor"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -1076,7 +1063,7 @@ class VIEW3D_PT_material_tools_panel(bpy.types.Panel):
 				row.operator(OpenSaveDir.bl_idname)
 
 		row = layout.row()
-		row.operator(CallSelectTextureMenuView3D.bl_idname)
+		row.operator(CallSelectTextureMenu.bl_idname)
 
 
 # Material tools UI panel in UV Editor
@@ -1096,7 +1083,7 @@ class UV_PT_material_uv_tools_panel(bpy.types.Panel):
 		layout = self.layout
 
 		row = layout.row()
-		row.operator(CallSelectTextureMenuImageEditor.bl_idname)
+		row.operator(CallSelectTextureMenu.bl_idname)
 
 
 # Material assign UI panel
@@ -1121,8 +1108,7 @@ classes = (
 	DeleteDuplicatedMaterials,
 	TextureFromActiveMaterial,
 	SelectTextureMenu,
-	CallSelectTextureMenuView3D,
-	CallSelectTextureMenuImageEditor,
+	CallSelectTextureMenu,
 )
 
 

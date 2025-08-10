@@ -8,7 +8,7 @@ from datetime import datetime
 
 
 # Find min and max vertex coordinates
-def find_min_max_verts(obj, coord_index, min_or_max):
+def find_min_max_verts(obj, coord_index):
 	bpy.ops.mesh.reveal()
 
 	# Get bmesh from active object
@@ -27,10 +27,7 @@ def find_min_max_verts(obj, coord_index, min_or_max):
 			if (obj.matrix_world @ v.co)[coord_index] > max_co:
 				max_co = (obj.matrix_world @ v.co)[coord_index]
 
-		if min_or_max == 0:
-			result = min_co
-		else:
-			result = max_co
+		result = (min_co, max_co)
 
 	return result
 

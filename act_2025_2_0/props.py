@@ -12,7 +12,7 @@ from bpy.props import (
 
 # region Update Functions
 def update_custom_forward_axis(self, context):
-	act = bpy.context.scene.act
+	act = context.scene.act
 	if act.custom_export_forward_axis == act.custom_export_up_axis:
 		# Get Current item index
 		index = 0
@@ -28,7 +28,7 @@ def update_custom_forward_axis(self, context):
 
 
 def update_custom_up_axis(self, context):
-	act = bpy.context.scene.act
+	act = context.scene.act
 	if act.custom_export_forward_axis == act.custom_export_up_axis:
 		# Get Current item index
 		index = 0
@@ -42,6 +42,7 @@ def update_custom_up_axis(self, context):
 			index = 0
 		act.custom_export_forward_axis = act.custom_export_axis_items[index][0]
 # endregion
+
 
 class ACTAddonProps(bpy.types.PropertyGroup):
 # region Palette props

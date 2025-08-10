@@ -1,6 +1,6 @@
 import re
 import collections
-
+from collections import defaultdict
 import bpy
 import bmesh
 
@@ -245,3 +245,20 @@ def set_mesh_selection(obj, selection):
 		for item in selection:
 			obj.data.vertices[item].select = True
 	bpy.ops.object.mode_set(mode=start_object_mode)
+
+
+# Object name to data name
+def obj_name_to_data_name():
+	obj_dict = defaultdict(list)
+
+	for obj in bpy.context.selected_objects:
+		if obj.type != 'EMPTY':
+			obj_dict[obj.data].append(obj)
+
+	for mesh, objects in obj_dict.items():
+		for enum, object_mesh in enumerate(objects):
+			# Skip instances
+			if enum == 0:
+				object_mesh.data.name = object_mesh.name
+			else:
+				break

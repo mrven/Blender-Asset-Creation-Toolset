@@ -5,9 +5,9 @@ from . import utils
 
 # Numbering
 class Numbering(bpy.types.Operator):
-	"""Numbering of Objects"""
+	"""Set Numbering of Objects"""
 	bl_idname = "act.numbering"
-	bl_label = "Numbering of Objects"
+	bl_label = "Set Numbering"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -104,7 +104,7 @@ class Numbering(bpy.types.Operator):
 class AddLODToObjName(bpy.types.Operator):
 	"""Add LOD to Obj Name"""
 	bl_idname = "act.lod_to_objname"
-	bl_label = "Add LOD to Obj Name"
+	bl_label = "Add LOD to Name"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -125,7 +125,7 @@ class AddLODToObjName(bpy.types.Operator):
 class RemoveLODFromObjName(bpy.types.Operator):
 	"""Remove LOD from Obj Name"""
 	bl_idname = "act.remove_lod_from_objname"
-	bl_label = "Remove LOD from Obj Name"
+	bl_label = "Remove LOD from Name"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -170,49 +170,40 @@ class VIEW3D_PT_rename_tools_panel(bpy.types.Panel):
 	@classmethod
 	def poll(cls, context):
 		preferences = context.preferences.addons[__package__].preferences
-		return (context.object is not None and (
-				context.object.mode == 'OBJECT' or context.mode == 'EDIT_ARMATURE')) and preferences.renaming_enable
+		return (context.object is not None and context.active_object is not None
+		        and context.object.mode in {'OBJECT', 'EDIT_ARMATURE'} and preferences.renaming_enable)
 
 	def draw(self, context):
 		act = context.scene.act
 		layout = self.layout
 
-		if context.object is not None:
-			if context.mode == 'OBJECT':
-				box = layout.box()
-				row = box.row()
-				row.label(text="Numbering Objects")
-				row = box.row(align=True)
-				row.label(text="Method:")
-				row.prop(act, 'nums_method', expand=False)
-				row = box.row(align=True)
-				row.label(text="Format:")
-				row.prop(act, 'nums_format', expand=False)
-				row = box.row()
-				row.prop(act, "delete_prev_nums", text="Delete Previous Nums")
-				row = box.row()
-				row.operator(Numbering.bl_idname, text="Set Numbering")
+		if context.mode == 'OBJECT':
+			box = layout.box()
+			row = box.row()
+			row.label(text="Numbering Objects")
+			row = box.row(align=True)
+			row.label(text="Method:")
+			row.prop(act, 'nums_method', expand=False)
+			row = box.row(align=True)
+			row.label(text="Format:")
+			row.prop(act, 'nums_format', expand=False)
+			row = box.row()
+			row.prop(act, "delete_prev_nums", text="Delete Previous Nums")
+			row = box.row()
+			row.operator(Numbering.bl_idname)
 
-				box = layout.box()
-				row = box.row(align=True)
-				row.prop(act, "lod_level", text="LOD Level:")
-				row = box.row(align=True)
-				row.operator(AddLODToObjName.bl_idname, text="Add LOD to Name")
-				row = box.row(align=True)
-				row.operator(RemoveLODFromObjName.bl_idname, text="Remove LOD from Name")
+			box = layout.box()
+			row = box.row(align=True)
+			row.prop(act, "lod_level", text="LOD Level:")
+			row = box.row(align=True)
+			row.operator(AddLODToObjName.bl_idname)
+			row = box.row(align=True)
+			row.operator(RemoveLODFromObjName.bl_idname)
 
-			elif context.mode == 'EDIT_ARMATURE':
-				row = layout.row(align=True)
-				row.operator(RenameBones.bl_idname, text="Add .L").Value = ".L"
-				row.operator(RenameBones.bl_idname, text="Add .R").Value = ".R"
-
-			else:
-				row = layout.row()
-				row.label(text=" ")
-
-		else:
-			row = layout.row()
-			row.label(text=" ")
+		elif context.mode == 'EDIT_ARMATURE':
+			row = layout.row(align=True)
+			row.operator(RenameBones.bl_idname, text="Add .L").Value = ".L"
+			row.operator(RenameBones.bl_idname, text="Add .R").Value = ".R"
 
 
 classes = (

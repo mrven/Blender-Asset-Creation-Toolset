@@ -8,7 +8,7 @@ from . import utils
 class ClearUV(bpy.types.Operator):
 	"""Clear UV layers"""
 	bl_idname = "act.uv_clear"
-	bl_label = "Clear UV layers"
+	bl_label = "Clear UV Maps"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -284,46 +284,42 @@ class UV_PT_uv_mover_panel(bpy.types.Panel):
 	@classmethod
 	def poll(cls, context):
 		preferences = context.preferences.addons[__package__].preferences
-		return (context.mode == 'EDIT_MESH') and preferences.uv_uv_enable
+		return context.mode == 'EDIT_MESH' and context.area.ui_type == 'UV' and preferences.uv_uv_enable
 
 	def draw(self, context):
 		act = context.scene.act
 
 		layout = self.layout
-		if context.object.mode == 'EDIT' and context.area.ui_type == 'UV':
-			row = layout.row()
-			row.label(text="Set Cursor To Corner:")
 
-			# Aligner buttons
-			row = layout.row(align=True)
-			row.operator("uv.uv_mover", text="Top Left").move_command = "TL"
-			row.operator("uv.uv_mover", text="Top Right").move_command = "TR"
+		row = layout.row()
+		row.label(text="Set Cursor To Corner:")
 
-			row = layout.row(align=True)
-			row.operator("uv.uv_mover", text="Bottom Left").move_command = "BL"
-			row.operator("uv.uv_mover", text="Bottom Right").move_command = "BR"
+		# Aligner buttons
+		row = layout.row(align=True)
+		row.operator("uv.uv_mover", text="Top Left").move_command = "TL"
+		row.operator("uv.uv_mover", text="Top Right").move_command = "TR"
 
-			row = layout.row()
-			row.label(text="Scale and Move:")
+		row = layout.row(align=True)
+		row.operator("uv.uv_mover", text="Bottom Left").move_command = "BL"
+		row.operator("uv.uv_mover", text="Bottom Right").move_command = "BR"
 
-			# Aligner buttons
-			row = layout.row(align=True)
-			row.operator("uv.uv_mover", text="Scale-").move_command = "MINUS"
-			row.operator("uv.uv_mover", text="UP").move_command = "UP"
-			row.operator("uv.uv_mover", text="Scale+").move_command = "PLUS"
+		row = layout.row()
+		row.label(text="Scale and Move:")
 
-			row = layout.row(align=True)
-			row.operator("uv.uv_mover", text="LEFT").move_command = "LEFT"
-			row.operator("uv.uv_mover", text="DOWN").move_command = "DOWN"
-			row.operator("uv.uv_mover", text="RIGHT").move_command = "RIGHT"
+		# Aligner buttons
+		row = layout.row(align=True)
+		row.operator("uv.uv_mover", text="Scale-").move_command = "MINUS"
+		row.operator("uv.uv_mover", text="UP").move_command = "UP"
+		row.operator("uv.uv_mover", text="Scale+").move_command = "PLUS"
 
-			row = layout.row(align=True)
-			row.label(text="Move Step   1/")
-			row.prop(act, 'uv_move_factor', expand=False)
+		row = layout.row(align=True)
+		row.operator("uv.uv_mover", text="LEFT").move_command = "LEFT"
+		row.operator("uv.uv_mover", text="DOWN").move_command = "DOWN"
+		row.operator("uv.uv_mover", text="RIGHT").move_command = "RIGHT"
 
-		else:
-			row = layout.row()
-			row.label(text=" ")
+		row = layout.row(align=True)
+		row.label(text="Move Step   1/")
+		row.prop(act, 'uv_move_factor', expand=False)
 
 
 # UV tools UI panels
@@ -336,50 +332,50 @@ class VIEW3D_PT_uv_tools_panel(bpy.types.Panel):
 	@classmethod
 	def poll(cls, context):
 		preferences = context.preferences.addons[__package__].preferences
-		return (context.object is not None and context.mode == 'OBJECT') and preferences.uv_view3d_enable
+		return (context.object is not None and context.active_object is not None
+		        and context.mode == 'OBJECT' and preferences.uv_view3d_enable)
 
 	def draw(self, context):
 		act = context.scene.act
 		layout = self.layout
 
-		if context.object is not None:
-			if context.mode == 'OBJECT':
-				# Rename UV
-				box = layout.box()
-				row = box.row(align=True)
-				row.prop(act, "uv_index_rename", text="UV ID:")
+		# Rename UV
+		box = layout.box()
+		row = box.row(align=True)
+		row.prop(act, "uv_index_rename", text="UV ID:")
 
-				row = box.row(align=True)
-				row.prop(act, "uv_name_rename")
-				row.operator(RenameUV.bl_idname, text="Rename UV")
+		row = box.row(align=True)
+		row.prop(act, "uv_name_rename")
+		row.operator(RenameUV.bl_idname)
 
-				row = box.row()
-				row.operator(RemoveUV.bl_idname, text="Remove UV")
+		row = box.row()
+		row.operator(RemoveUV.bl_idname)
 
-				row = box.row()
-				row.operator(SelectUV.bl_idname, text="Set Active UV")
+		row = box.row()
+		row.operator(SelectUV.bl_idname)
 
-				box = layout.box()
-				row = box.row(align=True)
-				row.prop(act, "uv_name_add")
-				row.operator(AddUV.bl_idname, text="Add UV")
-				row = box.row(align=True)
-				row.label(text="Packing:")
-				row.prop(act, "uv_packing_mode", expand=False)
-				if act.uv_packing_mode == 'SMART':
-					row = box.row()
-					row.prop(act, "uv_packing_smart_angle", text="Angle:")
-					row = box.row()
-					row.prop(act, "uv_packing_smart_margin", text="Margin:")
-				if act.uv_packing_mode == 'LIGHTMAP':
-					row = box.row()
-					row.prop(act, "uv_packing_lightmap_quality", text="Quality:")
-					row = box.row()
-					row.prop(act, "uv_packing_lightmap_margin", text="Margin:")
-				row = layout.row()
-				row.operator(ClearUV.bl_idname, text="Clear UV Maps")
-				row = layout.row()
-				row.operator(MarkSeamsFromUV.bl_idname, text="Mark Seams from UV")
+		box = layout.box()
+		row = box.row(align=True)
+		row.prop(act, "uv_name_add")
+		row.operator(AddUV.bl_idname)
+		row = box.row(align=True)
+		row.label(text="Packing:")
+		row.prop(act, "uv_packing_mode", expand=False)
+		if act.uv_packing_mode == 'SMART':
+			row = box.row()
+			row.prop(act, "uv_packing_smart_angle", text="Angle:")
+			row = box.row()
+			row.prop(act, "uv_packing_smart_margin", text="Margin:")
+		if act.uv_packing_mode == 'LIGHTMAP':
+			row = box.row()
+			row.prop(act, "uv_packing_lightmap_quality", text="Quality:")
+			row = box.row()
+			row.prop(act, "uv_packing_lightmap_margin", text="Margin:")
+		row = layout.row()
+		row.operator(ClearUV.bl_idname)
+		row = layout.row()
+		row.operator(MarkSeamsFromUV.bl_idname)
+
 
 classes = (
 	ClearUV,

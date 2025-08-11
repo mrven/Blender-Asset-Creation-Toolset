@@ -8,7 +8,7 @@ from . import utils
 class ClearNormals(bpy.types.Operator):
 	"""Clear Custom Split Normals"""
 	bl_idname = "act.clear_normals"
-	bl_label = "Clear Custom Split Normals"
+	bl_label = "Clear Custom Normals"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -77,7 +77,7 @@ class CalcNormals(bpy.types.Operator):
 class ObjNameToMeshName(bpy.types.Operator):
 	"""Obj Name to Data Name"""
 	bl_idname = "act.obj_name_to_mesh_name"
-	bl_label = "Obj Name to Data Name"
+	bl_label = "Obj Name -> Data Name"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -92,7 +92,7 @@ class ObjNameToMeshName(bpy.types.Operator):
 class CollectionNameToObjName(bpy.types.Operator):
 	"""Col Name to Obj Name"""
 	bl_idname = "act.collection_name_to_obj_name"
-	bl_label = "Col Name to Obj Name"
+	bl_label = "Collection Name -> Obj Name"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -161,7 +161,7 @@ class CollectionNameToObjName(bpy.types.Operator):
 class MergeBones(bpy.types.Operator):
 	"""Merge Selected Bones to Active"""
 	bl_idname = "act.merge_bones"
-	bl_label = "Merge Selected Bones to Active"
+	bl_label = "Merge Bones"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -280,7 +280,7 @@ class MergeBones(bpy.types.Operator):
 class InvertWeightPaintBrush(bpy.types.Operator):
 	"""Weight Paint Brush Subtract Mode"""
 	bl_idname = "act.weight_paint_brush_invert"
-	bl_label = "Weight Paint Brush Subtract Mode"
+	bl_label = "Invert Brush"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -301,7 +301,7 @@ class InvertWeightPaintBrush(bpy.types.Operator):
 class SelectNegativeScaledObjects(bpy.types.Operator):
 	"""Select Objects with Negative Scale"""
 	bl_idname = "act.select_negative_scaled_objects"
-	bl_label = "Select Objects with Negative Scale"
+	bl_label = "Select Negative Scaled Objs"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -389,7 +389,7 @@ class VIEW3D_PT_other_tools_panel(bpy.types.Panel):
 
 		if context.mode == 'OBJECT':
 			row = layout.row()
-			row.operator(ObjNameToMeshName.bl_idname, text="Obj Name -> Data Name")
+			row.operator(ObjNameToMeshName.bl_idname)
 
 			box = layout.box()
 			row = box.row(align=True)
@@ -404,14 +404,14 @@ class VIEW3D_PT_other_tools_panel(bpy.types.Panel):
 				row.label(text=" Style of Type ")
 				row.prop(act, "col_name_type_style", expand=False)
 			row = box.row()
-			row.operator(CollectionNameToObjName.bl_idname, text="Collection Name -> Obj Name")
+			row.operator(CollectionNameToObjName.bl_idname)
 
 			row = layout.row()
-			row.operator(ClearNormals.bl_idname, text="Clear Custom Normals")
+			row.operator(ClearNormals.bl_idname)
 
 			box = layout.box()
 			row = box.row()
-			row.operator(CalcNormals.bl_idname, text="Flip/Calculate Normals")
+			row.operator(CalcNormals.bl_idname)
 			row = box.row(align=True)
 			if act.calc_normals_en:
 				row.prop(act, "calc_normals_en", text="Recalc Normals", icon="CHECKBOX_HLT")
@@ -423,11 +423,11 @@ class VIEW3D_PT_other_tools_panel(bpy.types.Panel):
 				row.prop(act, "calc_normals_en", text="Recalc Normals", icon="CHECKBOX_DEHLT")
 
 			row = layout.row()
-			row.operator(SelectNegativeScaledObjects.bl_idname, text="Select Negative Scaled Objs")
+			row.operator(SelectNegativeScaledObjects.bl_idname)
 
 			box = layout.box()
 			row = box.row()
-			row.operator(CleanupEmpties.bl_idname, text="Cleanup Empties")
+			row.operator(CleanupEmpties.bl_idname)
 			row = box.row()
 			row.prop(act, "delete_empty_meshes", text="Also delete empty meshes")
 
@@ -440,7 +440,7 @@ class VIEW3D_PT_other_tools_panel(bpy.types.Panel):
 			row.prop(act, "merge_bones_method", text="", expand=False)
 
 			row = layout.row()
-			row.operator(MergeBones.bl_idname, text="Merge Bones")
+			row.operator(MergeBones.bl_idname)
 
 		if context.mode == 'PAINT_WEIGHT':
 			box = layout.box()
@@ -448,7 +448,7 @@ class VIEW3D_PT_other_tools_panel(bpy.types.Panel):
 			row.label(text="Current Mode:")
 			row.label(text=context.scene.tool_settings.weight_paint.brush.blend)
 			row = box.row()
-			row.operator(InvertWeightPaintBrush.bl_idname, text="Invert Brush")
+			row.operator(InvertWeightPaintBrush.bl_idname)
 
 
 classes = (

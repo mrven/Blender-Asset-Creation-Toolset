@@ -594,7 +594,8 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 	def poll(cls, context):
 		# If this panel not hidden in preferences
 		prefs = context.preferences.addons[__package__].preferences
-		return (context.object is not None and context.active_object is not None and context.mode == 'OBJECT') and prefs.export_import_enable
+		return (context.object is not None and context.active_object is not None
+		        and context.mode == 'OBJECT' and prefs.export_import_enable)
 
 	def draw(self, context):
 		act = context.scene.act

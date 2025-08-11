@@ -183,7 +183,7 @@ class VIEW3D_PT_origin_tools_panel(bpy.types.Panel):
 
 		if context.object.mode == 'EDIT':
 			row = layout.row()
-			row.operator(OriginToSelection.bl_idname, text="Set Origin To Selected")
+			row.operator(OriginToSelection.bl_idname)
 
 
 classes = (

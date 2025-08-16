@@ -1,7 +1,9 @@
 import bpy
 from datetime import datetime
 
-from . import utils
+from ..common import utils
+
+package_name = __package__.split('.')[0]
 
 # Dissolve Checker Loops
 class DissolveCheckerLoops(bpy.types.Operator):
@@ -91,7 +93,7 @@ class VIEW3D_PT_geometry_tools_panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(cls, context):
-		prefs = context.preferences.addons[__package__].preferences
+		prefs = context.preferences.addons[package_name].preferences
 		return (context.object is not None and context.active_object is not None and context.mode == 'EDIT_MESH') and prefs.geometry_enable
 
 	def draw(self, _):
@@ -104,7 +106,8 @@ class VIEW3D_PT_geometry_tools_panel(bpy.types.Panel):
 
 classes = (
 	DissolveCheckerLoops,
-	CollapseCheckerEdges
+	CollapseCheckerEdges,
+	VIEW3D_PT_geometry_tools_panel
 )
 
 

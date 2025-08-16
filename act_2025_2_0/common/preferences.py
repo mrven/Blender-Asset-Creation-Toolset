@@ -4,17 +4,19 @@ from bpy.props import (
 	StringProperty,
 	BoolProperty)
 
-from .origin_tools import VIEW3D_PT_origin_tools_panel
-from .rename_tools import VIEW3D_PT_rename_tools_panel
-from .uv_tools import UV_PT_uv_mover_panel, VIEW3D_PT_uv_tools_panel
-from .import_export_tools import VIEW3D_PT_import_export_tools_panel
-from .material_tools import VIEW3D_PT_material_tools_panel, UV_PT_material_uv_tools_panel
-from .other_tools import VIEW3D_PT_other_tools_panel
-from .geometry_tools import VIEW3D_PT_geometry_tools_panel
+from ..origin.origin_tools import VIEW3D_PT_origin_tools_panel
+from ..rename.rename_tools import VIEW3D_PT_rename_tools_panel
+from ..uv.uv_tools import UV_PT_uv_mover_panel, VIEW3D_PT_uv_tools_panel
+from ..import_export.import_export_tools import VIEW3D_PT_import_export_tools_panel
+from ..material.material_tools import VIEW3D_PT_material_tools_panel, UV_PT_material_uv_tools_panel
+from ..other.other_tools import VIEW3D_PT_other_tools_panel
+from ..geometry.geometry_tools import VIEW3D_PT_geometry_tools_panel
+
+package_name = __package__.split('.')[0]
 
 def update_export_import_panel_category(self, context):
 	is_panel = hasattr(bpy.types, 'VIEW3D_PT_import_export_tools_panel')
-	category = context.preferences.addons[__package__].preferences.export_import_panel_category
+	category = context.preferences.addons[package_name].preferences.export_import_panel_category
 
 	if is_panel:
 		try:
@@ -27,7 +29,7 @@ def update_export_import_panel_category(self, context):
 
 def update_material_panel_category(self, context):
 	is_panel = hasattr(bpy.types, 'VIEW3D_PT_material_tools_panel')
-	category = context.preferences.addons[__package__].preferences.material_panel_category
+	category = context.preferences.addons[package_name].preferences.material_panel_category
 
 	if is_panel:
 		try:
@@ -40,7 +42,7 @@ def update_material_panel_category(self, context):
 
 def update_origin_panel_category(self, context):
 	is_panel = hasattr(bpy.types, 'VIEW3D_PT_origin_tools_panel')
-	category = context.preferences.addons[__package__].preferences.origin_panel_category
+	category = context.preferences.addons[package_name].preferences.origin_panel_category
 
 	if is_panel:
 		try:
@@ -53,7 +55,7 @@ def update_origin_panel_category(self, context):
 
 def update_other_panel_category(self, context):
 	is_panel = hasattr(bpy.types, 'VIEW3D_PT_other_tools_panel')
-	category = context.preferences.addons[__package__].preferences.other_panel_category
+	category = context.preferences.addons[package_name].preferences.other_panel_category
 
 	if is_panel:
 		try:
@@ -66,7 +68,7 @@ def update_other_panel_category(self, context):
 
 def update_rename_panel_category(self, context):
 	is_panel = hasattr(bpy.types, 'VIEW3D_PT_rename_tools_panel')
-	category = context.preferences.addons[__package__].preferences.rename_panel_category
+	category = context.preferences.addons[package_name].preferences.rename_panel_category
 
 	if is_panel:
 		try:
@@ -79,7 +81,7 @@ def update_rename_panel_category(self, context):
 
 def update_uv_uv_panel_category(self, context):
 	is_panel = hasattr(bpy.types, 'UV_PT_uv_mover_panel')
-	category = context.preferences.addons[__package__].preferences.uv_uv_category
+	category = context.preferences.addons[package_name].preferences.uv_uv_category
 
 	if is_panel:
 		try:
@@ -92,7 +94,7 @@ def update_uv_uv_panel_category(self, context):
 
 def update_view3d_uv_panel_category(self, context):
 	is_panel = hasattr(bpy.types, 'VIEW3D_PT_uv_tools_panel')
-	category = context.preferences.addons[__package__].preferences.view3d_uv_panel_category
+	category = context.preferences.addons[package_name].preferences.view3d_uv_panel_category
 
 	if is_panel:
 		try:
@@ -105,7 +107,7 @@ def update_view3d_uv_panel_category(self, context):
 
 def update_uv_material_panel_category(self, context):
 	is_panel = hasattr(bpy.types, 'UV_PT_material_uv_tools_panel')
-	category = context.preferences.addons[__package__].preferences.uv_material_panel_category
+	category = context.preferences.addons[package_name].preferences.uv_material_panel_category
 
 	if is_panel:
 		try:
@@ -118,7 +120,7 @@ def update_uv_material_panel_category(self, context):
 
 def update_geometry_panel_category(self, context):
 	is_panel = hasattr(bpy.types, 'VIEW3D_PT_geometry_tools_panel')
-	category = context.preferences.addons[__package__].preferences.geometry_panel_category
+	category = context.preferences.addons[package_name].preferences.geometry_panel_category
 
 	if is_panel:
 		try:
@@ -130,7 +132,7 @@ def update_geometry_panel_category(self, context):
 
 
 class ACTAddonPreferences(bpy.types.AddonPreferences):
-	bl_idname = __package__
+	bl_idname = package_name
 
 	export_import_enable: BoolProperty(
 		name="Import/Export Tools",
@@ -293,34 +295,12 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 
 classes = (
 	ACTAddonPreferences,
-	VIEW3D_PT_origin_tools_panel,
-	VIEW3D_PT_rename_tools_panel,
-	VIEW3D_PT_uv_tools_panel,
-	VIEW3D_PT_import_export_tools_panel,
-	VIEW3D_PT_material_tools_panel,
-	VIEW3D_PT_other_tools_panel,
-	VIEW3D_PT_geometry_tools_panel,
-	UV_PT_uv_mover_panel,
-	UV_PT_material_uv_tools_panel,
 )
 
 
 def register():
 	for cls in classes:
 		bpy.utils.register_class(cls)
-
-	# Update Category
-	context = bpy.context
-	prefs = bpy.context.preferences.addons[__package__].preferences
-	update_origin_panel_category(prefs, context)
-	update_rename_panel_category(prefs, context)
-	update_view3d_uv_panel_category(prefs, context)
-	update_export_import_panel_category(prefs, context)
-	update_material_panel_category(prefs, context)
-	update_other_panel_category(prefs, context)
-	update_geometry_panel_category(prefs, context)
-	update_uv_uv_panel_category(prefs, context)
-	update_uv_material_panel_category(prefs, context)
 
 
 def unregister():

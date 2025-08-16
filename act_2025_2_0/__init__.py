@@ -11,33 +11,28 @@ bl_info = {
 	"category": "Object",
 }
 
-from . import props
-from . import preferences
-from . import origin_tools
-from . import rename_tools
-from . import uv_tools
-from . import import_export_tools
-from . import material_tools
-from . import other_tools
-from . import geometry_tools
+import importlib
 
-modules_names = (
-	props,
-	origin_tools,
-	rename_tools,
-	uv_tools,
-	import_export_tools,
-	material_tools,
-	other_tools,
-	geometry_tools,
-	preferences
+modules_order = (
+	"common",
+	"geometry",
+	"import_export",
+	"material",
+	"origin",
+	"other",
+	"rename",
+	"uv",
 )
 
+modules = [importlib.import_module(f".{name}", __package__) for name in modules_order]
+
 def register():
-	for module_name in modules_names:
-		module_name.register()
+	for m in modules:
+		if hasattr(m, "register"):
+			m.register()
 
 
 def unregister():
-	for module_name in reversed(modules_names):
-		module_name.unregister()
+	for m in reversed(modules):
+		if hasattr(m, "unregister"):
+			m.unregister()

@@ -2,7 +2,10 @@ import bpy
 from datetime import datetime
 from collections import defaultdict
 
+from ..common import utils as common_utils
 from . import utils
+
+package_name = __package__.split('.')[0]
 
 # Clear custom split normals
 class ClearNormals(bpy.types.Operator):
@@ -31,7 +34,7 @@ class ClearNormals(bpy.types.Operator):
 
 		context.view_layer.objects.active = active_obj
 
-		utils.print_execution_time("Clear Custom Normals", start_time)
+		common_utils.print_execution_time("Clear Custom Normals", start_time)
 		return {'FINISHED'}
 
 
@@ -70,7 +73,7 @@ class CalcNormals(bpy.types.Operator):
 
 		context.view_layer.objects.active = active_obj
 
-		utils.print_execution_time("Calculate Normals", start_time)
+		common_utils.print_execution_time("Calculate Normals", start_time)
 		return {'FINISHED'}
 
 
@@ -84,7 +87,8 @@ class ObjNameToMeshName(bpy.types.Operator):
 		start_time = datetime.now()
 		utils.obj_name_to_data_name()
 
-		utils.print_execution_time("Object Name to Mesh Name", start_time)
+		common_utils.print_execution_time("Object Name to Mesh Name", start_time)
+
 		return {'FINISHED'}
 
 
@@ -153,7 +157,8 @@ class CollectionNameToObjName(bpy.types.Operator):
 
 		utils.obj_name_to_data_name()
 
-		utils.print_execution_time("Collection Name to Object Name", start_time)
+		common_utils.print_execution_time("Collection Name to Object Name", start_time)
+
 		return {'FINISHED'}
 
 
@@ -186,7 +191,7 @@ class MergeBones(bpy.types.Operator):
 
 		# Cancel if select only one bone
 		if len(selected_bones_name) == 0:
-			utils.show_message_box('Select more than one bone',
+			common_utils.show_message_box('Select more than one bone',
 								   "Wrong Selection",
 									   'ERROR')
 			bpy.ops.object.mode_set(mode='EDIT')
@@ -201,7 +206,7 @@ class MergeBones(bpy.types.Operator):
 							meshes.append(m)
 
 		if len(meshes) == 0:
-			utils.show_message_box('Armature has no mesh',
+			common_utils.show_message_box('Armature has no mesh',
 								   "Mesh Error",
 								   'ERROR')
 			bpy.ops.object.mode_set(mode='EDIT')
@@ -272,7 +277,7 @@ class MergeBones(bpy.types.Operator):
 			armature.data.bones[active_bone_name].select = True
 		bpy.ops.object.mode_set(mode='EDIT')
 
-		utils.print_execution_time("Merge Bones", start_time)
+		common_utils.print_execution_time("Merge Bones", start_time)
 		return {'FINISHED'}
 
 
@@ -319,10 +324,10 @@ class SelectNegativeScaledObjects(bpy.types.Operator):
 				obj.select_set(True)
 
 			context.view_layer.objects.active = negative_scaled_obj[0]
-			utils.show_message_box("Selected " + str(len(negative_scaled_obj)) + " objects", "Negative Scaled Objects")
+			common_utils.show_message_box("Selected " + str(len(negative_scaled_obj)) + " objects", "Negative Scaled Objects")
 		else:
-			utils.show_message_box("No objects with negative scale found", "Negative Scaled Objects")
-		utils.print_execution_time("Select Objects with Negative Scale", start_time)
+			common_utils.show_message_box("No objects with negative scale found", "Negative Scaled Objects")
+		common_utils.print_execution_time("Select Objects with Negative Scale", start_time)
 		return {'FINISHED'}
 
 
@@ -366,7 +371,7 @@ class CleanupEmpties(bpy.types.Operator):
 		else:
 			context.view_layer.objects.active = active_object
 
-		utils.print_execution_time("Cleanup Empties", start_time)
+		common_utils.print_execution_time("Cleanup Empties", start_time)
 		return {'FINISHED'}
 
 # Panels
@@ -378,7 +383,7 @@ class VIEW3D_PT_other_tools_panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(cls, context):
-		preferences = context.preferences.addons[__package__].preferences
+		preferences = context.preferences.addons[package_name].preferences
 		return (context.object is not None and context.active_object is not None
 		        and context.object.mode in {'OBJECT', 'EDIT_ARMATURE', 'PAINT_WEIGHT'} and preferences.other_enable)
 
@@ -459,7 +464,8 @@ classes = (
 	MergeBones,
 	InvertWeightPaintBrush,
 	SelectNegativeScaledObjects,
-	CleanupEmpties
+	CleanupEmpties,
+	VIEW3D_PT_other_tools_panel,
 )
 
 

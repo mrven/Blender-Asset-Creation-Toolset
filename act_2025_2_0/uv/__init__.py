@@ -1,7 +1,8 @@
 import importlib
 
 modules_order = (
-	"uv_tools",
+	"operators",
+	"ui",
 )
 
 modules = [importlib.import_module(f".{name}", __package__) for name in modules_order]

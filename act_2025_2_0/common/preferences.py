@@ -4,13 +4,13 @@ from bpy.props import (
 	StringProperty,
 	BoolProperty)
 
-from ..origin.origin_tools import VIEW3D_PT_origin_tools_panel
-from ..rename.rename_tools import VIEW3D_PT_rename_tools_panel
-from ..uv.uv_tools import UV_PT_uv_mover_panel, VIEW3D_PT_uv_tools_panel
-from ..import_export.import_export_tools import VIEW3D_PT_import_export_tools_panel
-from ..material.material_tools import VIEW3D_PT_material_tools_panel, UV_PT_material_uv_tools_panel
-from ..other.other_tools import VIEW3D_PT_other_tools_panel
-from ..geometry.geometry_tools import VIEW3D_PT_geometry_tools_panel
+from ..origin.ui import VIEW3D_PT_origin_tools_panel
+from ..rename.ui import VIEW3D_PT_rename_tools_panel
+from ..uv.ui import UV_PT_uv_mover_panel, VIEW3D_PT_uv_tools_panel
+from ..import_export.ui import VIEW3D_PT_import_export_tools_panel
+from ..material.ui import VIEW3D_PT_material_tools_panel, UV_PT_material_uv_tools_panel
+from ..other.ui import VIEW3D_PT_other_tools_panel
+from ..geometry.ui import VIEW3D_PT_geometry_tools_panel
 
 package_name = __package__.split('.')[0]
 

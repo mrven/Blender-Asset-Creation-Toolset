@@ -1,7 +1,7 @@
 import bpy
 from datetime import datetime
 
-from ..common import utils
+from ..common import utils as common_utils
 
 package_name = __package__.split('.')[0]
 
@@ -15,7 +15,7 @@ class DissolveCheckerLoops(bpy.types.Operator):
 	def execute(self, context):
 		start_time = datetime.now()
 		if not context.scene.tool_settings.mesh_select_mode[1]:
-			utils.show_message_box("Change Selection Mode to EDGE first",
+			common_utils.show_message_box("Change Selection Mode to EDGE first",
 								   "Invalid Selection Mode",
 								   'ERROR')
 			return {'CANCELLED'}
@@ -31,7 +31,7 @@ class DissolveCheckerLoops(bpy.types.Operator):
 			bpy.ops.object.mode_set(mode='EDIT')
 
 			if selected_edges != 1:
-				utils.show_message_box("Select only one Edge",
+				common_utils.show_message_box("Select only one Edge",
 									   "Wrong Selection",
 									   'ERROR')
 				return {'CANCELLED'}
@@ -41,7 +41,7 @@ class DissolveCheckerLoops(bpy.types.Operator):
 		bpy.ops.mesh.loop_multi_select(ring=False)
 		bpy.ops.mesh.dissolve_mode(use_verts=True)
 
-		utils.print_execution_time("Dissolve Checker Loops", start_time)
+		common_utils.print_execution_time("Dissolve Checker Loops", start_time)
 		return {'FINISHED'}
 
 
@@ -55,7 +55,7 @@ class CollapseCheckerEdges(bpy.types.Operator):
 	def execute(self, context):
 		start_time = datetime.now()
 		if not context.scene.tool_settings.mesh_select_mode[1]:
-			utils.show_message_box("Change Selection Mode to EDGE first",
+			common_utils.show_message_box("Change Selection Mode to EDGE first",
 								   "Invalid Selection Mode",
 								   'ERROR')
 			return {'CANCELLED'}
@@ -71,7 +71,7 @@ class CollapseCheckerEdges(bpy.types.Operator):
 			bpy.ops.object.mode_set(mode='EDIT')
 
 			if selected_edges != 1:
-				utils.show_message_box("Select only one Edge",
+				common_utils.show_message_box("Select only one Edge",
 									   "Wrong Selection",
 									   'ERROR')
 				return {'CANCELLED'}
@@ -80,34 +80,13 @@ class CollapseCheckerEdges(bpy.types.Operator):
 		bpy.ops.mesh.select_nth(offset=1)
 		bpy.ops.mesh.merge(type='COLLAPSE')
 
-		utils.print_execution_time("Collapse Checker Edges", start_time)
+		common_utils.print_execution_time("Collapse Checker Edges", start_time)
 		return {'FINISHED'}
-
-
-# Panels
-class VIEW3D_PT_geometry_tools_panel(bpy.types.Panel):
-	bl_label = "Geometry Tools"
-	bl_space_type = "VIEW_3D"
-	bl_region_type = "UI"
-	bl_category = "ACT"
-
-	@classmethod
-	def poll(cls, context):
-		prefs = context.preferences.addons[package_name].preferences
-		return (context.object is not None and context.active_object is not None and context.mode == 'EDIT_MESH') and prefs.geometry_enable
-
-	def draw(self, _):
-		layout = self.layout
-		row = layout.row()
-		row.operator(DissolveCheckerLoops.bl_idname)
-		row = layout.row()
-		row.operator(CollapseCheckerEdges.bl_idname)
 
 
 classes = (
 	DissolveCheckerLoops,
 	CollapseCheckerEdges,
-	VIEW3D_PT_geometry_tools_panel
 )
 
 

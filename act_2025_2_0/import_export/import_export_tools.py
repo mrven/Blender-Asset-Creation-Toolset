@@ -4,7 +4,10 @@ import subprocess
 import math
 from datetime import datetime
 
+from ..common import utils as common_utils
 from . import utils
+
+package_name = __package__.split('.')[0]
 
 # FBX/OBJ/GLTF export
 class ACTExport(bpy.types.Operator):
@@ -22,14 +25,14 @@ class ACTExport(bpy.types.Operator):
 		# Check custom name
 		if act.fbx_export_mode == 'ALL':
 			if act.set_custom_fbx_name and len(act.custom_fbx_name) == 0:
-				utils.show_message_box('Custom Name can\'t be empty',
+				common_utils.show_message_box('Custom Name can\'t be empty',
 									   'Saving Error',
 									   'ERROR')
 				return {'CANCELLED'}
 
 		# Check saved blend file
 		if len(bpy.data.filepath) == 0 and not act.custom_export_path:
-			utils.show_message_box('Blend file is not saved. Try use Custom Export Path',
+			common_utils.show_message_box('Blend file is not saved. Try use Custom Export Path',
 								   'Saving Error',
 								   'ERROR')
 			return {'CANCELLED'}
@@ -48,13 +51,13 @@ class ACTExport(bpy.types.Operator):
 
 			if act.custom_export_path:
 				if len(act.export_path) == 0:
-					utils.show_message_box('Export Path can\'t be empty',
+					common_utils.show_message_box('Export Path can\'t be empty',
 										   'Saving Error',
 										   'ERROR')
 					return {'CANCELLED'}
 
 				if not os.path.exists(os.path.realpath(bpy.path.abspath(act.export_path))):
-					utils.show_message_box('Directory for export not exist',
+					common_utils.show_message_box('Directory for export not exist',
 										   'Saving Error',
 										   'ERROR')
 					return {'CANCELLED'}
@@ -276,7 +279,7 @@ class ACTExport(bpy.types.Operator):
 					prefilter_name = name
 
 				# Replace invalid chars
-				name = utils.prefilter_export_name(prefilter_name)
+				name = common_utils.prefilter_export_name(prefilter_name)
 
 				if name != prefilter_name:
 					incorrect_names.append(prefilter_name)
@@ -308,7 +311,7 @@ class ACTExport(bpy.types.Operator):
 					prefilter_name = x.name
 
 					# Replace invalid chars
-					name = utils.prefilter_export_name(prefilter_name)
+					name = common_utils.prefilter_export_name(prefilter_name)
 
 					if name != prefilter_name:
 						incorrect_names.append(prefilter_name)
@@ -415,7 +418,7 @@ class ACTExport(bpy.types.Operator):
 					bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
 
 					# Replace invalid chars
-					name = utils.prefilter_export_name(prefilter_name)
+					name = common_utils.prefilter_export_name(prefilter_name)
 
 					if name != prefilter_name:
 						incorrect_names.append(prefilter_name)
@@ -483,7 +486,7 @@ class ACTExport(bpy.types.Operator):
 								bpy.data.objects.remove(obj, do_unlink=True)
 
 					# Replace invalid chars
-					name = utils.prefilter_export_name(c)
+					name = common_utils.prefilter_export_name(c)
 
 					if name != c:
 						incorrect_names.append(c)
@@ -541,11 +544,11 @@ class ACTExport(bpy.types.Operator):
 
 		# Show message about incorrect names
 		if len(incorrect_names) > 0:
-			utils.show_message_box(
+			common_utils.show_message_box(
 				"Object(s) has invalid characters in name. Some chars in export name have been replaced",
 				"Incorrect Export Names")
 
-		utils.print_execution_time("FBX/OBJ Export", start_time)
+		common_utils.print_execution_time("FBX/OBJ Export", start_time)
 		return {'FINISHED'}
 
 
@@ -562,7 +565,7 @@ class OpenExportDir(bpy.types.Operator):
 
 		if not os.path.exists(os.path.realpath(bpy.path.abspath(act.export_dir))):
 			act.export_dir = ""
-			utils.show_message_box('Directory not exist',
+			common_utils.show_message_box('Directory not exist',
 								   'Wrong Path',
 								   'ERROR')
 
@@ -575,11 +578,11 @@ class OpenExportDir(bpy.types.Operator):
 			except Exception:
 				subprocess.Popen(['xdg-open', act.export_dir])
 		else:
-			utils.show_message_box('Export FBX\'s before',
+			common_utils.show_message_box('Export FBX\'s before',
 								   'Info')
 			return {'FINISHED'}
 
-		utils.print_execution_time("Open Export Directory", start_time)
+		common_utils.print_execution_time("Open Export Directory", start_time)
 		return {'FINISHED'}
 
 
@@ -593,7 +596,7 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 	@classmethod
 	def poll(cls, context):
 		# If this panel not hidden in preferences
-		prefs = context.preferences.addons[__package__].preferences
+		prefs = context.preferences.addons[package_name].preferences
 		return (context.object is not None and context.active_object is not None
 		        and context.mode == 'OBJECT' and prefs.export_import_enable)
 
@@ -771,7 +774,8 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 
 classes = (
 	ACTExport,
-	OpenExportDir
+	OpenExportDir,
+	VIEW3D_PT_import_export_tools_panel
 )
 
 

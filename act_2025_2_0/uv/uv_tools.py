@@ -2,7 +2,10 @@ import bpy
 from datetime import datetime
 import math
 
+from ..common import utils as common_utils
 from . import utils
+
+package_name = __package__.split('.')[0]
 
 # UV remover
 class ClearUV(bpy.types.Operator):
@@ -29,7 +32,7 @@ class ClearUV(bpy.types.Operator):
 
 		context.view_layer.objects.active = active_obj
 
-		utils.print_execution_time("Clear UV", start_time)
+		common_utils.print_execution_time("Clear UV", start_time)
 		return {'FINISHED'}
 
 
@@ -54,7 +57,7 @@ class RenameUV(bpy.types.Operator):
 				if uv_index < len(x.data.uv_layers):
 					x.data.uv_layers[uv_index].name = uv_name
 
-		utils.print_execution_time("Rename UV", start_time)
+		common_utils.print_execution_time("Rename UV", start_time)
 		return {'FINISHED'}
 
 
@@ -99,7 +102,7 @@ class AddUV(bpy.types.Operator):
 
 		context.view_layer.objects.active = active_obj
 
-		utils.print_execution_time("Add UV", start_time)
+		common_utils.print_execution_time("Add UV", start_time)
 		return {'FINISHED'}
 
 
@@ -134,7 +137,7 @@ class RemoveUV(bpy.types.Operator):
 
 		context.view_layer.objects.active = active_obj
 
-		utils.print_execution_time("Remove UV", start_time)
+		common_utils.print_execution_time("Remove UV", start_time)
 		return {'FINISHED'}
 
 
@@ -157,7 +160,7 @@ class SelectUV(bpy.types.Operator):
 					x.data.uv_layers[uv_index].active_render = True
 					x.data.uv_layers[uv_index].active = True
 
-		utils.print_execution_time("Select UV", start_time)
+		common_utils.print_execution_time("Select UV", start_time)
 		return {'FINISHED'}
 
 
@@ -218,7 +221,7 @@ class UVMover(bpy.types.Operator):
 
 		context.space_data.pivot_point = start_pivot_mode
 
-		utils.print_execution_time("UV Mover", start_time)
+		common_utils.print_execution_time("UV Mover", start_time)
 		return {'FINISHED'}
 
 
@@ -270,7 +273,7 @@ class MarkSeamsFromUV(bpy.types.Operator):
 
 		context.area.type = current_area
 		context.view_layer.objects.active = active_obj
-		utils.print_execution_time("Mark Seams from UV", start_time)
+		common_utils.print_execution_time("Mark Seams from UV", start_time)
 		return {'FINISHED'}
 
 
@@ -283,7 +286,7 @@ class UV_PT_uv_mover_panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(cls, context):
-		preferences = context.preferences.addons[__package__].preferences
+		preferences = context.preferences.addons[package_name].preferences
 		return context.mode == 'EDIT_MESH' and context.area.ui_type == 'UV' and preferences.uv_uv_enable
 
 	def draw(self, context):
@@ -331,7 +334,7 @@ class VIEW3D_PT_uv_tools_panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(cls, context):
-		preferences = context.preferences.addons[__package__].preferences
+		preferences = context.preferences.addons[package_name].preferences
 		return (context.object is not None and context.active_object is not None
 		        and context.mode == 'OBJECT' and preferences.uv_view3d_enable)
 
@@ -384,7 +387,8 @@ classes = (
 	RemoveUV,
 	SelectUV,
 	UVMover,
-	MarkSeamsFromUV
+	MarkSeamsFromUV,
+	VIEW3D_PT_uv_tools_panel,
 )
 
 

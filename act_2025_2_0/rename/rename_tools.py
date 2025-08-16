@@ -1,7 +1,10 @@
 import bpy
 from datetime import datetime
 
+from ..common import utils as common_utils
 from . import utils
+
+package_name = __package__.split('.')[0]
 
 # Numbering
 class Numbering(bpy.types.Operator):
@@ -96,7 +99,7 @@ class Numbering(bpy.types.Operator):
 			else:
 				objects_list[y][0].name = ob_name + '_' + num_str
 
-		utils.print_execution_time("Numbering", start_time)
+		common_utils.print_execution_time("Numbering", start_time)
 		return {'FINISHED'}
 
 
@@ -117,7 +120,7 @@ class AddLODToObjName(bpy.types.Operator):
 				obj.name = obj.name[:-5]
 			obj.name = obj.name + "_LOD" + str(act.lod_level)
 
-		utils.print_execution_time("Add LOD to Obj Name", start_time)
+		common_utils.print_execution_time("Add LOD to Obj Name", start_time)
 		return {'FINISHED'}
 
 
@@ -136,7 +139,7 @@ class RemoveLODFromObjName(bpy.types.Operator):
 			if obj.name[-5:][:-1] == "_LOD":
 				obj.name = obj.name[:-5]
 
-		utils.print_execution_time("Remove LOD from Obj Name", start_time)
+		common_utils.print_execution_time("Remove LOD from Obj Name", start_time)
 		return {'FINISHED'}
 
 
@@ -156,7 +159,7 @@ class RenameBones(bpy.types.Operator):
 		for x in selected_bones:
 			x.name = x.name + self.Value
 
-		utils.print_execution_time("Rename Bones", start_time)
+		common_utils.print_execution_time("Rename Bones", start_time)
 		return {'FINISHED'}
 
 
@@ -169,7 +172,7 @@ class VIEW3D_PT_rename_tools_panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(cls, context):
-		preferences = context.preferences.addons[__package__].preferences
+		preferences = context.preferences.addons[package_name].preferences
 		return (context.object is not None and context.active_object is not None
 		        and context.object.mode in {'OBJECT', 'EDIT_ARMATURE'} and preferences.renaming_enable)
 
@@ -210,7 +213,8 @@ classes = (
 	Numbering,
 	RenameBones,
 	AddLODToObjName,
-	RemoveLODFromObjName
+	RemoveLODFromObjName,
+	VIEW3D_PT_rename_tools_panel
 )
 
 

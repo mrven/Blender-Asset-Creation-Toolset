@@ -1,7 +1,10 @@
 import bpy
 from datetime import datetime
 
+from ..common import utils as common_utils
 from . import utils
+
+package_name = __package__.split('.')[0]
 
 class Align(bpy.types.Operator):
 	"""Origin To Min/Max/Mid/Coordinate/Cursor"""
@@ -105,7 +108,7 @@ class Align(bpy.types.Operator):
 
 		context.view_layer.objects.active = current_active_obj
 
-		utils.print_execution_time("Align To ...", start_time)
+		common_utils.print_execution_time("Align To ...", start_time)
 		return {'FINISHED'}
 
 
@@ -127,7 +130,7 @@ class OriginToSelection(bpy.types.Operator):
 		context.scene.cursor.location = saved_cursor_loc
 		bpy.ops.object.mode_set(mode='EDIT')
 
-		utils.print_execution_time("Set Origin to Selection", start_time)
+		common_utils.print_execution_time("Set Origin to Selection", start_time)
 		return {'FINISHED'}
 
 
@@ -140,7 +143,7 @@ class VIEW3D_PT_origin_tools_panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(cls, context):
-		preferences = context.preferences.addons[__package__].preferences
+		preferences = context.preferences.addons[package_name].preferences
 		return (context.object is not None and context.active_object is not None
 		        and context.mode in {'OBJECT', 'EDIT_MESH'} and preferences.origin_enable)
 
@@ -189,6 +192,7 @@ class VIEW3D_PT_origin_tools_panel(bpy.types.Panel):
 classes = (
 	Align,
 	OriginToSelection,
+	VIEW3D_PT_origin_tools_panel
 )
 
 

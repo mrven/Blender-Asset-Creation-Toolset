@@ -4,131 +4,36 @@ from bpy.props import (
 	StringProperty,
 	BoolProperty)
 
-from ..origin.ui import VIEW3D_PT_origin_tools_panel
-from ..rename.ui import VIEW3D_PT_rename_tools_panel
-from ..uv.ui import UV_PT_uv_mover_panel, VIEW3D_PT_uv_tools_panel
-from ..import_export.ui import VIEW3D_PT_import_export_tools_panel
-from ..material.ui import VIEW3D_PT_material_tools_panel, UV_PT_material_uv_tools_panel
-from ..other.ui import VIEW3D_PT_other_tools_panel
-from ..geometry.ui import VIEW3D_PT_geometry_tools_panel
+PANELS_TO_UPDATE = {
+    "VIEW3D_PT_import_export_tools_panel": "export_import_panel_category",
+    "VIEW3D_PT_material_tools_panel": "material_panel_category",
+    "VIEW3D_PT_origin_tools_panel": "origin_panel_category",
+    "VIEW3D_PT_other_tools_panel": "other_panel_category",
+    "VIEW3D_PT_rename_tools_panel": "rename_panel_category",
+    "UV_PT_uv_mover_panel": "uv_uv_category",
+    "VIEW3D_PT_uv_tools_panel": "view3d_uv_panel_category",
+    "UV_PT_material_uv_tools_panel": "uv_material_panel_category",
+}
 
 package_name = __package__.split('.')[0]
 
-def update_export_import_panel_category(self, context):
-	is_panel = hasattr(bpy.types, 'VIEW3D_PT_import_export_tools_panel')
-	category = context.preferences.addons[package_name].preferences.export_import_panel_category
+def update_all_panel_categories(_, context):
+	prefs = context.preferences.addons[package_name].preferences
 
-	if is_panel:
+	for panel_name, pref_attr in PANELS_TO_UPDATE.items():
+		panel_cls = getattr(bpy.types, panel_name)
+		category = getattr(prefs, pref_attr, None)
+
+		if not category:
+			continue
+
 		try:
-			bpy.utils.unregister_class(VIEW3D_PT_import_export_tools_panel)
-		except:
+			bpy.utils.unregister_class(panel_cls)
+		except RuntimeError:
 			pass
-	VIEW3D_PT_import_export_tools_panel.bl_category = category
-	bpy.utils.register_class(VIEW3D_PT_import_export_tools_panel)
 
-
-def update_material_panel_category(self, context):
-	is_panel = hasattr(bpy.types, 'VIEW3D_PT_material_tools_panel')
-	category = context.preferences.addons[package_name].preferences.material_panel_category
-
-	if is_panel:
-		try:
-			bpy.utils.unregister_class(VIEW3D_PT_material_tools_panel)
-		except:
-			pass
-	VIEW3D_PT_material_tools_panel.bl_category = category
-	bpy.utils.register_class(VIEW3D_PT_material_tools_panel)
-
-
-def update_origin_panel_category(self, context):
-	is_panel = hasattr(bpy.types, 'VIEW3D_PT_origin_tools_panel')
-	category = context.preferences.addons[package_name].preferences.origin_panel_category
-
-	if is_panel:
-		try:
-			bpy.utils.unregister_class(VIEW3D_PT_origin_tools_panel)
-		except:
-			pass
-	VIEW3D_PT_origin_tools_panel.bl_category = category
-	bpy.utils.register_class(VIEW3D_PT_origin_tools_panel)
-
-
-def update_other_panel_category(self, context):
-	is_panel = hasattr(bpy.types, 'VIEW3D_PT_other_tools_panel')
-	category = context.preferences.addons[package_name].preferences.other_panel_category
-
-	if is_panel:
-		try:
-			bpy.utils.unregister_class(VIEW3D_PT_other_tools_panel)
-		except:
-			pass
-	VIEW3D_PT_other_tools_panel.bl_category = category
-	bpy.utils.register_class(VIEW3D_PT_other_tools_panel)
-
-
-def update_rename_panel_category(self, context):
-	is_panel = hasattr(bpy.types, 'VIEW3D_PT_rename_tools_panel')
-	category = context.preferences.addons[package_name].preferences.rename_panel_category
-
-	if is_panel:
-		try:
-			bpy.utils.unregister_class(VIEW3D_PT_rename_tools_panel)
-		except:
-			pass
-	VIEW3D_PT_rename_tools_panel.bl_category = category
-	bpy.utils.register_class(VIEW3D_PT_rename_tools_panel)
-
-
-def update_uv_uv_panel_category(self, context):
-	is_panel = hasattr(bpy.types, 'UV_PT_uv_mover_panel')
-	category = context.preferences.addons[package_name].preferences.uv_uv_category
-
-	if is_panel:
-		try:
-			bpy.utils.unregister_class(UV_PT_uv_mover_panel)
-		except:
-			pass
-	UV_PT_uv_mover_panel.bl_category = category
-	bpy.utils.register_class(UV_PT_uv_mover_panel)
-
-
-def update_view3d_uv_panel_category(self, context):
-	is_panel = hasattr(bpy.types, 'VIEW3D_PT_uv_tools_panel')
-	category = context.preferences.addons[package_name].preferences.view3d_uv_panel_category
-
-	if is_panel:
-		try:
-			bpy.utils.unregister_class(VIEW3D_PT_uv_tools_panel)
-		except:
-			pass
-	VIEW3D_PT_uv_tools_panel.bl_category = category
-	bpy.utils.register_class(VIEW3D_PT_uv_tools_panel)
-
-
-def update_uv_material_panel_category(self, context):
-	is_panel = hasattr(bpy.types, 'UV_PT_material_uv_tools_panel')
-	category = context.preferences.addons[package_name].preferences.uv_material_panel_category
-
-	if is_panel:
-		try:
-			bpy.utils.unregister_class(UV_PT_material_uv_tools_panel)
-		except:
-			pass
-	UV_PT_material_uv_tools_panel.bl_category = category
-	bpy.utils.register_class(UV_PT_material_uv_tools_panel)
-
-
-def update_geometry_panel_category(self, context):
-	is_panel = hasattr(bpy.types, 'VIEW3D_PT_geometry_tools_panel')
-	category = context.preferences.addons[package_name].preferences.geometry_panel_category
-
-	if is_panel:
-		try:
-			bpy.utils.unregister_class(VIEW3D_PT_geometry_tools_panel)
-		except:
-			pass
-	VIEW3D_PT_geometry_tools_panel.bl_category = category
-	bpy.utils.register_class(VIEW3D_PT_geometry_tools_panel)
+		panel_cls.bl_category = category
+		bpy.utils.register_class(panel_cls)
 
 
 class ACTAddonPreferences(bpy.types.AddonPreferences):
@@ -140,7 +45,7 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 		default=True)
 
 	material_enable: BoolProperty(
-		name="Material/Texture Tools",
+		name="Material/Texture Tools (3D View)",
 		description="Show/Hide Material/Texture Tools (3D View) UI Panel",
 		default=True)
 
@@ -187,58 +92,58 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 	export_import_panel_category: StringProperty(
 		description="Choose a name for the category of the Export panel",
 		default="ACT",
-		update=update_export_import_panel_category
+		update=update_all_panel_categories
 	)
 
 	material_panel_category: StringProperty(
 		description="Choose a name for the category of the Material (3D View) panel",
 		default="ACT",
-		update=update_material_panel_category
+		update=update_all_panel_categories
 	)
 
 	origin_panel_category: StringProperty(
 		description="Choose a name for the category of the Origin panel",
 		default="ACT",
-		update=update_origin_panel_category
+		update=update_all_panel_categories
 	)
 
 	other_panel_category: StringProperty(
 		description="Choose a name for the category of the Other panel",
 		default="ACT",
-		update=update_other_panel_category
+		update=update_all_panel_categories
 	)
 
 	geometry_panel_category: StringProperty(
 		description="Choose a name for the category of the Geometry panel",
 		default="ACT",
-		update=update_geometry_panel_category
+		update=update_all_panel_categories
 	)
 
 	rename_panel_category: StringProperty(
 		description="Choose a name for the category of the Rename panel",
 		default="ACT",
-		update=update_rename_panel_category
+		update=update_all_panel_categories
 	)
 
 	uv_uv_category: StringProperty(
 		description="Choose a name for the category of the UV (UV Editor) panel",
 		default="ACT",
-		update=update_uv_uv_panel_category
+		update=update_all_panel_categories
 	)
 
 	view3d_uv_panel_category: StringProperty(
 		description="Choose a name for the category of the UV (3D View) panel",
 		default="ACT",
-		update=update_view3d_uv_panel_category
+		update=update_all_panel_categories
 	)
 
 	uv_material_panel_category: StringProperty(
 		description="Choose a name for the category of the Material (Image Editor) panel",
 		default="ACT",
-		update=update_uv_material_panel_category
+		update=update_all_panel_categories
 	)
 
-	def draw(self, context):
+	def draw(self, _):
 		layout = self.layout
 		row = layout.row()
 		row.label(text='Visibility and Category for Panels:')

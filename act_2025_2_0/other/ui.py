@@ -72,7 +72,7 @@ class VIEW3D_PT_other_tools_panel(bpy.types.Panel):
 
 			row = layout.row(align=True)
 			row.label(text="Method")
-			row.prop(act, "merge_bones_method", text="", expand=False)
+			row.prop(act, "merge_bones_method", expand=False)
 
 			row = layout.row()
 			row.operator(operators.MergeBones.bl_idname)

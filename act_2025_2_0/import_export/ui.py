@@ -61,7 +61,7 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 					row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_DEHLT")
 
 			if act.export_format == 'FBX':
-				if act.apply_rot and act.fbx_export_mode == 'PARENT' and act.export_target_engine != 'UNITY2023':
+				if act.apply_rot and act.fbx_export_mode == 'PARENT' and act.export_target_engine != 'UNITY':
 					row = box.row()
 					row.prop(act, "apply_rot_rotated", text="Apply for Rotated Objects")
 
@@ -177,7 +177,7 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 
 		row = layout.row()
 		if act.export_format == 'FBX':
-			if act.export_target_engine in {'UNITY', 'UNITY2023'}:
+			if act.export_target_engine in {'UNITY_LEGACY', 'UNITY'}:
 				row.operator(operators.ACTExport.bl_idname, text="Export FBX to Unity")
 			else:
 				row.operator(operators.ACTExport.bl_idname, text="Export FBX to Unreal")

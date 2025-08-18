@@ -22,9 +22,9 @@ EXPORT_SMOOTHING_ITEMS = (('OFF', 'Normals Only', ''),
 							('FACE', 'Face', ''),
 							('EDGE', 'Edge', ''))
 
-EXPORT_TARGET_ENGINE_ITEMS = (('UNITY2023', 'Unity', ''),
+EXPORT_TARGET_ENGINE_ITEMS = (('UNITY', 'Unity', ''),
 								('UNREAL', 'Unreal', ''),
-								('UNITY', 'Unity (Legacy)', ''))
+								('UNITY_LEGACY', 'Unity (Legacy)', ''))
 
 EXPORT_VC_COLOR_SPACE_ITEMS = (('LINEAR', 'Linear', ''),
 								('SRGB', 'sRGB', ''))

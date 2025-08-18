@@ -108,8 +108,8 @@ class VIEW3D_PT_uv_tools_panel(bpy.types.Panel):
 
 
 classes = (
-	UV_PT_uv_mover_panel,
 	VIEW3D_PT_uv_tools_panel,
+	UV_PT_uv_mover_panel,
 )
 
 

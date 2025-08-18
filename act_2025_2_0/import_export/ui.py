@@ -63,7 +63,7 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 			if act.export_format == 'FBX':
 				if act.apply_rot and act.fbx_export_mode == 'PARENT' and act.export_target_engine != 'UNITY2023':
 					row = box.row()
-					row.prop(act, "apply_rot_rotated")
+					row.prop(act, "apply_rot_rotated", text="Apply for Rotated Objects")
 
 		row = layout.row()
 		row.prop(act, "delete_mats_before_export", text="Delete All Materials")
@@ -96,19 +96,19 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 
 				row = box.row(align=True)
 				row.label(text=" Loose Edges")
-				row.prop(act, "export_loose_edges", text="")
+				row.prop(act, "export_loose_edges")
 
 				row = box.row(align=True)
 				row.label(text=" Tangent Space")
-				row.prop(act, "export_tangent_space", text="")
+				row.prop(act, "export_tangent_space")
 
 				row = box.row(align=True)
 				row.label(text=" Only Deform Bones")
-				row.prop(act, "export_only_deform_bones", text="")
+				row.prop(act, "export_only_deform_bones")
 
 				row = box.row(align=True)
 				row.label(text=" Add Leaf Bones")
-				row.prop(act, "export_add_leaf_bones", text="")
+				row.prop(act, "export_add_leaf_bones")
 
 				row = box.row(align=True)
 				row.label(text=" VC color space")
@@ -116,27 +116,27 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 
 				row = box.row(align=True)
 				row.label(text=" Custom Props")
-				row.prop(act, "export_custom_props", text="")
+				row.prop(act, "export_custom_props")
 
 			if act.export_format == 'OBJ':
 				row = box.row(align=True)
 				row.label(text=" Separate By Mats")
-				row.prop(act, "obj_separate_by_materials", text="")
+				row.prop(act, "obj_separate_by_materials")
 
 				row = box.row(align=True)
 				row.label(text=" Smooth Groups")
-				row.prop(act, "obj_export_smooth_groups", text="")
+				row.prop(act, "obj_export_smooth_groups")
 
 			if act.export_format == 'FBX' or act.export_format == 'OBJ':
 				row = box.row(align=True)
 				row.label(text="Use Custom Scale")
-				row.prop(act, "use_custom_export_scale", text="")
+				row.prop(act, "use_custom_export_scale")
 				if act.use_custom_export_scale:
 					row = box.row(align=True)
 					row.prop(act, "custom_export_scale_value", text="Scale")
 				row = box.row(align=True)
 				row.label(text="Use Custom Axes")
-				row.prop(act, "use_custom_export_axes", text="")
+				row.prop(act, "use_custom_export_axes")
 				if act.use_custom_export_axes:
 					row = box.row(align=True)
 					row.label(text=" Forward")
@@ -149,23 +149,23 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 			if act.export_format == 'GLTF':
 				row = box.row(align=True)
 				row.label(text=" Pack Images")
-				row.prop(act, "gltf_export_image_format", text="")
+				row.prop(act, "gltf_export_image_format")
 
 				row = box.row(align=True)
 				row.label(text=" Deform Bones Only")
-				row.prop(act, "gltf_export_deform_bones_only", text="")
+				row.prop(act, "gltf_export_deform_bones_only")
 
 				row = box.row(align=True)
 				row.label(text=" Custom Properties")
-				row.prop(act, "gltf_export_custom_properties", text="")
+				row.prop(act, "gltf_export_custom_properties")
 
 				row = box.row(align=True)
 				row.label(text=" Tangents")
-				row.prop(act, "gltf_export_tangents", text="")
+				row.prop(act, "gltf_export_tangents")
 
 				row = box.row(align=True)
 				row.label(text=" Attributes")
-				row.prop(act, "gltf_export_attributes", text="")
+				row.prop(act, "gltf_export_attributes")
 
 		box = layout.box()
 		row = box.row()

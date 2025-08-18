@@ -8,9 +8,9 @@ def export_model(path, name):
 		# Scale Defaults
 		apply_scale_options_value = 'FBX_SCALE_NONE'
 		global_scale_value = 1.0
-		if act.export_format == 'FBX' and act.export_target_engine == 'UNITY':
+		if act.export_format == 'FBX' and act.export_target_engine == 'UNITY_LEGACY':
 			apply_scale_options_value = 'FBX_SCALE_ALL'
-		if act.export_format == 'FBX' and act.export_target_engine == 'UNITY2023':
+		if act.export_format == 'FBX' and act.export_target_engine == 'UNITY':
 			global_scale_value = 0.01
 
 		# Custom Scale Option
@@ -22,7 +22,7 @@ def export_model(path, name):
 		forward_axis = '-Z'
 		up_axis = 'Y'
 		use_transform = True
-		if act.export_format == 'FBX' and act.export_target_engine == 'UNITY2023':
+		if act.export_format == 'FBX' and act.export_target_engine == 'UNITY':
 			forward_axis = '-Y'
 			up_axis = 'Z'
 			use_transform = False
@@ -39,7 +39,7 @@ def export_model(path, name):
 				up_axis = up_axis.replace('-', 'NEGATIVE_')
 
 		if act.export_format == 'FBX':
-			if act.export_target_engine == 'UNITY':
+			if act.export_target_engine == 'UNITY_LEGACY':
 				bpy.ops.export_scene.fbx(
 					filepath=str(path + name + '.fbx'), use_selection=True,
 					apply_scale_options=apply_scale_options_value,
@@ -61,7 +61,7 @@ def export_model(path, name):
 					colors_type=act.export_vc_color_space, use_custom_props=act.export_custom_props,
 					global_scale=global_scale_value, axis_forward=forward_axis, axis_up=up_axis,
 					use_space_transform=use_transform)
-			elif act.export_target_engine == 'UNITY2023':
+			elif act.export_target_engine == 'UNITY':
 				bpy.ops.export_scene.fbx(
 					filepath=str(path + name + '.fbx'), use_selection=True,
 					apply_scale_options=apply_scale_options_value,
@@ -90,7 +90,7 @@ def export_model(path, name):
 				export_def_bones=act.gltf_export_deform_bones_only)
 	else:
 		if act.export_format == 'FBX':
-			if act.export_target_engine == 'UNITY':
+			if act.export_target_engine == 'UNITY_LEGACY':
 				bpy.ops.export_scene.fbx(
 					filepath=str(path + name + '.fbx'), use_selection=True,
 					apply_scale_options='FBX_SCALE_ALL', add_leaf_bones=False, colors_type='LINEAR',
@@ -100,7 +100,7 @@ def export_model(path, name):
 					filepath=str(path + name + '.fbx'), use_selection=True,
 					apply_scale_options='FBX_SCALE_NONE', mesh_smooth_type='FACE', use_tspace=True,
 					add_leaf_bones=False, colors_type='LINEAR', use_custom_props=True)
-			elif act.export_target_engine == 'UNITY2023':
+			elif act.export_target_engine == 'UNITY':
 				bpy.ops.export_scene.fbx(
 					filepath=str(path + name + '.fbx'), use_selection=True, apply_scale_options='FBX_SCALE_NONE',
 					global_scale=0.01, colors_type='LINEAR', axis_forward='-Y', axis_up='Z',

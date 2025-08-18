@@ -13,7 +13,8 @@ class VIEW3D_PT_geometry_tools_panel(bpy.types.Panel):
 	@classmethod
 	def poll(cls, context):
 		prefs = context.preferences.addons[package_name].preferences
-		return (context.object is not None and context.active_object is not None and context.mode == 'EDIT_MESH') and prefs.geometry_enable
+		return ((context.object is not None and context.active_object is not None and context.mode == 'EDIT_MESH')
+		        and prefs.geometry_enable)
 
 	def draw(self, _):
 		layout = self.layout

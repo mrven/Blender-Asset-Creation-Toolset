@@ -15,13 +15,13 @@ import importlib
 
 modules_order = (
 	"common",
+	"origin",
+	"rename",
+	"uv",
 	"geometry",
 	"import_export",
 	"material",
-	"origin",
 	"other",
-	"rename",
-	"uv",
 )
 
 modules = [importlib.import_module(f".{name}", __package__) for name in modules_order]

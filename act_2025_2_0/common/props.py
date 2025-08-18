@@ -9,9 +9,10 @@ from bpy.props import (
 	IntProperty,
 )
 
+from .constants import *
 
 # region Update Functions
-def update_custom_forward_axis(self, context):
+def update_custom_forward_axis(_, context):
 	act = context.scene.act
 	if act.custom_export_forward_axis == act.custom_export_up_axis:
 		# Get Current item index
@@ -27,7 +28,7 @@ def update_custom_forward_axis(self, context):
 		act.custom_export_up_axis = act.custom_export_axis_items[index][0]
 
 
-def update_custom_up_axis(self, context):
+def update_custom_up_axis(_, context):
 	act = context.scene.act
 	if act.custom_export_forward_axis == act.custom_export_up_axis:
 		# Get Current item index
@@ -75,18 +76,9 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 		description="Export Directory",
 		default="")
 
-	fbx_export_mode_menu_items = (
-		('INDIVIDUAL', 'One-to-One', ''),
-		('ALL', 'All-to-One', ''),
-		('PARENT', 'By Parent', ''),
-		('COLLECTION', 'By Collection', ''))
-	fbx_export_mode: EnumProperty(name="", items=fbx_export_mode_menu_items)
+	fbx_export_mode: EnumProperty(name="", items=EXPORT_MODE_ITEMS)
 
-	export_format_menu_items = (
-		('FBX', 'FBX', ''),
-		('OBJ', 'OBJ', ''),
-		('GLTF', 'GLTF', ''))
-	export_format: EnumProperty(name="", items=export_format_menu_items)
+	export_format: EnumProperty(name="", items=EXPORT_FORMAT_ITEMS)
 
 	obj_separate_by_materials: BoolProperty(
 		name="Separate By Materials",
@@ -98,12 +90,7 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 		description="Export Smooth Groups",
 		default=True)
 
-	gltf_export_image_format_items = (
-		('AUTO', 'Auto', ''),
-		('JPEG', 'JPEG', ''),
-		('WEBP', 'WebP', ''),
-		('NONE', 'None', ''))
-	gltf_export_image_format: EnumProperty(name="", items=gltf_export_image_format_items)
+	gltf_export_image_format: EnumProperty(name="", items=GLTF_IMAGE_FORMAT_ITEMS)
 
 	gltf_export_custom_properties: BoolProperty(
 		name="Custom Properties",
@@ -193,11 +180,7 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 		description="Tangent Space",
 		default=False)
 
-	export_smoothing_items = (
-		('OFF', 'Normals Only', ''),
-		('FACE', 'Face', ''),
-		('EDGE', 'Edge', ''))
-	export_smoothing: EnumProperty(name="", items=export_smoothing_items)
+	export_smoothing: EnumProperty(name="", items=EXPORT_SMOOTHING_ITEMS)
 
 	export_custom_props: BoolProperty(
 		name="Custom Properties",
@@ -205,11 +188,7 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 		default=True)
 
 	# Export FBX Target Engine
-	export_target_engine_items = (
-		('UNITY2023', 'Unity', ''),
-		('UNREAL', 'Unreal', ''),
-		('UNITY', 'Unity (Legacy)', ''))
-	export_target_engine: EnumProperty(name="", items=export_target_engine_items)
+	export_target_engine: EnumProperty(name="", items=EXPORT_TARGET_ENGINE_ITEMS)
 
 	export_combine_meshes: BoolProperty(
 		name="Combine Meshes before Export",
@@ -227,10 +206,7 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 		default=False)
 
 	# Export Linear/sRGB color space for VC
-	export_vc_color_space_items = (
-		('LINEAR', 'Linear', ''),
-		('SRGB', 'sRGB', ''))
-	export_vc_color_space: EnumProperty(name="", items=export_vc_color_space_items)
+	export_vc_color_space: EnumProperty(name="", items=EXPORT_VC_COLOR_SPACE_ITEMS)
 
 	# Use Custom Scale (for OBJ/FBX)
 	use_custom_export_scale: BoolProperty(
@@ -252,23 +228,15 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 		description="Set custom Forward/Up axes",
 		default=False)
 
-	custom_export_axis_items = (
-		('X', 'X', ''),
-		('Y', 'Y', ''),
-		('Z', 'Z', ''),
-		('-X', '-X', ''),
-		('-Y', '-Y', ''),
-		('-Z', '-Z', ''))
-
 	# Custom Forward Axis
 	custom_export_forward_axis: EnumProperty(name="",
 											 default="-Z",
-											 items=custom_export_axis_items,
+											 items=EXPORT_AXIS_ITEMS,
 											 update=update_custom_forward_axis)
 	# Custom Up Axis
 	custom_export_up_axis: EnumProperty(name="",
 										default="Y",
-										items=custom_export_axis_items,
+										items=EXPORT_AXIS_ITEMS,
 										update=update_custom_up_axis)
 #endregion
 
@@ -283,19 +251,9 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 		description="Delete Previous Numbers from Object Names",
 		default=True)
 
-	nums_method_items = (
-		('ALONG_X', 'Along X', ''),
-		('ALONG_Y', 'Along Y', ''),
-		('ALONG_Z', 'Along Z', ''),
-		('SIMPLE', 'Simple', ''),
-		('NONE', 'None', ''))
-	nums_method: EnumProperty(name="", items=nums_method_items)
+	nums_method: EnumProperty(name="", items=NUMBERING_METHOD_ITEMS)
 
-	nums_format_items = (
-		('NO_ZEROS', '_X, _XX, _XXX', ''),
-		('ONE_ZERO', '_0X, _XX, _XXX', ''),
-		('TWO_ZEROS', '_00X, _0XX, _XXX', ''))
-	nums_format: EnumProperty(name="", items=nums_format_items)
+	nums_format: EnumProperty(name="", items=NUMBERING_FORMAT_ITEMS)
 
 	lod_level: IntProperty(
         name="LOD Level",
@@ -321,13 +279,7 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 #endregion
 
 #region UV tools props
-	uv_move_factor_items = (
-		('1', '2', ''),
-		('2', '4', ''),
-		('3', '8', ''),
-		('4', '16', ''),
-		('5', '32', ''))
-	uv_move_factor: EnumProperty(name="", items=uv_move_factor_items, default='3')
+	uv_move_factor: EnumProperty(name="", items=UV_MOVE_FACTOR_ITEMS, default='3')
 
 	uv_index_rename: IntProperty(
 		name="UV Index",
@@ -346,11 +298,7 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 		description="UV Name",
 		default="")
 
-	uv_packing_mode_items = (
-		('NO', 'Copy Active', ''),
-		('SMART', 'Smart', ''),
-		('LIGHTMAP', 'Lightmap', ''))
-	uv_packing_mode: EnumProperty(name="", items=uv_packing_mode_items)
+	uv_packing_mode: EnumProperty(name="", items=UV_PACKING_ITEMS)
 
 	uv_packing_smart_angle: FloatProperty(
 		name="",
@@ -397,28 +345,17 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 		default=False)
 
 	# Merge bones - Delete or Dissolve
-	merge_bones_method_items = (
-		('DELETE', 'Delete', ''),
-		('DISSOLVE', 'Dissolve', ''))
-	merge_bones_method: EnumProperty(name="", items=merge_bones_method_items)
+	merge_bones_method: EnumProperty(name="", items=MERGE_BONES_METHOD_ITEMS)
 
 	# Add Collection name to objects name or Replace
-	col_to_obj_name_method_items = (
-		('ADD', 'Add', 'Add Collection name to current object name'),
-		('REPLACE', 'Replace', 'Replace current object name to {Collection}_{Type}_{Num}'))
-	col_to_obj_name_method: EnumProperty(name="", items=col_to_obj_name_method_items)
+	col_to_obj_name_method: EnumProperty(name="", items=COL_TO_OBJ_NAME_METHOD_ITEMS)
 
 	# Where Place the collection name
-	col_name_position_items = (
-		('START', 'To Start', 'Add Collection name to beginning of object name'),
-		('END', 'To End', 'Add Collection name to end of object name'))
-	col_name_position: EnumProperty(name="", items=col_name_position_items)
+	col_name_position: EnumProperty(name="", items=COL_NAME_POSITION_ITEMS)
 
 	# Style of type's spelling (Mesh or MESH)
-	col_name_type_style_items = (
-		('DEFAULT', 'Default', 'Example: Collection_Mesh_001'),
-		('CAPITAL', 'CAPITAL', 'Example: Collection_MESH_001'))
-	col_name_type_style: EnumProperty(name="", items=col_name_type_style_items)
+
+	col_name_type_style: EnumProperty(name="", items=COL_NAME_STYLE_ITEMS)
 
 	# Cleanup Empties: Also delete empty meshes
 	delete_empty_meshes: BoolProperty(

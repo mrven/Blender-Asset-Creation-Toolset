@@ -17,7 +17,7 @@ PANELS_TO_UPDATE = {
 
 package_name = __package__.split('.')[0]
 
-def update_all_panel_categories(_, context):
+def update_panel_categories(_, context):
 	prefs = context.preferences.addons[package_name].preferences
 
 	for panel_name, pref_attr in PANELS_TO_UPDATE.items():
@@ -92,55 +92,55 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 	export_import_panel_category: StringProperty(
 		description="Choose a name for the category of the Export panel",
 		default="ACT",
-		update=update_all_panel_categories
+		update=update_panel_categories
 	)
 
 	material_panel_category: StringProperty(
 		description="Choose a name for the category of the Material (3D View) panel",
 		default="ACT",
-		update=update_all_panel_categories
+		update=update_panel_categories
 	)
 
 	origin_panel_category: StringProperty(
 		description="Choose a name for the category of the Origin panel",
 		default="ACT",
-		update=update_all_panel_categories
+		update=update_panel_categories
 	)
 
 	other_panel_category: StringProperty(
 		description="Choose a name for the category of the Other panel",
 		default="ACT",
-		update=update_all_panel_categories
+		update=update_panel_categories
 	)
 
 	geometry_panel_category: StringProperty(
 		description="Choose a name for the category of the Geometry panel",
 		default="ACT",
-		update=update_all_panel_categories
+		update=update_panel_categories
 	)
 
 	rename_panel_category: StringProperty(
 		description="Choose a name for the category of the Rename panel",
 		default="ACT",
-		update=update_all_panel_categories
+		update=update_panel_categories
 	)
 
 	uv_uv_category: StringProperty(
 		description="Choose a name for the category of the UV (UV Editor) panel",
 		default="ACT",
-		update=update_all_panel_categories
+		update=update_panel_categories
 	)
 
 	view3d_uv_panel_category: StringProperty(
 		description="Choose a name for the category of the UV (3D View) panel",
 		default="ACT",
-		update=update_all_panel_categories
+		update=update_panel_categories
 	)
 
 	uv_material_panel_category: StringProperty(
 		description="Choose a name for the category of the Material (Image Editor) panel",
 		default="ACT",
-		update=update_all_panel_categories
+		update=update_panel_categories
 	)
 
 	def draw(self, _):

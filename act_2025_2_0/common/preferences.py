@@ -13,8 +13,6 @@ PANELS_TO_UPDATE = {
     "VIEW3D_PT_import_export_tools_panel": "export_import_panel_category",
     "VIEW3D_PT_material_tools_panel": "material_panel_category",
     "VIEW3D_PT_other_tools_panel": "other_panel_category",
-
-
 }
 
 package_name = __package__.split('.')[0]

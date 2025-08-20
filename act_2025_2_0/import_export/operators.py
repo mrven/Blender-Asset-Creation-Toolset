@@ -28,6 +28,7 @@ class ACTExport(bpy.types.Operator):
 		start_selected_obj = context.selected_objects
 		start_active_obj = context.active_object
 		current_selected_obj = context.selected_objects
+		name = context.active_object.name
 
 		# Check custom name
 		if act.fbx_export_mode == 'ALL' and act.set_custom_fbx_name and not act.custom_fbx_name:
@@ -45,24 +46,67 @@ class ACTExport(bpy.types.Operator):
 				                              'Saving Error', 'ERROR')
 				return {'CANCELLED'}
 
-			export_dir = bpy.path.abspath(act.export_path)
-			export_dir = os.path.realpath(export_dir)
+			export_path = bpy.path.abspath(act.export_path)
+			export_path = os.path.realpath(export_path)
 
-			if not os.path.exists(export_dir):
+			if not os.path.exists(export_path):
 				common_utils.show_message_box('Directory for export not exist',
 				                              'Saving Error', 'ERROR')
 				return {'CANCELLED'}
 
-			path = export_dir + os.sep
+			path = export_path + os.sep
 		else:
 			path = bpy.path.abspath(f'//{act.export_format}s/')
 
 		os.makedirs(path, exist_ok=True)
 
+		# Filtering selected objects. Exclude all not meshes, empties, armatures, curves and text
+		for x in current_selected_obj:
+			if x.type not in {'MESH', 'EMPTY', 'ARMATURE', 'CURVE', 'FONT'}:
+				x.select_set(False)
+		current_selected_obj = context.selected_objects
 
 		bpy.ops.ed.undo_push(message="FBX Bridge Export Prepare")
 
-		# Export FBXs
+		# Undoable operations
+
+		allow_multi_users = (act.export_format == 'FBX' and act.export_target_engine == 'UNITY'
+		                     and not act.export_combine_meshes)
+
+		if not allow_multi_users:
+			bpy.ops.object.make_single_user(type='SELECTED_OBJECTS', object=True, obdata=True)
+
+		# Convert all non-mesh objects to mesh (except empties)
+		bpy.ops.object.select_all(action='DESELECT')
+
+		for obj in current_selected_obj:
+			obj.select_set(True)
+			context.view_layer.objects.active = obj
+
+			if obj.type == 'EMPTY':
+				continue
+
+			# Remove disabled modifiers
+			for modifier in reversed(obj.modifiers):
+				if not (modifier.show_viewport and modifier.show_render):
+					obj.modifiers.remove(modifier)
+
+			# Apply modifiers (except Armature)
+			if obj.type == 'MESH' and obj.data.users < 2 and not obj.data.shape_keys:
+				for modifier in obj.modifiers:
+					if modifier.type == 'ARMATURE':
+						continue
+					try:
+						bpy.ops.object.modifier_apply(modifier=modifier.name)
+					except Exception as err:
+						print(f"Can't apply modifier: {modifier.name} on {obj.name}", err)
+						bpy.ops.object.modifier_remove(modifier=modifier.name)
+			else:
+				bpy.ops.object.convert(target='MESH')
+
+			obj.select_set(False)
+
+
 
 		bpy.ops.ed.undo_push(message="")
 		bpy.ops.ed.undo()
@@ -70,6 +114,26 @@ class ACTExport(bpy.types.Operator):
 
 		# Restore
 
+		# Restore original selection and mode
+		bpy.ops.object.select_all(action='DESELECT')
+		for obj in start_selected_obj:
+			obj.select_set(True)
+
+		context.view_layer.objects.active = start_active_obj
+
+		# Save export dir path for option "Open export dir"
+		context.scene.act.export_dir = path
+
+		# Show message about incorrect names
+		if len(incorrect_names) > 0:
+			common_utils.show_message_box(
+				"Object(s) has invalid characters in name. Some chars in export name have been replaced",
+				"Incorrect Export Names")
+
+		common_utils.print_execution_time("FBX/OBJ/GLTF Export", start_time)
+		# return {'FINISHED'}
+
+		# =============================================
 
 		# Check "Pivot Point Align" option, save start state and disable it
 		current_pivot_point_align = context.scene.tool_settings.use_transform_pivot_point_align
@@ -79,16 +143,6 @@ class ACTExport(bpy.types.Operator):
 		# Save cursor location and pivot point mode
 		saved_cursor_loc = context.scene.cursor.location.copy()
 		current_pivot_point = context.scene.tool_settings.transform_pivot_point
-
-		# Name for FBX is active object name (by default)
-		name = context.active_object.name
-
-		# Filtering selected objects. Exclude all not meshes, empties, armatures, curves and text
-		bpy.ops.object.select_all(action='DESELECT')
-		for x in current_selected_obj:
-			if x.type == 'MESH' or x.type == 'EMPTY' or x.type == 'ARMATURE' or x.type == 'CURVE' or x.type == 'FONT':
-				x.select_set(True)
-		current_selected_obj = context.selected_objects
 
 		# Added suffix _ex to all selected objects. Also add _ex to mesh data and armature name
 		for obj in current_selected_obj:
@@ -119,6 +173,7 @@ class ACTExport(bpy.types.Operator):
 						obj.modifiers.remove(modifier)
 
 			# Apply modifiers (except Armature)
+			# TODO: Add check for shape keys
 			if act.export_target_engine == 'UNITY' and act.export_format == 'FBX':
 				# Processing only objects without linked data or for all of enabled option combine meshes
 				if ((obj.type == 'MESH' and obj.data.users < 2) or (
@@ -520,28 +575,6 @@ class ACTExport(bpy.types.Operator):
 			if j.type == 'MESH' or j.type == 'ARMATURE':
 				j.data.name = j.data.name[:-3]
 
-		for i in start_selected_obj:
-			i.select_set(True)
-
-		context.view_layer.objects.active = start_active_obj
-
-		# Restore "Pivot point align" option
-		context.scene.tool_settings.use_transform_pivot_point_align = current_pivot_point_align
-
-		# Restore cursor location and pivot point mode
-		context.scene.cursor.location = saved_cursor_loc
-		context.scene.tool_settings.transform_pivot_point = current_pivot_point
-
-		# Save export dir path for option "Open export dir"
-		act.export_dir = path
-
-		# Show message about incorrect names
-		if len(incorrect_names) > 0:
-			common_utils.show_message_box(
-				"Object(s) has invalid characters in name. Some chars in export name have been replaced",
-				"Incorrect Export Names")
-
-		common_utils.print_execution_time("FBX/OBJ Export", start_time)
 		return {'FINISHED'}
 
 

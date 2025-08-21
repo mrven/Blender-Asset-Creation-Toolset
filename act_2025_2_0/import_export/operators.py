@@ -76,7 +76,6 @@ class ACTExport(bpy.types.Operator):
 		if not allow_multi_users:
 			bpy.ops.object.make_single_user(type='SELECTED_OBJECTS', object=True, obdata=True)
 
-		# Convert all non-mesh objects to mesh (except empties)
 		bpy.ops.object.select_all(action='DESELECT')
 
 		for obj in current_selected_obj:
@@ -86,12 +85,21 @@ class ACTExport(bpy.types.Operator):
 			if obj.type == 'EMPTY':
 				continue
 
+			# Remove all materials (optional)
+			if act.delete_mats_before_export:
+				if obj.type == 'MESH' and obj.data.materials:
+					obj.data.materials.clear()
+
+			# Triangulate with adding modifier (optional)
+			if act.triangulate_before_export:
+				bpy.ops.object.modifier_add(type='TRIANGULATE')
+
 			# Remove disabled modifiers
 			for modifier in reversed(obj.modifiers):
 				if not (modifier.show_viewport and modifier.show_render):
 					obj.modifiers.remove(modifier)
 
-			# Apply modifiers (except Armature)
+			# Apply modifiers (except Armature) and convert to mesh
 			if obj.type == 'MESH' and obj.data.users < 2 and not obj.data.shape_keys:
 				for modifier in obj.modifiers:
 					if modifier.type == 'ARMATURE':
@@ -154,77 +162,12 @@ class ACTExport(bpy.types.Operator):
 		bpy.ops.object.duplicate()
 		exp_objects = context.selected_objects
 
-		if act.export_format == 'FBX' and act.export_target_engine == 'UNITY':
-			if act.export_combine_meshes:
-				bpy.ops.object.make_single_user(type='SELECTED_OBJECTS', object=True, obdata=True)
-		else:
-			bpy.ops.object.make_single_user(type='SELECTED_OBJECTS', object=True, obdata=True)
-
-		# Convert all non-mesh objects to mesh (except empties)
-		for obj in exp_objects:
-			bpy.ops.object.select_all(action='DESELECT')
-			obj.select_set(True)
-			context.view_layer.objects.active = obj
-
-			# Remove disabled modifiers
-			if obj.type != 'EMPTY':
-				for modifier in reversed(obj.modifiers):
-					if not (modifier.show_viewport and modifier.show_render):
-						obj.modifiers.remove(modifier)
-
-			# Apply modifiers (except Armature)
-			# TODO: Add check for shape keys
-			if act.export_target_engine == 'UNITY' and act.export_format == 'FBX':
-				# Processing only objects without linked data or for all of enabled option combine meshes
-				if ((obj.type == 'MESH' and obj.data.users < 2) or (
-						act.fbx_export_mode != 'INDIVIDUAL' and act.export_combine_meshes)):
-					for modifier in obj.modifiers:
-						if modifier.type != 'ARMATURE':
-							try:
-								bpy.ops.object.modifier_apply(modifier=modifier.name)
-							except Exception:
-								bpy.ops.object.modifier_remove(modifier=modifier.name)
-				elif obj.type != 'EMPTY':
-					bpy.ops.object.convert(target='MESH')
-			else:
-				if obj.type == 'MESH':
-					for modifier in obj.modifiers:
-						if modifier.type != 'ARMATURE':
-							try:
-								bpy.ops.object.modifier_apply(modifier=modifier.name)
-							except Exception:
-								bpy.ops.object.modifier_remove(modifier=modifier.name)
-				elif obj.type != 'EMPTY':
-					bpy.ops.object.convert(target='MESH')
 		# Delete _ex.001 suffix from object names.
 		# Mesh name and armature name is object name
 		for obj in exp_objects:
 			obj.name = obj.name[:-7]
 			if obj.type == 'MESH' or obj.type == 'ARMATURE':
 				obj.data.name = obj.name
-
-		# Delete all materials (Optional)
-		if act.delete_mats_before_export:
-			for obj in exp_objects:
-				if obj.type == 'MESH' and len(obj.data.materials) > 0:
-					for q in reversed(range(len(obj.data.materials))):
-						context.object.active_material_index = q
-						obj.data.materials.pop(index=q)
-
-		# Triangulate meshes (Optional)
-		if act.triangulate_before_export:
-			for obj in exp_objects:
-				if obj.type != 'MESH':
-					continue
-				bpy.ops.object.select_all(action='DESELECT')
-				obj.select_set(True)
-				context.view_layer.objects.active = obj
-				bpy.ops.object.mode_set(mode='EDIT')
-				bpy.ops.mesh.reveal()
-				bpy.ops.mesh.select_all(action='SELECT')
-				bpy.ops.mesh.quads_convert_to_tris(quad_method='BEAUTY', ngon_method='BEAUTY')
-				bpy.ops.mesh.select_all(action='DESELECT')
-				bpy.ops.object.mode_set(mode='OBJECT')
 
 		# Select all exported objects
 		for obj in exp_objects:

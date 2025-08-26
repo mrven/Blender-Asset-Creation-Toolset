@@ -78,6 +78,7 @@ class ACTExport(bpy.types.Operator):
 
 		bpy.ops.object.select_all(action='DESELECT')
 
+		# Preparing transforms
 		for obj in current_selected_obj:
 			obj.select_set(True)
 			context.view_layer.objects.active = obj
@@ -112,9 +113,89 @@ class ACTExport(bpy.types.Operator):
 			else:
 				bpy.ops.object.convert(target='MESH')
 
+			# Apply Scale and Rotation for UNITY Export or GLTF
+			# Processing only objects without linked data
+			if (act.export_format == 'FBX' and act.export_target_engine == 'UNITY') or act.export_format == 'GLTF':
+				if not (obj.type == 'MESH' and obj.data.users > 2):
+						bpy.ops.object.transform_apply(location=False, rotation=act.apply_rot, scale=act.apply_scale)
+			else:
+				# Apply scale
+				bpy.ops.object.transform_apply(location=False, rotation=False, scale=act.apply_scale)
+				# Rotation Fix. Rotate X -90, Apply, Rotate X 90
+				if act.apply_rot:
+					context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
+
+					if obj.parent is None:
+						# Check object has any rotation
+						# for option "Apply for Rotated Objects"
+						child_rotated = False
+						bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
+						for x in context.selected_objects:
+							if abs(x.rotation_euler.x) + abs(x.rotation_euler.y) + abs(x.rotation_euler.z) > 0.017:
+								child_rotated = True
+
+						bpy.ops.object.select_all(action='DESELECT')
+						obj.select_set(True)
+
+						rotate_params = dict(value=(math.pi * -90 / 180), orient_axis='X',
+						                     orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
+						                     orient_type='GLOBAL', constraint_axis=(True, False, False),
+						                     orient_matrix_type='GLOBAL', mirror=False,
+						                     use_proportional_edit=False)
+
+						# X-rotation fix
+						if act.export_format == 'FBX' and (act.apply_rot_rotated
+						                                   or (not act.apply_rot_rotated and not child_rotated)
+						                                   or not act.fbx_export_mode == 'PARENT'):
+							bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+							bpy.ops.transform.rotate(**rotate_params)
+							bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
+							bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+							bpy.ops.object.select_all(action='DESELECT')
+							obj.select_set(True)
+							rotate_params['value'] = (math.pi * 90 / 180)
+							bpy.ops.transform.rotate(**rotate_params)
+
 			obj.select_set(False)
 
+		# Export Stage
+		for obj in current_selected_obj:
+			obj.select_set(True)
 
+		# Export all as one fbx
+		if act.fbx_export_mode == 'ALL':
+			# Combine All Meshes (Optional)
+			if act.export_combine_meshes:
+				# combine all children to parent object
+				# If  parent is empty
+				if context.view_layer.objects.active.type != 'MESH':
+					current_active = context.view_layer.objects.active
+					# Combine all child meshes to first in list
+					for obj in current_selected_obj:
+						if obj.type == 'MESH':
+							context.view_layer.objects.active = obj
+
+					bpy.ops.object.join()
+					context.view_layer.objects.active = current_active
+
+			# Set custom fbx/obj name (Optional)
+			prefilter_name = act.custom_fbx_name if act.set_custom_fbx_name else name
+
+			# Replace invalid chars
+			name = common_utils.prefilter_export_name(prefilter_name)
+
+			if name != prefilter_name:
+				incorrect_names.append(prefilter_name)
+
+			# Export FBX/OBJ/GLTF
+			utils.export_model(path, name)
+
+
+		# Show message about incorrect names
+		if len(incorrect_names) > 0:
+			common_utils.show_message_box(
+				"Object(s) has invalid characters in name. Some chars in export name have been replaced",
+				"Incorrect Export Names")
 
 		bpy.ops.ed.undo_push(message="")
 		bpy.ops.ed.undo()
@@ -131,12 +212,6 @@ class ACTExport(bpy.types.Operator):
 
 		# Save export dir path for option "Open export dir"
 		context.scene.act.export_dir = path
-
-		# Show message about incorrect names
-		if len(incorrect_names) > 0:
-			common_utils.show_message_box(
-				"Object(s) has invalid characters in name. Some chars in export name have been replaced",
-				"Incorrect Export Names")
 
 		common_utils.print_execution_time("FBX/OBJ/GLTF Export", start_time)
 		# return {'FINISHED'}
@@ -173,63 +248,6 @@ class ACTExport(bpy.types.Operator):
 		for obj in exp_objects:
 			obj.select_set(True)
 
-		# Apply Scale and Rotation for UNITY Export or GLTF
-		# Processing only objects without linked data
-		if (act.export_target_engine == 'UNITY' and act.export_format == 'FBX') or act.export_format == 'GLTF':
-			current_active = context.view_layer.objects.active
-			bpy.ops.object.select_all(action='DESELECT')
-			for x in exp_objects:
-				if (x.type == 'MESH' and x.data.users < 2) or x.type != 'MESH':
-					context.view_layer.objects.active = x
-					x.select_set(True)
-			bpy.ops.object.transform_apply(location=False, rotation=act.apply_rot, scale=act.apply_scale)
-			context.view_layer.objects.active = current_active
-		else:
-			# Apply scale
-			bpy.ops.object.transform_apply(location=False, rotation=False, scale=act.apply_scale)
-			# Rotation Fix. Rotate X -90, Apply, Rotate X 90
-			if act.apply_rot:
-				context.scene.tool_settings.transform_pivot_point = 'MEDIAN_POINT'
-
-				# Operate only with higher level parents
-				for x in exp_objects:
-					bpy.ops.object.select_all(action='DESELECT')
-
-					if x.parent is None:
-						x.select_set(True)
-						context.view_layer.objects.active = x
-
-						# Check object has any rotation
-						# for option "Apply for Rotated Objects"
-						child_rotated = False
-						bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
-						for y in context.selected_objects:
-							if abs(y.rotation_euler.x) + abs(y.rotation_euler.y) + abs(y.rotation_euler.z) > 0.017:
-								child_rotated = True
-
-						bpy.ops.object.select_all(action='DESELECT')
-						x.select_set(True)
-
-						rotate_params = dict(value=(math.pi * -90 / 180), orient_axis='X',
-											 orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
-											 orient_type='GLOBAL', constraint_axis=(True, False, False),
-											 orient_matrix_type='GLOBAL', mirror=False,
-											 use_proportional_edit=False)
-
-						# X-rotation fix
-						if act.export_format == 'FBX' and (act.apply_rot_rotated
-														   or (not act.apply_rot_rotated and not child_rotated)
-														   or not act.fbx_export_mode == 'PARENT'):
-							bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
-							bpy.ops.transform.rotate(**rotate_params)
-							bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
-							bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
-							bpy.ops.object.select_all(action='DESELECT')
-							x.select_set(True)
-							rotate_params['value'] = (math.pi * 90 / 180)
-							bpy.ops.transform.rotate(**rotate_params)
-
-		bpy.ops.object.select_all(action='DESELECT')
 
 		# Select exported objects
 		for x in exp_objects:

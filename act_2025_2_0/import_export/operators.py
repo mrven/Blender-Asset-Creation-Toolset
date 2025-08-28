@@ -92,7 +92,7 @@ class ACTExport(bpy.types.Operator):
 					obj.data.materials.clear()
 
 			# Triangulate with adding modifier (optional)
-			if act.triangulate_before_export:
+			if act.triangulate_before_export and obj.type in {'MESH', 'CURVE', 'FONT'}:
 				bpy.ops.object.modifier_add(type='TRIANGULATE')
 
 			# Remove disabled modifiers

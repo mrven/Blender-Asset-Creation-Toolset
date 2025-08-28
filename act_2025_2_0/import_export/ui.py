@@ -115,7 +115,7 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 				row.prop(act, "export_vc_color_space", expand=False)
 
 				row = box.row(align=True)
-				row.label(text=" Custom Props")
+				row.label(text=" Custom Properties")
 				row.prop(act, "export_custom_props")
 
 			if act.export_format == 'OBJ':
@@ -153,15 +153,15 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 
 				row = box.row(align=True)
 				row.label(text=" Deform Bones Only")
-				row.prop(act, "gltf_export_deform_bones_only")
+				row.prop(act, "export_only_deform_bones")
 
 				row = box.row(align=True)
 				row.label(text=" Custom Properties")
-				row.prop(act, "gltf_export_custom_properties")
+				row.prop(act, "export_custom_props")
 
 				row = box.row(align=True)
 				row.label(text=" Tangents")
-				row.prop(act, "gltf_export_tangents")
+				row.prop(act, "export_tangent_space")
 
 				row = box.row(align=True)
 				row.label(text=" Attributes")

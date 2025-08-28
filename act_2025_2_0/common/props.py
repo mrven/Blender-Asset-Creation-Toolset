@@ -69,12 +69,6 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 
 	gltf_export_image_format: EnumProperty(name="", items=GLTF_IMAGE_FORMAT_ITEMS)
 
-	gltf_export_custom_properties: BoolProperty(description="Export Custom Properties", default=True)
-
-	gltf_export_deform_bones_only: BoolProperty(description="Deform Bones Only")
-
-	gltf_export_tangents: BoolProperty(description="Export Tangents")
-
 	gltf_export_attributes: BoolProperty(description="Export Attributes")
 
 	apply_rot: BoolProperty(description="Apply Rotation for Exported Models", default=True)

@@ -24,7 +24,7 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 		# Export Mode
 		row = layout.row(align=True)
 		row.label(text="Export Mode:")
-		row.prop(act, 'fbx_export_mode', expand=False)
+		row.prop(act, 'export_mode', expand=False)
 
 		# Export Format (FBX or OBJ)
 		row = layout.row(align=True)
@@ -37,7 +37,7 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 			row.label(text="Target Engine:")
 			row.prop(act, "export_target_engine", expand=False)
 
-		if not (act.export_format == 'OBJ' and act.fbx_export_mode in {'ALL', 'COLLECTION'}):
+		if not (act.export_format == 'OBJ' and act.export_mode in {'ALL', 'COLLECTION'}):
 			# Apply Transforms
 			box = layout.box()
 			row = box.row()
@@ -54,28 +54,28 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 				else:
 					row.prop(act, "apply_scale", text="Scale", icon="CHECKBOX_DEHLT")
 
-			if act.fbx_export_mode in {'INDIVIDUAL', 'PARENT'}:
+			if act.export_mode in {'INDIVIDUAL', 'PARENT'}:
 				if act.apply_loc:
 					row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_HLT")
 				else:
 					row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_DEHLT")
 
 			if act.export_format == 'FBX':
-				if act.apply_rot and act.fbx_export_mode == 'PARENT' and act.export_target_engine != 'UNITY':
+				if act.apply_rot and act.export_mode == 'PARENT' and act.export_target_engine != 'UNITY':
 					row = box.row()
 					row.prop(act, "apply_rot_rotated", text="Apply for Rotated Objects")
 
 		row = layout.row()
 		row.prop(act, "delete_mats_before_export", text="Delete All Materials")
 
-		if act.fbx_export_mode != 'INDIVIDUAL':
+		if act.export_mode != 'INDIVIDUAL':
 			row = layout.row()
 			row.prop(act, "export_combine_meshes", text="Combine All Meshes")
 
 		row = layout.row()
 		row.prop(act, "triangulate_before_export", text="Triangulate Meshes")
 
-		if act.fbx_export_mode == 'ALL':
+		if act.export_mode == 'ALL':
 			box = layout.box()
 			row = box.row()
 			row.prop(act, "set_custom_fbx_name", text="Custom Name for File")

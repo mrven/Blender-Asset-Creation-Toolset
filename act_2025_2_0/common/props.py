@@ -59,7 +59,7 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 #region Export props
 	export_dir: StringProperty(name="", description="Export Directory")
 
-	fbx_export_mode: EnumProperty(name="", items=EXPORT_MODE_ITEMS)
+	export_mode: EnumProperty(name="", items=EXPORT_MODE_ITEMS)
 
 	export_format: EnumProperty(name="", items=EXPORT_FORMAT_ITEMS)
 

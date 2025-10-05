@@ -5,11 +5,10 @@ from ..common import utils as common_utils
 
 package_name = __package__.split('.')[0]
 
-# Dissolve Checker Loops
 class DissolveCheckerLoops(bpy.types.Operator):
-	"""Dissolve Checker Loops"""
 	bl_idname = "act.dissolve_checker_loops"
 	bl_label = "Dissolve Checker Loops"
+	bl_description = "Dissolve Checker Loops (best for cylindrical topology)"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -19,22 +18,22 @@ class DissolveCheckerLoops(bpy.types.Operator):
 								   "Invalid Selection Mode",
 								   'ERROR')
 			return {'CANCELLED'}
-		else:
-			selected_obj = context.selected_objects
-			selected_edges = 0
-			bpy.ops.object.mode_set(mode='OBJECT')
 
-			for obj in selected_obj:
-				for edge in obj.data.edges:
-					selected_edges += edge.select
+		selected_obj = context.selected_objects
+		selected_edges = 0
+		bpy.ops.object.mode_set(mode='OBJECT')
 
-			bpy.ops.object.mode_set(mode='EDIT')
+		for obj in selected_obj:
+			for edge in obj.data.edges:
+				selected_edges += edge.select
 
-			if selected_edges != 1:
-				common_utils.show_message_box("Select only one Edge",
-									   "Wrong Selection",
-									   'ERROR')
-				return {'CANCELLED'}
+		bpy.ops.object.mode_set(mode='EDIT')
+
+		if selected_edges != 1:
+			common_utils.show_message_box("Select only one Edge",
+								   "Wrong Selection",
+								   'ERROR')
+			return {'CANCELLED'}
 
 		bpy.ops.mesh.loop_multi_select(ring=True)
 		bpy.ops.mesh.select_nth(offset=1)
@@ -45,11 +44,10 @@ class DissolveCheckerLoops(bpy.types.Operator):
 		return {'FINISHED'}
 
 
-# Collapse  Checker Edges
 class CollapseCheckerEdges(bpy.types.Operator):
-	"""Collapse  Checker Edges"""
 	bl_idname = "act.collapse_checker_edges"
 	bl_label = "Collapse Checker Edges"
+	bl_description = "Collapse Checker Edges (best for ring topology)"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, context):
@@ -59,22 +57,22 @@ class CollapseCheckerEdges(bpy.types.Operator):
 								   "Invalid Selection Mode",
 								   'ERROR')
 			return {'CANCELLED'}
-		else:
-			selected_obj = context.selected_objects
-			selected_edges = 0
-			bpy.ops.object.mode_set(mode='OBJECT')
 
-			for obj in selected_obj:
-				for edge in obj.data.edges:
-					selected_edges += edge.select
+		selected_obj = context.selected_objects
+		selected_edges = 0
+		bpy.ops.object.mode_set(mode='OBJECT')
 
-			bpy.ops.object.mode_set(mode='EDIT')
+		for obj in selected_obj:
+			for edge in obj.data.edges:
+				selected_edges += edge.select
 
-			if selected_edges != 1:
-				common_utils.show_message_box("Select only one Edge",
-									   "Wrong Selection",
-									   'ERROR')
-				return {'CANCELLED'}
+		bpy.ops.object.mode_set(mode='EDIT')
+
+		if selected_edges != 1:
+			common_utils.show_message_box("Select only one Edge",
+								   "Wrong Selection",
+								   'ERROR')
+			return {'CANCELLED'}
 
 		bpy.ops.mesh.loop_multi_select(ring=False)
 		bpy.ops.mesh.select_nth(offset=1)

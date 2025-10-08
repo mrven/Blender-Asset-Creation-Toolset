@@ -63,13 +63,13 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 
 	export_format: EnumProperty(name="", items=EXPORT_FORMAT_ITEMS)
 
-	obj_separate_by_materials: BoolProperty(description="Separate Objects By Materials", default=True)
+	obj_separate_by_materials: BoolProperty(name="", description="Separate Objects By Materials", default=True)
 
-	obj_export_smooth_groups: BoolProperty(description="Export Smooth Groups", default=True)
+	obj_export_smooth_groups: BoolProperty(name="", description="Export Smooth Groups", default=True)
 
 	gltf_export_image_format: EnumProperty(name="", items=GLTF_IMAGE_FORMAT_ITEMS)
 
-	gltf_export_attributes: BoolProperty(description="Export Attributes")
+	gltf_export_attributes: BoolProperty(name="", description="Export Attributes")
 
 	apply_rot: BoolProperty(description="Apply Rotation for Exported Models", default=True)
 
@@ -94,33 +94,33 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 	#Custom Export Options props
 	export_custom_options: BoolProperty(description="Custom FBX Export Options")
 
-	export_loose_edges: BoolProperty(description="Loose Edges")
+	export_loose_edges: BoolProperty(name="", description="Loose Edges")
 
-	export_tangent_space: BoolProperty(description="Tangent Space")
+	export_tangent_space: BoolProperty(name="", description="Tangent Space")
 
 	export_smoothing: EnumProperty(name="", items=EXPORT_SMOOTHING_ITEMS)
 
-	export_custom_props: BoolProperty(description="Custom Props", default=True)
+	export_custom_props: BoolProperty(name="", description="Custom Props", default=True)
 
 	# Export FBX Target Engine
 	export_target_engine: EnumProperty(name="", items=EXPORT_TARGET_ENGINE_ITEMS)
 
 	export_combine_meshes: BoolProperty(description="Combine Meshes before Export")
 
-	export_only_deform_bones: BoolProperty(description="Only Deform Bones")
+	export_only_deform_bones: BoolProperty(name="", description="Only Deform Bones")
 
-	export_add_leaf_bones: BoolProperty(description="Add Leaf Bones")
+	export_add_leaf_bones: BoolProperty(name="", description="Add Leaf Bones")
 
 	# Export Linear/sRGB color space for VC
 	export_vc_color_space: EnumProperty(name="", items=EXPORT_VC_COLOR_SPACE_ITEMS)
 
 	# Use Custom Scale (for OBJ/FBX)
-	use_custom_export_scale: BoolProperty(description="Set custom scale for export")
+	use_custom_export_scale: BoolProperty(name="", description="Set custom scale for export")
 
-	custom_export_scale_value: FloatProperty(description="Scale", default=1.00, min=0.00001, max=9999, step=1)
+	custom_export_scale_value: FloatProperty(name="", description="Scale", default=1.00, min=0.00001, max=9999, step=1)
 
 	# Use Custom Forward/Up Axes
-	use_custom_export_axes: BoolProperty(description="Set custom Forward/Up axes")
+	use_custom_export_axes: BoolProperty(name="", description="Set custom Forward/Up axes")
 
 	# Custom Forward Axis
 	custom_export_forward_axis: EnumProperty(name="", default="-Z", items=EXPORT_AXIS_ITEMS,

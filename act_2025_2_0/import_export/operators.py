@@ -192,6 +192,7 @@ class ACTExport(bpy.types.Operator):
 
 		# Export by parents
 		if act.export_mode in {'PARENT', 'INDIVIDUAL'}:
+			# TODO: При индивидуальном экспорте делать make_single_user, чтобы нормально применить трансформы
 			if act.export_mode == 'INDIVIDUAL':
 				bpy.ops.object.parent_clear(type='CLEAR_KEEP_TRANSFORM')
 

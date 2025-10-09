@@ -67,7 +67,7 @@ class ACTExport(bpy.types.Operator):
 
 		# Undoable operations
 		allow_multi_users = (act.export_format == 'FBX' and act.export_target_engine == 'UNITY'
-		                     and not act.export_combine_meshes)
+		                     and not act.export_combine_meshes and not act.export_mode == 'INDIVIDUAL')
 
 		if not allow_multi_users:
 			bpy.ops.object.make_single_user(type='SELECTED_OBJECTS', object=True, obdata=True)
@@ -192,7 +192,6 @@ class ACTExport(bpy.types.Operator):
 
 		# Export by parents
 		if act.export_mode in {'PARENT', 'INDIVIDUAL'}:
-			# TODO: При индивидуальном экспорте делать make_single_user, чтобы нормально применить трансформы
 			if act.export_mode == 'INDIVIDUAL':
 				bpy.ops.object.parent_clear(type='CLEAR_KEEP_TRANSFORM')
 

@@ -10,7 +10,7 @@ package_name = __package__.split('.')[0]
 # Clear custom split normals
 class ClearNormals(bpy.types.Operator):
 	"""Clear Custom Split Normals"""
-	bl_idname = "act.clear_normals"
+	bl_idname = "object.act_clear_normals"
 	bl_label = "Clear Custom Normals"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -41,7 +41,7 @@ class ClearNormals(bpy.types.Operator):
 # Recalculate normals
 class CalcNormals(bpy.types.Operator):
 	"""Recalculate Normals"""
-	bl_idname = "act.calc_normals"
+	bl_idname = "object.act_calc_normals"
 	bl_label = "Flip/Calculate Normals"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -79,7 +79,7 @@ class CalcNormals(bpy.types.Operator):
 
 class ObjNameToMeshName(bpy.types.Operator):
 	"""Obj Name to Data Name"""
-	bl_idname = "act.obj_name_to_mesh_name"
+	bl_idname = "object.act_obj_name_to_mesh_name"
 	bl_label = "Obj Name -> Data Name"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -95,7 +95,7 @@ class ObjNameToMeshName(bpy.types.Operator):
 # Collection Name to Object Name
 class CollectionNameToObjName(bpy.types.Operator):
 	"""Col Name to Obj Name"""
-	bl_idname = "act.collection_name_to_obj_name"
+	bl_idname = "object.act_collection_name_to_obj_name"
 	bl_label = "Collection Name -> Obj Name"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -165,7 +165,7 @@ class CollectionNameToObjName(bpy.types.Operator):
 # Merge bones
 class MergeBones(bpy.types.Operator):
 	"""Merge Selected Bones to Active"""
-	bl_idname = "act.merge_bones"
+	bl_idname = "object.act_merge_bones"
 	bl_label = "Merge Bones"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -284,7 +284,7 @@ class MergeBones(bpy.types.Operator):
 # Weight paint brush mode invert
 class InvertWeightPaintBrush(bpy.types.Operator):
 	"""Weight Paint Brush Subtract Mode"""
-	bl_idname = "act.weight_paint_brush_invert"
+	bl_idname = "object.act_weight_paint_brush_invert"
 	bl_label = "Invert Brush"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -305,7 +305,7 @@ class InvertWeightPaintBrush(bpy.types.Operator):
 # Select Objects with Negative Scale
 class SelectNegativeScaledObjects(bpy.types.Operator):
 	"""Select Objects with Negative Scale"""
-	bl_idname = "act.select_negative_scaled_objects"
+	bl_idname = "object.act_select_negative_scaled_objects"
 	bl_label = "Select Negative Scaled Objs"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -333,7 +333,7 @@ class SelectNegativeScaledObjects(bpy.types.Operator):
 
 class CleanupEmpties(bpy.types.Operator):
 	"""Delete empties without any child"""
-	bl_idname = "act.cleanup_empties"
+	bl_idname = "object.act_cleanup_empties"
 	bl_label = "Cleanup Empties"
 	bl_options = {'REGISTER', 'UNDO'}
 

@@ -9,7 +9,7 @@ package_name = __package__.split('.')[0]
 # Numbering
 class Numbering(bpy.types.Operator):
 	"""Set Numbering of Objects"""
-	bl_idname = "act.numbering"
+	bl_idname = "object.act_numbering"
 	bl_label = "Set Numbering"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -106,7 +106,7 @@ class Numbering(bpy.types.Operator):
 # Added LOD Postfix
 class AddLODToObjName(bpy.types.Operator):
 	"""Add LOD to Obj Name"""
-	bl_idname = "act.lod_to_objname"
+	bl_idname = "object.act_lod_to_objname"
 	bl_label = "Add LOD to Name"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -127,7 +127,7 @@ class AddLODToObjName(bpy.types.Operator):
 # Remove LOD Postfix
 class RemoveLODFromObjName(bpy.types.Operator):
 	"""Remove LOD from Obj Name"""
-	bl_idname = "act.remove_lod_from_objname"
+	bl_idname = "object.act_remove_lod_from_objname"
 	bl_label = "Remove LOD from Name"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -146,7 +146,7 @@ class RemoveLODFromObjName(bpy.types.Operator):
 # Rename bones
 class RenameBones(bpy.types.Operator):
 	"""Rename bones"""
-	bl_idname = "act.rename_bones"
+	bl_idname = "object.act_rename_bones"
 	bl_label = "Rename bones"
 	bl_options = {'REGISTER', 'UNDO'}
 

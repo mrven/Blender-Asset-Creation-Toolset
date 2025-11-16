@@ -12,7 +12,7 @@ package_name = __package__.split('.')[0]
 # FBX/OBJ/GLTF export
 class ACTExport(bpy.types.Operator):
 	"""Export FBXs/OBJs/GLTFs to Unity/UE/Godot"""
-	bl_idname = "act.export"
+	bl_idname = "object.act_export"
 	bl_label = "Export FBXs/OBJs/GLTFs"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -366,7 +366,7 @@ class ACTExport(bpy.types.Operator):
 # Open Export Directory
 class OpenExportDir(bpy.types.Operator):
 	"""Open Export Directory in OS"""
-	bl_idname = "act.open_export_dir"
+	bl_idname = "object.act_open_export_dir"
 	bl_label = "Open Export Directory"
 	bl_options = {'REGISTER', 'UNDO'}
 

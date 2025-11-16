@@ -10,7 +10,7 @@ package_name = __package__.split('.')[0]
 # UV remover
 class ClearUV(bpy.types.Operator):
 	"""Clear UV layers"""
-	bl_idname = "act.uv_clear"
+	bl_idname = "object.act_uv_clear"
 	bl_label = "Clear UV Maps"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -39,7 +39,7 @@ class ClearUV(bpy.types.Operator):
 # Rename UV
 class RenameUV(bpy.types.Operator):
 	"""Rename UV"""
-	bl_idname = "act.uv_rename"
+	bl_idname = "object.act_uv_rename"
 	bl_label = "Rename UV"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -64,7 +64,7 @@ class RenameUV(bpy.types.Operator):
 # Add UV
 class AddUV(bpy.types.Operator):
 	"""Add UV"""
-	bl_idname = "act.uv_add"
+	bl_idname = "object.act_uv_add"
 	bl_label = "Add UV"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -109,7 +109,7 @@ class AddUV(bpy.types.Operator):
 # Remove UV
 class RemoveUV(bpy.types.Operator):
 	"""Add UV"""
-	bl_idname = "act.uv_remove"
+	bl_idname = "object.act_uv_remove"
 	bl_label = "Remove UV"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -144,7 +144,7 @@ class RemoveUV(bpy.types.Operator):
 # Select UV
 class SelectUV(bpy.types.Operator):
 	"""Add UV"""
-	bl_idname = "act.uv_select"
+	bl_idname = "object.act_uv_select"
 	bl_label = "Set Active UV"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -167,7 +167,7 @@ class SelectUV(bpy.types.Operator):
 # UV mover
 class UVMover(bpy.types.Operator):
 	"""UV Mover"""
-	bl_idname = "uv.uv_mover"
+	bl_idname = "uv.act_uv_mover"
 	bl_label = "Move and Scale UV islands"
 	bl_options = {'REGISTER', 'UNDO'}
 	move_command: bpy.props.StringProperty()
@@ -228,7 +228,7 @@ class UVMover(bpy.types.Operator):
 #Mark Seams from UV
 class MarkSeamsFromUV(bpy.types.Operator):
 	"""Mark Seams from UV"""
-	bl_idname = "act.mark_seams_from_uv"
+	bl_idname = "object.act_mark_seams_from_uv"
 	bl_label = "Mark Seams from UV"
 	bl_options = {'REGISTER', 'UNDO'}
 

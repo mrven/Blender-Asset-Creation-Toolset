@@ -2,7 +2,7 @@ import bpy
 
 from . import operators
 
-package_name = __package__.split('.')[0]
+package_name = __package__.split(".")[0]
 
 class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 	bl_label = "Export Tools"
@@ -15,7 +15,7 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 		# If this panel not hidden in preferences
 		prefs = context.preferences.addons[package_name].preferences
 		return (context.object is not None and context.active_object is not None
-		        and context.mode == 'OBJECT' and prefs.export_import_enable)
+		        and context.mode == "OBJECT" and prefs.export_import_enable)
 
 	def draw(self, context):
 		act = context.scene.act
@@ -24,27 +24,27 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 		# Export Mode
 		row = layout.row(align=True)
 		row.label(text="Export Mode:")
-		row.prop(act, 'export_mode', expand=False)
+		row.prop(act, "export_mode", expand=False)
 
 		# Export Format (FBX or OBJ)
 		row = layout.row(align=True)
 		row.label(text="File Format:")
 		row.prop(act, "export_format", expand=False)
 
-		if act.export_format == 'FBX':
+		if act.export_format == "FBX":
 			# Target Engine
 			row = layout.row(align=True)
 			row.label(text="Target Engine:")
 			row.prop(act, "export_target_engine", expand=False)
 
-		if not (act.export_format == 'OBJ' and act.export_mode in {'ALL', 'COLLECTION'}):
+		if not (act.export_format == "OBJ" and act.export_mode in {"ALL", "COLLECTION"}):
 			# Apply Transforms
 			box = layout.box()
 			row = box.row()
 			row.label(text="Apply:")
 
 			row = box.row(align=True)
-			if act.export_format in {'FBX', 'GLTF'}:
+			if act.export_format in {"FBX", "GLTF"}:
 				if act.apply_rot:
 					row.prop(act, "apply_rot", text="Rotation", icon="CHECKBOX_HLT")
 				else:
@@ -54,28 +54,28 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 				else:
 					row.prop(act, "apply_scale", text="Scale", icon="CHECKBOX_DEHLT")
 
-			if act.export_mode in {'INDIVIDUAL', 'PARENT'}:
+			if act.export_mode in {"INDIVIDUAL", "PARENT"}:
 				if act.apply_loc:
 					row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_HLT")
 				else:
 					row.prop(act, "apply_loc", text="Location", icon="CHECKBOX_DEHLT")
 
-			if act.export_format == 'FBX':
-				if act.apply_rot and act.export_mode == 'PARENT' and act.export_target_engine != 'UNITY':
+			if act.export_format == "FBX":
+				if act.apply_rot and act.export_mode == "PARENT" and act.export_target_engine != "UNITY":
 					row = box.row()
 					row.prop(act, "apply_rot_rotated", text="Apply for Rotated Objects")
 
 		row = layout.row()
 		row.prop(act, "delete_mats_before_export", text="Delete All Materials")
 
-		if act.export_mode != 'INDIVIDUAL':
+		if act.export_mode != "INDIVIDUAL":
 			row = layout.row()
 			row.prop(act, "export_combine_meshes", text="Combine All Meshes")
 
 		row = layout.row()
 		row.prop(act, "triangulate_before_export", text="Triangulate Meshes")
 
-		if act.export_mode == 'ALL':
+		if act.export_mode == "ALL":
 			box = layout.box()
 			row = box.row()
 			row.prop(act, "set_custom_fbx_name", text="Custom Name for File")
@@ -89,7 +89,7 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 		row = box.row()
 		row.prop(act, "export_custom_options", text="Custom Export Options")
 		if act.export_custom_options:
-			if act.export_format == 'FBX':
+			if act.export_format == "FBX":
 				row = box.row(align=True)
 				row.label(text=" Smoothing")
 				row.prop(act, "export_smoothing", expand=False)
@@ -118,7 +118,7 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 				row.label(text=" Custom Properties")
 				row.prop(act, "export_custom_props")
 
-			if act.export_format == 'OBJ':
+			if act.export_format == "OBJ":
 				row = box.row(align=True)
 				row.label(text=" Separate By Mats")
 				row.prop(act, "obj_separate_by_materials")
@@ -127,7 +127,7 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 				row.label(text=" Smooth Groups")
 				row.prop(act, "obj_export_smooth_groups")
 
-			if act.export_format == 'FBX' or act.export_format == 'OBJ':
+			if act.export_format == "FBX" or act.export_format == "OBJ":
 				row = box.row(align=True)
 				row.label(text="Use Custom Scale")
 				row.prop(act, "use_custom_export_scale")
@@ -146,7 +146,7 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 					row.prop(act, "custom_export_up_axis", expand=False)
 
 
-			if act.export_format == 'GLTF':
+			if act.export_format == "GLTF":
 				row = box.row(align=True)
 				row.label(text=" Pack Images")
 				row.prop(act, "gltf_export_image_format")
@@ -176,12 +176,12 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 			row.prop(act, "export_path")
 
 		row = layout.row()
-		if act.export_format == 'FBX':
-			if act.export_target_engine in {'UNITY_LEGACY', 'UNITY'}:
+		if act.export_format == "FBX":
+			if act.export_target_engine in {"UNITY_LEGACY", "UNITY"}:
 				row.operator(operators.ACTExport.bl_idname, text="Export FBX to Unity")
 			else:
 				row.operator(operators.ACTExport.bl_idname, text="Export FBX to Unreal")
-		if act.export_format in {'OBJ', 'GLTF'}:
+		if act.export_format in {"OBJ", "GLTF"}:
 			row.operator(operators.ACTExport.bl_idname, text=f"Export {act.export_format}")
 
 		if len(act.export_dir) > 0:

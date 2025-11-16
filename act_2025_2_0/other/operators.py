@@ -5,14 +5,14 @@ from collections import defaultdict
 from ..common import utils as common_utils
 from . import utils
 
-package_name = __package__.split('.')[0]
+package_name = __package__.split(".")[0]
 
 # Clear custom split normals
 class ClearNormals(bpy.types.Operator):
 	"""Clear Custom Split Normals"""
 	bl_idname = "object.act_clear_normals"
 	bl_label = "Clear Custom Normals"
-	bl_options = {'REGISTER', 'UNDO'}
+	bl_options = {"REGISTER", "UNDO"}
 
 	def execute(self, context):
 		start_time = datetime.now()
@@ -20,9 +20,9 @@ class ClearNormals(bpy.types.Operator):
 		active_obj = context.active_object
 
 		for x in selected_obj:
-			bpy.ops.object.select_all(action='DESELECT')
+			bpy.ops.object.select_all(action="DESELECT")
 			x.select_set(True)
-			if x.type == 'MESH' and x.data.has_custom_normals:
+			if x.type == "MESH" and x.data.has_custom_normals:
 				context.view_layer.objects.active = x
 				bpy.ops.mesh.customdata_custom_splitnormals_clear()
 				# Enable Auto Smooth with angle 180 degrees
@@ -35,7 +35,7 @@ class ClearNormals(bpy.types.Operator):
 		context.view_layer.objects.active = active_obj
 
 		common_utils.print_execution_time("Clear Custom Normals", start_time)
-		return {'FINISHED'}
+		return {"FINISHED"}
 
 
 # Recalculate normals
@@ -43,7 +43,7 @@ class CalcNormals(bpy.types.Operator):
 	"""Recalculate Normals"""
 	bl_idname = "object.act_calc_normals"
 	bl_label = "Flip/Calculate Normals"
-	bl_options = {'REGISTER', 'UNDO'}
+	bl_options = {"REGISTER", "UNDO"}
 
 	def execute(self, context):
 		start_time = datetime.now()
@@ -52,20 +52,20 @@ class CalcNormals(bpy.types.Operator):
 		active_obj = context.active_object
 
 		for x in selected_obj:
-			bpy.ops.object.select_all(action='DESELECT')
+			bpy.ops.object.select_all(action="DESELECT")
 			x.select_set(True)
 
-			if x.type == 'MESH':
+			if x.type == "MESH":
 				context.view_layer.objects.active = x
-				bpy.ops.object.mode_set(mode='EDIT')
+				bpy.ops.object.mode_set(mode="EDIT")
 				bpy.ops.mesh.reveal()
-				bpy.ops.mesh.select_all(action='SELECT')
+				bpy.ops.mesh.select_all(action="SELECT")
 				if not act.calc_normals_en:
 					bpy.ops.mesh.flip_normals()
 				else:
 					bpy.ops.mesh.normals_make_consistent(inside=act.normals_inside)
-				bpy.ops.mesh.select_all(action='DESELECT')
-				bpy.ops.object.mode_set(mode='OBJECT')
+				bpy.ops.mesh.select_all(action="DESELECT")
+				bpy.ops.object.mode_set(mode="OBJECT")
 
 		# Select again objects
 		for j in selected_obj:
@@ -74,14 +74,14 @@ class CalcNormals(bpy.types.Operator):
 		context.view_layer.objects.active = active_obj
 
 		common_utils.print_execution_time("Calculate Normals", start_time)
-		return {'FINISHED'}
+		return {"FINISHED"}
 
 
 class ObjNameToMeshName(bpy.types.Operator):
 	"""Obj Name to Data Name"""
 	bl_idname = "object.act_obj_name_to_mesh_name"
 	bl_label = "Obj Name -> Data Name"
-	bl_options = {'REGISTER', 'UNDO'}
+	bl_options = {"REGISTER", "UNDO"}
 
 	def execute(self, context):
 		start_time = datetime.now()
@@ -89,7 +89,7 @@ class ObjNameToMeshName(bpy.types.Operator):
 
 		common_utils.print_execution_time("Object Name to Mesh Name", start_time)
 
-		return {'FINISHED'}
+		return {"FINISHED"}
 
 
 # Collection Name to Object Name
@@ -97,7 +97,7 @@ class CollectionNameToObjName(bpy.types.Operator):
 	"""Col Name to Obj Name"""
 	bl_idname = "object.act_collection_name_to_obj_name"
 	bl_label = "Collection Name -> Obj Name"
-	bl_options = {'REGISTER', 'UNDO'}
+	bl_options = {"REGISTER", "UNDO"}
 
 	def execute(self, context):
 		start_time = datetime.now()
@@ -121,21 +121,21 @@ class CollectionNameToObjName(bpy.types.Operator):
 				cur_collect_obj_list = [x for x in collect_dict[collect] if
 										x.type == object_type and x.select_get()]
 
-				if act.col_to_obj_name_method == 'ADD':
+				if act.col_to_obj_name_method == "ADD":
 					col_name = collect[0].name
 				else:
-					if act.col_name_type_style == 'CAPITAL':
-						col_name = collect[0].name + '_' + object_type
+					if act.col_name_type_style == "CAPITAL":
+						col_name = collect[0].name + "_" + object_type
 					else:
-						col_name = collect[0].name + '_' + object_type.title()
+						col_name = collect[0].name + "_" + object_type.title()
 
 				# List for skip rename and overwrite name
 				all_obj_list = [i.name for i in bpy.data.objects if i.type == object_type and col_name in i.name]
 
 				for obj in cur_collect_obj_list:
-					if act.col_to_obj_name_method == 'REPLACE':
+					if act.col_to_obj_name_method == "REPLACE":
 						zeros = "0" * (obj_count_len + 1 - len(str(add_digit + 1)))
-						name = f'{col_name}_{zeros}{1 + add_digit}'
+						name = f"{col_name}_{zeros}{1 + add_digit}"
 
 						while True:
 							if name == obj.name:
@@ -144,22 +144,22 @@ class CollectionNameToObjName(bpy.types.Operator):
 							elif name in all_obj_list:
 								add_digit += 1
 								zeros = "0" * (obj_count_len + 1 - len(str(add_digit + 1)))
-								name = f'{col_name}_{zeros}{1 + add_digit}'
+								name = f"{col_name}_{zeros}{1 + add_digit}"
 							else:
 								obj.name = name
 								all_obj_list.append(name)
 								break
 					else:
-						if act.col_name_position == 'START':
-							obj.name = col_name + '_' + obj.name
+						if act.col_name_position == "START":
+							obj.name = col_name + "_" + obj.name
 						else:
-							obj.name = obj.name + '_' + col_name
+							obj.name = obj.name + "_" + col_name
 
 		utils.obj_name_to_data_name()
 
 		common_utils.print_execution_time("Collection Name to Object Name", start_time)
 
-		return {'FINISHED'}
+		return {"FINISHED"}
 
 
 # Merge bones
@@ -167,22 +167,22 @@ class MergeBones(bpy.types.Operator):
 	"""Merge Selected Bones to Active"""
 	bl_idname = "object.act_merge_bones"
 	bl_label = "Merge Bones"
-	bl_options = {'REGISTER', 'UNDO'}
+	bl_options = {"REGISTER", "UNDO"}
 
 	def execute(self, context):
 		start_time = datetime.now()
 		act = context.scene.act
 
 		# Active Bone not updating if switch MODE from POSE to EDIT
-		bpy.ops.object.mode_set(mode='OBJECT')
-		bpy.ops.object.mode_set(mode='EDIT')
+		bpy.ops.object.mode_set(mode="OBJECT")
+		bpy.ops.object.mode_set(mode="EDIT")
 
 		armature = context.active_object
 		active_bone_name = armature.data.bones.active.name
 		selected_bones_name = []
 		meshes = []
 
-		bpy.ops.object.mode_set(mode='OBJECT')
+		bpy.ops.object.mode_set(mode="OBJECT")
 
 		# Collect selected bones, but not active
 		for bone in armature.data.bones:
@@ -191,29 +191,29 @@ class MergeBones(bpy.types.Operator):
 
 		# Cancel if select only one bone
 		if len(selected_bones_name) == 0:
-			common_utils.show_message_box('Select more than one bone',
+			common_utils.show_message_box("Select more than one bone",
 								   "Wrong Selection",
-									   'ERROR')
-			bpy.ops.object.mode_set(mode='EDIT')
-			return {'CANCELLED'}
+									   "ERROR")
+			bpy.ops.object.mode_set(mode="EDIT")
+			return {"CANCELLED"}
 
 		# Find mesh deformed with this armature
 		for m in context.scene.objects:
-			if m.type == 'MESH':
+			if m.type == "MESH":
 				if len(m.modifiers) > 0:
 					for n in m.modifiers:
-						if n.type == 'ARMATURE' and n.object.name_full == armature.name_full:
+						if n.type == "ARMATURE" and n.object.name_full == armature.name_full:
 							meshes.append(m)
 
 		if len(meshes) == 0:
-			common_utils.show_message_box('Armature has no mesh',
+			common_utils.show_message_box("Armature has no mesh",
 								   "Mesh Error",
-								   'ERROR')
-			bpy.ops.object.mode_set(mode='EDIT')
-			return {'CANCELLED'}
+								   "ERROR")
+			bpy.ops.object.mode_set(mode="EDIT")
+			return {"CANCELLED"}
 
 		for mesh in meshes:
-			bpy.ops.object.select_all(action='DESELECT')
+			bpy.ops.object.select_all(action="DESELECT")
 			mesh.select_set(True)
 			context.view_layer.objects.active = mesh
 
@@ -242,20 +242,20 @@ class MergeBones(bpy.types.Operator):
 
 				mesh.vertex_groups.active_index = mesh.vertex_groups[bone_name].index
 
-				bpy.ops.object.modifier_add(type='VERTEX_WEIGHT_MIX')
-				mesh.modifiers['VertexWeightMix'].vertex_group_a = active_bone_name
-				mesh.modifiers['VertexWeightMix'].vertex_group_b = bone_name
-				mesh.modifiers['VertexWeightMix'].mix_mode = 'ADD'
-				mesh.modifiers['VertexWeightMix'].mix_set = 'ALL'
+				bpy.ops.object.modifier_add(type="VERTEX_WEIGHT_MIX")
+				mesh.modifiers["VertexWeightMix"].vertex_group_a = active_bone_name
+				mesh.modifiers["VertexWeightMix"].vertex_group_b = bone_name
+				mesh.modifiers["VertexWeightMix"].mix_mode = "ADD"
+				mesh.modifiers["VertexWeightMix"].mix_set = "ALL"
 				bpy.ops.object.modifier_apply(modifier="VertexWeightMix")
 				bpy.ops.object.vertex_group_remove()
 
-		bpy.ops.object.select_all(action='DESELECT')
+		bpy.ops.object.select_all(action="DESELECT")
 		armature.select_set(True)
 		context.view_layer.objects.active = armature
-		bpy.ops.object.mode_set(mode='EDIT')
-		bpy.ops.armature.select_all(action='DESELECT')
-		bpy.ops.object.mode_set(mode='OBJECT')
+		bpy.ops.object.mode_set(mode="EDIT")
+		bpy.ops.armature.select_all(action="DESELECT")
+		bpy.ops.object.mode_set(mode="OBJECT")
 
 		# Delete selected bones
 		for bone_name in selected_bones_name:
@@ -264,21 +264,21 @@ class MergeBones(bpy.types.Operator):
 			except:
 				continue
 
-			bpy.ops.object.mode_set(mode='EDIT')
+			bpy.ops.object.mode_set(mode="EDIT")
 
-			if act.merge_bones_method == 'DELETE':
+			if act.merge_bones_method == "DELETE":
 				bpy.ops.armature.delete()
-			elif act.merge_bones_method == 'DISSOLVE':
+			elif act.merge_bones_method == "DISSOLVE":
 				bpy.ops.armature.dissolve()
 
-			bpy.ops.object.mode_set(mode='OBJECT')
+			bpy.ops.object.mode_set(mode="OBJECT")
 
-		if act.merge_bones_method == 'DELETE':
+		if act.merge_bones_method == "DELETE":
 			armature.data.bones[active_bone_name].select = True
-		bpy.ops.object.mode_set(mode='EDIT')
+		bpy.ops.object.mode_set(mode="EDIT")
 
 		common_utils.print_execution_time("Merge Bones", start_time)
-		return {'FINISHED'}
+		return {"FINISHED"}
 
 
 # Weight paint brush mode invert
@@ -286,20 +286,20 @@ class InvertWeightPaintBrush(bpy.types.Operator):
 	"""Weight Paint Brush Subtract Mode"""
 	bl_idname = "object.act_weight_paint_brush_invert"
 	bl_label = "Invert Brush"
-	bl_options = {'REGISTER', 'UNDO'}
+	bl_options = {"REGISTER", "UNDO"}
 
 	def execute(self, context):
 		current_brush = context.scene.tool_settings.weight_paint.brush
 
-		if current_brush.blend == 'ADD':
-			current_brush.blend = 'SUB'
-		elif current_brush.blend == 'SUB':
-			current_brush.blend = 'ADD'
+		if current_brush.blend == "ADD":
+			current_brush.blend = "SUB"
+		elif current_brush.blend == "SUB":
+			current_brush.blend = "ADD"
 		else:
 			weight = context.scene.tool_settings.unified_paint_settings.weight
 			context.scene.tool_settings.unified_paint_settings.weight = 1 - weight
 
-		return {'FINISHED'}
+		return {"FINISHED"}
 
 
 # Select Objects with Negative Scale
@@ -307,7 +307,7 @@ class SelectNegativeScaledObjects(bpy.types.Operator):
 	"""Select Objects with Negative Scale"""
 	bl_idname = "object.act_select_negative_scaled_objects"
 	bl_label = "Select Negative Scaled Objs"
-	bl_options = {'REGISTER', 'UNDO'}
+	bl_options = {"REGISTER", "UNDO"}
 
 	def execute(self, context):
 		start_time = datetime.now()
@@ -318,7 +318,7 @@ class SelectNegativeScaledObjects(bpy.types.Operator):
 				negative_scaled_obj.append(obj)
 
 		if len(negative_scaled_obj) > 0:
-			bpy.ops.object.select_all(action='DESELECT')
+			bpy.ops.object.select_all(action="DESELECT")
 
 			for obj in negative_scaled_obj:
 				obj.select_set(True)
@@ -328,14 +328,14 @@ class SelectNegativeScaledObjects(bpy.types.Operator):
 		else:
 			common_utils.show_message_box("No objects with negative scale found", "Negative Scaled Objects")
 		common_utils.print_execution_time("Select Objects with Negative Scale", start_time)
-		return {'FINISHED'}
+		return {"FINISHED"}
 
 
 class CleanupEmpties(bpy.types.Operator):
 	"""Delete empties without any child"""
 	bl_idname = "object.act_cleanup_empties"
 	bl_label = "Cleanup Empties"
-	bl_options = {'REGISTER', 'UNDO'}
+	bl_options = {"REGISTER", "UNDO"}
 
 	def execute(self, context):
 		start_time = datetime.now()
@@ -343,15 +343,15 @@ class CleanupEmpties(bpy.types.Operator):
 		selected_objects = context.selected_objects
 		active_object = context.active_object
 		is_active_object_deleted = False
-		bpy.ops.object.select_all(action='DESELECT')
+		bpy.ops.object.select_all(action="DESELECT")
 
 		for obj in reversed(selected_objects):
-			if obj.type == 'EMPTY' \
+			if obj.type == "EMPTY" \
 					or (act.delete_empty_meshes and obj.type == "MESH" and len(obj.data.vertices) == 0):
 				empty_branch = True
 
 				for child in obj.children_recursive:
-					if not (child.type == 'EMPTY' or
+					if not (child.type == "EMPTY" or
 							(act.delete_empty_meshes and child.type == "MESH" and len(child.data.vertices) == 0)):
 						empty_branch = False
 
@@ -372,7 +372,7 @@ class CleanupEmpties(bpy.types.Operator):
 			context.view_layer.objects.active = active_object
 
 		common_utils.print_execution_time("Cleanup Empties", start_time)
-		return {'FINISHED'}
+		return {"FINISHED"}
 
 
 classes = (

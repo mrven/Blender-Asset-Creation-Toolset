@@ -2,7 +2,7 @@ import bpy
 
 from . import operators
 
-package_name = __package__.split('.')[0]
+package_name = __package__.split(".")[0]
 
 
 class VIEW3D_PT_other_tools_panel(bpy.types.Panel):
@@ -15,14 +15,14 @@ class VIEW3D_PT_other_tools_panel(bpy.types.Panel):
 	def poll(cls, context):
 		preferences = context.preferences.addons[package_name].preferences
 		return (context.object is not None and context.active_object is not None
-		        and context.object.mode in {'OBJECT', 'EDIT_ARMATURE', 'PAINT_WEIGHT'} and preferences.other_enable)
+		        and context.object.mode in {"OBJECT", "EDIT_ARMATURE", "PAINT_WEIGHT"} and preferences.other_enable)
 
 	def draw(self, context):
 		act = context.scene.act
 
 		layout = self.layout
 
-		if context.mode == 'OBJECT':
+		if context.mode == "OBJECT":
 			row = layout.row()
 			row.operator(operators.ObjNameToMeshName.bl_idname)
 
@@ -30,7 +30,7 @@ class VIEW3D_PT_other_tools_panel(bpy.types.Panel):
 			row = box.row(align=True)
 			row.label(text=" Method")
 			row.prop(act, "col_to_obj_name_method", expand=False)
-			if act.col_to_obj_name_method == 'ADD':
+			if act.col_to_obj_name_method == "ADD":
 				row = box.row(align=True)
 				row.label(text=" Place ")
 				row.prop(act, "col_name_position", expand=False)
@@ -66,7 +66,7 @@ class VIEW3D_PT_other_tools_panel(bpy.types.Panel):
 			row = box.row()
 			row.prop(act, "delete_empty_meshes", text="Also delete empty meshes")
 
-		if context.mode == 'EDIT_ARMATURE':
+		if context.mode == "EDIT_ARMATURE":
 			row = layout.row()
 			row.label(text="Merge Bones:")
 
@@ -77,7 +77,7 @@ class VIEW3D_PT_other_tools_panel(bpy.types.Panel):
 			row = layout.row()
 			row.operator(operators.MergeBones.bl_idname)
 
-		if context.mode == 'PAINT_WEIGHT':
+		if context.mode == "PAINT_WEIGHT":
 			box = layout.box()
 			row = box.row(align=True)
 			row.label(text="Current Mode:")

@@ -15,7 +15,7 @@ PANELS_TO_UPDATE = {
     "VIEW3D_PT_other_tools_panel": "other_panel_category",
 }
 
-package_name = __package__.split('.')[0]
+package_name = __package__.split(".")[0]
 
 def update_panel_categories(_, context):
 	prefs = context.preferences.addons[package_name].preferences
@@ -146,56 +146,56 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 	def draw(self, _):
 		layout = self.layout
 		row = layout.row()
-		row.label(text='Visibility and Category for Panels:')
+		row.label(text="Visibility and Category for Panels:")
 
 		box = layout.box()
 		row = box.row(align=True)
-		row.prop(self, 'origin_enable')
+		row.prop(self, "origin_enable")
 		if self.origin_enable:
-			row.prop(self, 'origin_panel_category', text="Panel")
+			row.prop(self, "origin_panel_category", text="Panel")
 
 		row = box.row(align=True)
-		row.prop(self, 'renaming_enable')
+		row.prop(self, "renaming_enable")
 		if self.renaming_enable:
-			row.prop(self, 'rename_panel_category', text="Panel")
+			row.prop(self, "rename_panel_category", text="Panel")
 
 		row = box.row(align=True)
-		row.prop(self, 'uv_view3d_enable')
+		row.prop(self, "uv_view3d_enable")
 		if self.uv_view3d_enable:
-			row.prop(self, 'view3d_uv_panel_category', text="Panel")
+			row.prop(self, "view3d_uv_panel_category", text="Panel")
 
 		row = box.row(align=True)
-		row.prop(self, 'uv_uv_enable')
+		row.prop(self, "uv_uv_enable")
 		if self.uv_uv_enable:
-			row.prop(self, 'uv_uv_category', text="Panel")
+			row.prop(self, "uv_uv_category", text="Panel")
 
 		row = box.row(align=True)
-		row.prop(self, 'export_import_enable')
+		row.prop(self, "export_import_enable")
 		if self.export_import_enable:
-			row.prop(self, 'export_import_panel_category', text="Panel")
+			row.prop(self, "export_import_panel_category", text="Panel")
 
 		row = box.row(align=True)
-		row.prop(self, 'material_enable')
+		row.prop(self, "material_enable")
 		if self.material_enable:
-			row.prop(self, 'material_panel_category', text="Panel")
+			row.prop(self, "material_panel_category", text="Panel")
 
 		row = box.row(align=True)
-		row.prop(self, 'uv_material_enable')
+		row.prop(self, "uv_material_enable")
 		if self.uv_material_enable:
-			row.prop(self, 'uv_material_panel_category', text="Panel")
+			row.prop(self, "uv_material_panel_category", text="Panel")
 
 		row = box.row()
-		row.prop(self, 'material_properties_enable')
+		row.prop(self, "material_properties_enable")
 
 		row = box.row(align=True)
-		row.prop(self, 'other_enable')
+		row.prop(self, "other_enable")
 		if self.other_enable:
-			row.prop(self, 'other_panel_category', text="Panel")
+			row.prop(self, "other_panel_category", text="Panel")
 
 		row = box.row(align=True)
-		row.prop(self, 'geometry_enable')
+		row.prop(self, "geometry_enable")
 		if self.geometry_enable:
-			row.prop(self, 'geometry_panel_category', text="Panel")
+			row.prop(self, "geometry_panel_category", text="Panel")
 
 
 classes = (

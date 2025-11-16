@@ -4,14 +4,14 @@ from datetime import datetime
 from ..common import utils as common_utils
 from . import utils
 
-package_name = __package__.split('.')[0]
+package_name = __package__.split(".")[0]
 
 # Numbering
 class Numbering(bpy.types.Operator):
 	"""Set Numbering of Objects"""
 	bl_idname = "object.act_numbering"
 	bl_label = "Set Numbering"
-	bl_options = {'REGISTER', 'UNDO'}
+	bl_options = {"REGISTER", "UNDO"}
 
 	def execute(self, context):
 		start_time = datetime.now()
@@ -26,17 +26,17 @@ class Numbering(bpy.types.Operator):
 
 				if utils.str_is_int(ob_name[-1:]):
 					underscore_pos = len(ob_name) - 2
-					if ob_name[underscore_pos] == '_':
+					if ob_name[underscore_pos] == "_":
 						ob_name = ob_name[:-2]
 
 				if utils.str_is_int(ob_name[-2:]):
 					underscore_pos = len(ob_name) - 3
-					if ob_name[underscore_pos] == '_':
+					if ob_name[underscore_pos] == "_":
 						ob_name = ob_name[:-3]
 
 				if utils.str_is_int(ob_name[-3:]):
 					underscore_pos = len(ob_name) - 4
-					if ob_name[underscore_pos] == '_':
+					if ob_name[underscore_pos] == "_":
 						ob_name = ob_name[:-4]
 
 				obj.name = ob_name
@@ -47,17 +47,17 @@ class Numbering(bpy.types.Operator):
 			object_class = [x, 0]
 
 			# List of objects
-			if act.nums_method == 'ALONG_X' or act.nums_method == 'SIMPLE' or act.nums_method == 'NONE':
+			if act.nums_method == "ALONG_X" or act.nums_method == "SIMPLE" or act.nums_method == "NONE":
 				object_class = [x, x.location.x]
-			if act.nums_method == 'ALONG_Y':
+			if act.nums_method == "ALONG_Y":
 				object_class = [x, x.location.y]
-			if act.nums_method == 'ALONG_Z':
+			if act.nums_method == "ALONG_Z":
 				object_class = [x, x.location.z]
 
 			objects_list.append(object_class)
 
 		# Sort list
-		if act.nums_method != 'SIMPLE':
+		if act.nums_method != "SIMPLE":
 			objects_list.sort(key=lambda obj_sort: obj_sort[1])
 
 		# Preprocess delete Blender numbers and add new numbers
@@ -68,39 +68,39 @@ class Numbering(bpy.types.Operator):
 			ob_name = current_obj.name
 			if utils.str_is_int(ob_name[-3:]):
 				dot_pos = len(ob_name) - 4
-				if ob_name[dot_pos] == '.':
+				if ob_name[dot_pos] == ".":
 					ob_name = ob_name[:-4]
 
 			# Format for numbers
-			num_str = ''
+			num_str = ""
 
 			# _X, _XX, _XXX
-			if act.nums_format == 'NO_ZEROS':
+			if act.nums_format == "NO_ZEROS":
 				num_str = str(y + 1)
 
 			# _0X, _XX, _XXX
-			if act.nums_format == 'ONE_ZERO':
+			if act.nums_format == "ONE_ZERO":
 				if y <= 8:
-					num_str = '0' + str(y + 1)
+					num_str = "0" + str(y + 1)
 				else:
 					num_str = str(y + 1)
 
 			# _00X, _0XX, _XXX
-			if act.nums_format == 'TWO_ZEROS':
+			if act.nums_format == "TWO_ZEROS":
 				if y <= 8:
-					num_str = '00' + str(y + 1)
+					num_str = "00" + str(y + 1)
 				elif (y >= 9) and (y <= 98):
-					num_str = '0' + str(y + 1)
+					num_str = "0" + str(y + 1)
 				else:
 					num_str = str(y + 1)
 
-			if act.nums_method == 'NONE':
+			if act.nums_method == "NONE":
 				objects_list[y][0].name = ob_name
 			else:
-				objects_list[y][0].name = ob_name + '_' + num_str
+				objects_list[y][0].name = ob_name + "_" + num_str
 
 		common_utils.print_execution_time("Numbering", start_time)
-		return {'FINISHED'}
+		return {"FINISHED"}
 
 
 # Added LOD Postfix
@@ -108,7 +108,7 @@ class AddLODToObjName(bpy.types.Operator):
 	"""Add LOD to Obj Name"""
 	bl_idname = "object.act_lod_to_objname"
 	bl_label = "Add LOD to Name"
-	bl_options = {'REGISTER', 'UNDO'}
+	bl_options = {"REGISTER", "UNDO"}
 
 	def execute(self, context):
 		start_time = datetime.now()
@@ -121,7 +121,7 @@ class AddLODToObjName(bpy.types.Operator):
 			obj.name = obj.name + "_LOD" + str(act.lod_level)
 
 		common_utils.print_execution_time("Add LOD to Obj Name", start_time)
-		return {'FINISHED'}
+		return {"FINISHED"}
 
 
 # Remove LOD Postfix
@@ -129,7 +129,7 @@ class RemoveLODFromObjName(bpy.types.Operator):
 	"""Remove LOD from Obj Name"""
 	bl_idname = "object.act_remove_lod_from_objname"
 	bl_label = "Remove LOD from Name"
-	bl_options = {'REGISTER', 'UNDO'}
+	bl_options = {"REGISTER", "UNDO"}
 
 	def execute(self, context):
 		start_time = datetime.now()
@@ -140,7 +140,7 @@ class RemoveLODFromObjName(bpy.types.Operator):
 				obj.name = obj.name[:-5]
 
 		common_utils.print_execution_time("Remove LOD from Obj Name", start_time)
-		return {'FINISHED'}
+		return {"FINISHED"}
 
 
 # Rename bones
@@ -148,7 +148,7 @@ class RenameBones(bpy.types.Operator):
 	"""Rename bones"""
 	bl_idname = "object.act_rename_bones"
 	bl_label = "Rename bones"
-	bl_options = {'REGISTER', 'UNDO'}
+	bl_options = {"REGISTER", "UNDO"}
 
 	Value: bpy.props.StringProperty()
 
@@ -160,7 +160,7 @@ class RenameBones(bpy.types.Operator):
 			x.name = x.name + self.Value
 
 		common_utils.print_execution_time("Rename Bones", start_time)
-		return {'FINISHED'}
+		return {"FINISHED"}
 
 
 classes = (

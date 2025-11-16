@@ -2,7 +2,7 @@ import bpy
 import collections
 
 # Exclude unnecessary objects
-def selected_obj_with_unique_data(obj_type='MESH'):
+def selected_obj_with_unique_data(obj_type="MESH"):
 	objs_with_instances = collections.defaultdict(list)
 
 	for obj in bpy.context.selected_objects:
@@ -15,7 +15,7 @@ def selected_obj_with_unique_data(obj_type='MESH'):
 def get_mesh_selection(obj):
 	selection = []
 	start_object_mode = bpy.context.object.mode
-	bpy.ops.object.mode_set(mode='OBJECT')
+	bpy.ops.object.mode_set(mode="OBJECT")
 	if bpy.context.scene.tool_settings.mesh_select_mode[2]:
 		selection_source = obj.data.polygons
 	elif bpy.context.scene.tool_settings.mesh_select_mode[1]:
@@ -34,7 +34,7 @@ def get_mesh_selection(obj):
 # Set Mesh Selection
 def set_mesh_selection(obj, selection):
 	start_object_mode = bpy.context.object.mode
-	bpy.ops.object.mode_set(mode='OBJECT')
+	bpy.ops.object.mode_set(mode="OBJECT")
 	if bpy.context.scene.tool_settings.mesh_select_mode[2]:
 		for item in selection:
 			obj.data.polygons[item].select = True

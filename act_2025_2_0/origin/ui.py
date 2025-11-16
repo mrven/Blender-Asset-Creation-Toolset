@@ -2,7 +2,7 @@ import bpy
 
 from . import operators
 
-package_name = __package__.split('.')[0]
+package_name = __package__.split(".")[0]
 
 class VIEW3D_PT_origin_tools_panel(bpy.types.Panel):
 	bl_label = "Origin Tools"
@@ -14,13 +14,13 @@ class VIEW3D_PT_origin_tools_panel(bpy.types.Panel):
 	def poll(cls, context):
 		preferences = context.preferences.addons[package_name].preferences
 		return (context.object is not None and context.active_object is not None
-		        and context.mode in {'OBJECT', 'EDIT_MESH'} and preferences.origin_enable)
+		        and context.mode in {"OBJECT", "EDIT_MESH"} and preferences.origin_enable)
 
 	def draw(self, context):
 		act = context.scene.act
 
 		layout = self.layout
-		if context.mode == 'OBJECT':
+		if context.mode == "OBJECT":
 			row = layout.row()
 			row.label(text="Origin Align")
 
@@ -41,7 +41,7 @@ class VIEW3D_PT_origin_tools_panel(bpy.types.Panel):
 				("Coordinate", "COORDINATE")
 			]
 
-			axes = ['X', 'Y', 'Z']
+			axes = ["X", "Y", "Z"]
 
 			for label, align_mode in align_modes:
 				row = layout.row(align=True)
@@ -53,7 +53,7 @@ class VIEW3D_PT_origin_tools_panel(bpy.types.Panel):
 			row = layout.row()
 			row.prop(act, "align_co", text="Coordinate")
 
-		if context.object.mode == 'EDIT':
+		if context.object.mode == "EDIT":
 			row = layout.row()
 			row.operator(operators.OriginToSelection.bl_idname)
 

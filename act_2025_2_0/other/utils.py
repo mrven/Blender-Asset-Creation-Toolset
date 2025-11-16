@@ -6,7 +6,7 @@ def obj_name_to_data_name():
 	obj_dict = defaultdict(list)
 
 	for obj in bpy.context.selected_objects:
-		if obj.type != 'EMPTY':
+		if obj.type != "EMPTY":
 			obj_dict[obj.data].append(obj)
 
 	for mesh, objects in obj_dict.items():

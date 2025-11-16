@@ -53,7 +53,7 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 
 	pbr_workflow: BoolProperty(description="PBR Workflow")
 
-	save_path: StringProperty(name="", description="Path for Save Palettes", subtype='DIR_PATH')
+	save_path: StringProperty(name="", description="Path for Save Palettes", subtype="DIR_PATH")
 #endregion
 
 #region Export props
@@ -89,7 +89,7 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 
 	triangulate_before_export: BoolProperty(description="Triangulate Meshes before Export")
 
-	export_path: StringProperty(name="", description="Path for Export FBX", subtype='DIR_PATH')
+	export_path: StringProperty(name="", description="Path for Export FBX", subtype="DIR_PATH")
 
 	#Custom Export Options props
 	export_custom_options: BoolProperty(description="Custom FBX Export Options")
@@ -147,7 +147,7 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 #endregion
 
 #region UV tools props
-	uv_move_factor: EnumProperty(name="", items=UV_MOVE_FACTOR_ITEMS, default='3')
+	uv_move_factor: EnumProperty(name="", items=UV_MOVE_FACTOR_ITEMS, default="3")
 
 	uv_index_rename: IntProperty(description="UV Index", min=0, max=10)
 

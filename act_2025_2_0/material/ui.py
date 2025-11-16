@@ -3,7 +3,7 @@ import bpy
 from . import operators
 from . import utils
 
-package_name = __package__.split('.')[0]
+package_name = __package__.split(".")[0]
 
 # Menu for select texture In UV Editor from active material
 class OBJECT_MT_select_texture_menu(bpy.types.Menu):
@@ -22,13 +22,13 @@ class OBJECT_MT_select_texture_menu(bpy.types.Menu):
 
 		if has_opened_image_editor:
 			# If active object is mesh and has material slots
-			if context.active_object.type == 'MESH':
+			if context.active_object.type == "MESH":
 				if len(context.active_object.data.materials) > 0:
 					has_textures = False
 
 					# Collect all textures from active material to list
 					for node in context.active_object.active_material.node_tree.nodes:
-						if node.type == 'TEX_IMAGE':
+						if node.type == "TEX_IMAGE":
 							texture_name = node.image.name_full
 							texture_in_list = False
 							for texture in texture_list:
@@ -57,12 +57,12 @@ class CallSelectTextureMenu(bpy.types.Operator):
 	"""Select Texture In UV Editor From Active Material"""
 	bl_idname = "object.act_call_select_texture_menu"
 	bl_label = "Open Texture in UV Editor"
-	bl_options = {'REGISTER', 'UNDO'}
+	bl_options = {"REGISTER", "UNDO"}
 
 	def execute(self, _):
 		bpy.ops.wm.call_menu(name=OBJECT_MT_select_texture_menu.bl_idname)
 
-		return {'FINISHED'}
+		return {"FINISHED"}
 
 
 # Material tools UI panel in 3D View
@@ -76,13 +76,13 @@ class VIEW3D_PT_material_tools_panel(bpy.types.Panel):
 	def poll(cls, context):
 		prefs = context.preferences.addons[package_name].preferences
 		return (context.object is not None and context.active_object is not None
-		        and context.mode in {'OBJECT', 'EDIT_MESH'} and prefs.material_enable)
+		        and context.mode in {"OBJECT", "EDIT_MESH"} and prefs.material_enable)
 
 	def draw(self, context):
 		act = context.scene.act
 		layout = self.layout
 
-		if context.mode == 'OBJECT':
+		if context.mode == "OBJECT":
 			box = layout.box()
 			row = box.row()
 			row.operator(operators.MaterialToViewport.bl_idname)
@@ -124,7 +124,7 @@ class VIEW3D_PT_material_tools_panel(bpy.types.Panel):
 # Material tools UI panel in UV Editor
 class UV_PT_material_uv_tools_panel(bpy.types.Panel):
 	bl_label = "Material/Texture Tools"
-	bl_space_type = 'IMAGE_EDITOR'
+	bl_space_type = "IMAGE_EDITOR"
 	bl_region_type = "UI"
 	bl_category = "ACT"
 
@@ -132,7 +132,7 @@ class UV_PT_material_uv_tools_panel(bpy.types.Panel):
 	def poll(cls, context):
 		prefs = context.preferences.addons[package_name].preferences
 		return (context.object is not None and context.active_object is not None
-		        and context.mode in {'OBJECT', 'EDIT_MESH'} and prefs.uv_material_enable)
+		        and context.mode in {"OBJECT", "EDIT_MESH"} and prefs.uv_material_enable)
 
 	def draw(self, _):
 		layout = self.layout
@@ -145,7 +145,7 @@ class UV_PT_material_uv_tools_panel(bpy.types.Panel):
 def material_menu_panel(self, context):
 	prefs = context.preferences.addons[package_name].preferences
 	if context.object is not None and context.active_object is not None and prefs.material_properties_enable:
-		if context.object.mode == 'EDIT' and len(context.selected_objects) > 1:
+		if context.object.mode == "EDIT" and len(context.selected_objects) > 1:
 			layout = self.layout
 			row = layout.row()
 			row.operator(operators.AssignMultiEditMaterials.bl_idname)

@@ -6,7 +6,7 @@ from . import utils
 package_name = __package__.split('.')[0]
 
 # Menu for select texture In UV Editor from active material
-class SelectTextureMenu(bpy.types.Menu):
+class OBJECT_MT_select_texture_menu(bpy.types.Menu):
 	bl_idname = "OBJECT_MT_select_texture_menu"
 	bl_label = "Select Texture"
 
@@ -55,12 +55,12 @@ class SelectTextureMenu(bpy.types.Menu):
 # Call menu for select texture In UV Editor from active material
 class CallSelectTextureMenu(bpy.types.Operator):
 	"""Select Texture In UV Editor From Active Material"""
-	bl_idname = "act.call_select_texture_menu"
+	bl_idname = "object.act_call_select_texture_menu"
 	bl_label = "Open Texture in UV Editor"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	def execute(self, _):
-		bpy.ops.wm.call_menu(name=SelectTextureMenu.bl_idname)
+		bpy.ops.wm.call_menu(name=OBJECT_MT_select_texture_menu.bl_idname)
 
 		return {'FINISHED'}
 
@@ -152,7 +152,7 @@ def material_menu_panel(self, context):
 
 
 classes = (
-	SelectTextureMenu,
+	OBJECT_MT_select_texture_menu,
 	CallSelectTextureMenu,
 	VIEW3D_PT_material_tools_panel,
 	UV_PT_material_uv_tools_panel,

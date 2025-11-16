@@ -8,7 +8,7 @@ package_name = __package__.split('.')[0]
 
 class Align(bpy.types.Operator):
 	"""Origin To Min/Max/Mid/Coordinate/Cursor"""
-	bl_idname = "act.align"
+	bl_idname = "object.act_align"
 	bl_label = "Origin To ..."
 	bl_options = {'REGISTER', 'UNDO'}
 	mode: bpy.props.StringProperty()
@@ -115,7 +115,7 @@ class Align(bpy.types.Operator):
 # Set origin to selection in edit mode
 class OriginToSelection(bpy.types.Operator):
 	"""Set Origin To Selection"""
-	bl_idname = "act.set_origin_to_select"
+	bl_idname = "object.act_set_origin_to_select"
 	bl_label = "Set Origin To Selection"
 	bl_options = {'REGISTER', 'UNDO'}
 

@@ -6,7 +6,7 @@ from ..common import utils as common_utils
 package_name = __package__.split('.')[0]
 
 class DissolveCheckerLoops(bpy.types.Operator):
-	bl_idname = "act.dissolve_checker_loops"
+	bl_idname = "object.act_dissolve_checker_loops"
 	bl_label = "Dissolve Checker Loops"
 	bl_description = "Dissolve Checker Loops (best for cylindrical topology)"
 	bl_options = {'REGISTER', 'UNDO'}
@@ -45,7 +45,7 @@ class DissolveCheckerLoops(bpy.types.Operator):
 
 
 class CollapseCheckerEdges(bpy.types.Operator):
-	bl_idname = "act.collapse_checker_edges"
+	bl_idname = "object.act_collapse_checker_edges"
 	bl_label = "Collapse Checker Edges"
 	bl_description = "Collapse Checker Edges (best for ring topology)"
 	bl_options = {'REGISTER', 'UNDO'}

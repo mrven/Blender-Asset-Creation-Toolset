@@ -12,7 +12,7 @@ package_name = __package__.split('.')[0]
 # Palette texture creator
 class CreatePalette(bpy.types.Operator):
 	"""Create Palette Texture"""
-	bl_idname = "act.create_palette"
+	bl_idname = "object.act_create_palette"
 	bl_label = "Create Palette Texture"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -604,7 +604,7 @@ class CreatePalette(bpy.types.Operator):
 # Open textures export directory
 class OpenSaveDir(bpy.types.Operator):
 	"""Open Save Directory in OS"""
-	bl_idname = "act.open_palette_save_dir"
+	bl_idname = "object.act_open_palette_save_dir"
 	bl_label = "Open Save Directory"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -638,7 +638,7 @@ class OpenSaveDir(bpy.types.Operator):
 # Assign materials in multiEdit
 class AssignMultiEditMaterials(bpy.types.Operator):
 	"""Assign Materials for some objects in MultiEdit Mode"""
-	bl_idname = "act.assign_multi_edit_materials"
+	bl_idname = "object.act_assign_multi_edit_materials"
 	bl_label = "Active Material -> Selected"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -697,7 +697,7 @@ class AssignMultiEditMaterials(bpy.types.Operator):
 # Clear vertex colors
 class ClearVertexColors(bpy.types.Operator):
 	"""Clear Vertex Colors"""
-	bl_idname = "act.clear_vc"
+	bl_idname = "object.act_clear_vc"
 	bl_label = "Clear Vertex Colors"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -725,7 +725,7 @@ class ClearVertexColors(bpy.types.Operator):
 # Material color to viewport color
 class MaterialToViewport(bpy.types.Operator):
 	"""Material Color to Viewport Color"""
-	bl_idname = "act.material_to_viewport"
+	bl_idname = "object.act_material_to_viewport"
 	bl_label = "Material -> Viewport Colors"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -758,7 +758,7 @@ class MaterialToViewport(bpy.types.Operator):
 # Random material viewport color
 class RandomViewportColor(bpy.types.Operator):
 	"""Random Material Viewport Color"""
-	bl_idname = "act.random_viewport_color"
+	bl_idname = "object.act_random_viewport_color"
 	bl_label = "Random Material Viewport Color"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -797,7 +797,7 @@ class RandomViewportColor(bpy.types.Operator):
 # Clear viewport color
 class ClearViewportColor(bpy.types.Operator):
 	"""Clear Viewport Color"""
-	bl_idname = "act.clear_viewport_color"
+	bl_idname = "object.act_clear_viewport_color"
 	bl_label = "Clear Viewport Colors"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -833,7 +833,7 @@ class ClearViewportColor(bpy.types.Operator):
 # Delete unused materials
 class DeleteUnusedMaterials(bpy.types.Operator):
 	"""Delete from Objects Unused Materials and Slots"""
-	bl_idname = "act.delete_unused_materials"
+	bl_idname = "object.act_delete_unused_materials"
 	bl_label = "Delete Unused Materials"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -864,7 +864,7 @@ class DeleteUnusedMaterials(bpy.types.Operator):
 # Delete duplicated materials
 class DeleteDuplicatedMaterials(bpy.types.Operator):
 	"""Delete from Selected Objects Duplicated Materials"""
-	bl_idname = "act.delete_duplicated_materials"
+	bl_idname = "object.act_delete_duplicated_materials"
 	bl_label = "Cleanup Duplicated Materials"
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -938,7 +938,7 @@ class DeleteDuplicatedMaterials(bpy.types.Operator):
 # Select texture in UV Editor from active material (See Select_Texture_Menu)
 class TextureFromActiveMaterial(bpy.types.Operator):
 	"""Select Texture In UV Editor From Active Material"""
-	bl_idname = "act.texture_from_material"
+	bl_idname = "object.act_texture_from_material"
 	bl_label = "Select Texture In UV Editor From Active Material"
 	bl_options = {'REGISTER', 'UNDO'}
 	texture_name: bpy.props.StringProperty()

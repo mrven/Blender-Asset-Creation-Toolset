@@ -64,8 +64,9 @@ class CollapseCheckerEdges(bpy.types.Operator):
 		bpy.ops.object.mode_set(mode="OBJECT")
 
 		for obj in selected_obj:
-			for edge in obj.data.edges:
-				selected_edges += edge.select
+			if obj.type == "MESH":
+				for edge in obj.data.edges:
+					selected_edges += edge.select
 
 		bpy.ops.object.mode_set(mode="EDIT")
 

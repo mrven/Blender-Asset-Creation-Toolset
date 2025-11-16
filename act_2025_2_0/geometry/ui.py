@@ -2,7 +2,7 @@ import bpy
 
 from . import operators
 
-package_name = __package__.split('.')[0]
+package_name = __package__.split(".")[0]
 
 class VIEW3D_PT_geometry_tools_panel(bpy.types.Panel):
 	bl_label = "Geometry Tools"
@@ -13,7 +13,7 @@ class VIEW3D_PT_geometry_tools_panel(bpy.types.Panel):
 	@classmethod
 	def poll(cls, context):
 		prefs = context.preferences.addons[package_name].preferences
-		return ((context.object is not None and context.active_object is not None and context.mode == 'EDIT_MESH')
+		return ((context.object is not None and context.active_object is not None and context.mode == "EDIT_MESH")
 		        and prefs.geometry_enable)
 
 	def draw(self, _):

@@ -2,7 +2,7 @@ import bpy
 
 from . import operators
 
-package_name = __package__.split('.')[0]
+package_name = __package__.split(".")[0]
 
 class VIEW3D_PT_rename_tools_panel(bpy.types.Panel):
 	bl_label = "Renaming Tools"
@@ -14,22 +14,22 @@ class VIEW3D_PT_rename_tools_panel(bpy.types.Panel):
 	def poll(cls, context):
 		preferences = context.preferences.addons[package_name].preferences
 		return (context.object is not None and context.active_object is not None
-		        and context.object.mode in {'OBJECT', 'EDIT_ARMATURE'} and preferences.renaming_enable)
+		        and context.object.mode in {"OBJECT", "EDIT_ARMATURE"} and preferences.renaming_enable)
 
 	def draw(self, context):
 		act = context.scene.act
 		layout = self.layout
 
-		if context.mode == 'OBJECT':
+		if context.mode == "OBJECT":
 			box = layout.box()
 			row = box.row()
 			row.label(text="Numbering Objects")
 			row = box.row(align=True)
 			row.label(text="Method:")
-			row.prop(act, 'nums_method', expand=False)
+			row.prop(act, "nums_method", expand=False)
 			row = box.row(align=True)
 			row.label(text="Format:")
-			row.prop(act, 'nums_format', expand=False)
+			row.prop(act, "nums_format", expand=False)
 			row = box.row()
 			row.prop(act, "delete_prev_nums", text="Delete Previous Nums")
 			row = box.row()
@@ -43,7 +43,7 @@ class VIEW3D_PT_rename_tools_panel(bpy.types.Panel):
 			row = box.row(align=True)
 			row.operator(operators.RemoveLODFromObjName.bl_idname)
 
-		elif context.mode == 'EDIT_ARMATURE':
+		elif context.mode == "EDIT_ARMATURE":
 			row = layout.row(align=True)
 			row.operator(operators.RenameBones.bl_idname, text="Add .L").Value = ".L"
 			row.operator(operators.RenameBones.bl_idname, text="Add .R").Value = ".R"

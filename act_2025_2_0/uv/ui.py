@@ -2,19 +2,19 @@ import bpy
 
 from . import operators
 
-package_name = __package__.split('.')[0]
+package_name = __package__.split(".")[0]
 
 # UV mover UI panel
 class UV_PT_uv_mover_panel(bpy.types.Panel):
 	bl_label = "UV Mover"
-	bl_space_type = 'IMAGE_EDITOR'
+	bl_space_type = "IMAGE_EDITOR"
 	bl_region_type = "UI"
 	bl_category = "ACT"
 
 	@classmethod
 	def poll(cls, context):
 		preferences = context.preferences.addons[package_name].preferences
-		return context.mode == 'EDIT_MESH' and context.area.ui_type == 'UV' and preferences.uv_uv_enable
+		return context.mode == "EDIT_MESH" and context.area.ui_type == "UV" and preferences.uv_uv_enable
 
 	def draw(self, context):
 		act = context.scene.act
@@ -49,7 +49,7 @@ class UV_PT_uv_mover_panel(bpy.types.Panel):
 
 		row = layout.row(align=True)
 		row.label(text="Move Step   1/")
-		row.prop(act, 'uv_move_factor', expand=False)
+		row.prop(act, "uv_move_factor", expand=False)
 
 
 # UV tools UI panels
@@ -63,7 +63,7 @@ class VIEW3D_PT_uv_tools_panel(bpy.types.Panel):
 	def poll(cls, context):
 		preferences = context.preferences.addons[package_name].preferences
 		return (context.object is not None and context.active_object is not None
-		        and context.mode == 'OBJECT' and preferences.uv_view3d_enable)
+		        and context.mode == "OBJECT" and preferences.uv_view3d_enable)
 
 	def draw(self, context):
 		act = context.scene.act
@@ -91,12 +91,12 @@ class VIEW3D_PT_uv_tools_panel(bpy.types.Panel):
 		row = box.row(align=True)
 		row.label(text="Packing:")
 		row.prop(act, "uv_packing_mode", expand=False)
-		if act.uv_packing_mode == 'SMART':
+		if act.uv_packing_mode == "SMART":
 			row = box.row()
 			row.prop(act, "uv_packing_smart_angle", text="Angle:")
 			row = box.row()
 			row.prop(act, "uv_packing_smart_margin", text="Margin:")
-		if act.uv_packing_mode == 'LIGHTMAP':
+		if act.uv_packing_mode == "LIGHTMAP":
 			row = box.row()
 			row.prop(act, "uv_packing_lightmap_quality", text="Quality:")
 			row = box.row()

@@ -4,13 +4,13 @@ from datetime import datetime
 from ..common import utils as common_utils
 from . import utils
 
-package_name = __package__.split('.')[0]
+package_name = __package__.split(".")[0]
 
 class Align(bpy.types.Operator):
 	"""Origin To Min/Max/Mid/Coordinate/Cursor"""
 	bl_idname = "object.act_align"
 	bl_label = "Origin To ..."
-	bl_options = {'REGISTER', 'UNDO'}
+	bl_options = {"REGISTER", "UNDO"}
 	mode: bpy.props.StringProperty()
 	axis: bpy.props.StringProperty()
 
@@ -23,14 +23,14 @@ class Align(bpy.types.Operator):
 		current_active_obj = context.active_object
 		saved_cursor_loc = context.scene.cursor.location.copy()
 
-		bpy.ops.object.mode_set(mode='OBJECT')
-		bpy.ops.object.select_all(action='DESELECT')
+		bpy.ops.object.mode_set(mode="OBJECT")
+		bpy.ops.object.select_all(action="DESELECT")
 
-		axis_index = {'X': 0, 'Y': 1, 'Z': 2}[self.axis]
+		axis_index = {"X": 0, "Y": 1, "Z": 2}[self.axis]
 
 		# Change individual origin point
 		for obj in current_selected_obj:
-			if obj.type != 'MESH':
+			if obj.type != "MESH":
 				continue
 
 			obj.select_set(True)
@@ -38,20 +38,20 @@ class Align(bpy.types.Operator):
 			# Save current origin and relocate 3D Cursor
 			saved_origin_loc = obj.location.copy()
 
-			bpy.ops.object.mode_set(mode='EDIT')
+			bpy.ops.object.mode_set(mode="EDIT")
 
 			target_co = None
 
-			if self.mode == 'MIN':
+			if self.mode == "MIN":
 				target_co = utils.find_min_max_verts(obj, axis_index)[0]
-			elif self.mode == 'MAX':
+			elif self.mode == "MAX":
 				target_co = utils.find_min_max_verts(obj, axis_index)[1]
-			elif self.mode == 'MID':
+			elif self.mode == "MID":
 				min_co, max_co = utils.find_min_max_verts(obj, axis_index)
 				target_co = (min_co + max_co) / 2
-			elif self.mode == 'CURSOR':
+			elif self.mode == "CURSOR":
 				target_co = saved_cursor_loc[axis_index]
-			elif self.mode == 'COORDINATE':
+			elif self.mode == "COORDINATE":
 				target_co = act.align_co
 
 			if target_co is None:
@@ -59,27 +59,27 @@ class Align(bpy.types.Operator):
 
 			if not act.align_geom_to_orig:
 				# Move cursor
-				bpy.ops.object.mode_set(mode='OBJECT')
+				bpy.ops.object.mode_set(mode="OBJECT")
 
 				new_cursor = list(saved_origin_loc)
 				new_cursor[axis_index] = target_co
 				context.scene.cursor.location = new_cursor
 
 				# Apply origin to cursor position
-				bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+				bpy.ops.object.origin_set(type="ORIGIN_CURSOR")
 				# Reset 3D Cursor position to previous point
 				context.scene.cursor.location = saved_cursor_loc
 
 			# Align Geometry To Origin (Optional)
 			# Move Geometry of object instead of origin
 			if act.align_geom_to_orig:
-				if self.mode in {'CURSOR','COORDINATE'}:
-					bpy.ops.object.mode_set(mode='OBJECT')
+				if self.mode in {"CURSOR","COORDINATE"}:
+					bpy.ops.object.mode_set(mode="OBJECT")
 					difference = target_co - saved_origin_loc[axis_index]
 				else:
 					difference = saved_origin_loc[axis_index] - target_co
 					bpy.ops.mesh.reveal()
-					bpy.ops.mesh.select_all(action='SELECT')
+					bpy.ops.mesh.select_all(action="SELECT")
 
 				move_vector = [0.0, 0.0, 0.0]
 				move_vector[axis_index] = difference
@@ -88,17 +88,17 @@ class Align(bpy.types.Operator):
 				constraint_axis[axis_index] = True
 
 				translate_params = {
-					'value': tuple(move_vector),
-					'constraint_axis': tuple(constraint_axis),
-					'orient_type': 'GLOBAL',
-					'orient_matrix_type': 'GLOBAL',
-					'mirror': False,
-					'use_proportional_edit': False
+					"value": tuple(move_vector),
+					"constraint_axis": tuple(constraint_axis),
+					"orient_type": "GLOBAL",
+					"orient_matrix_type": "GLOBAL",
+					"mirror": False,
+					"use_proportional_edit": False
 				}
 
 				bpy.ops.transform.translate(**translate_params)
 
-				bpy.ops.object.mode_set(mode='OBJECT')
+				bpy.ops.object.mode_set(mode="OBJECT")
 
 			obj.select_set(False)
 
@@ -109,7 +109,7 @@ class Align(bpy.types.Operator):
 		context.view_layer.objects.active = current_active_obj
 
 		common_utils.print_execution_time("Align To ...", start_time)
-		return {'FINISHED'}
+		return {"FINISHED"}
 
 
 # Set origin to selection in edit mode
@@ -117,21 +117,21 @@ class OriginToSelection(bpy.types.Operator):
 	"""Set Origin To Selection"""
 	bl_idname = "object.act_set_origin_to_select"
 	bl_label = "Set Origin To Selection"
-	bl_options = {'REGISTER', 'UNDO'}
+	bl_options = {"REGISTER", "UNDO"}
 
 	def execute(self, context):
 		start_time = datetime.now()
 		saved_cursor_loc = context.scene.cursor.location.copy()
 		bpy.ops.view3d.snap_cursor_to_selected()
-		bpy.ops.object.mode_set(mode='OBJECT')
+		bpy.ops.object.mode_set(mode="OBJECT")
 		# Apply origin to Cursor position
-		bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+		bpy.ops.object.origin_set(type="ORIGIN_CURSOR")
 		# Reset 3D Cursor position  
 		context.scene.cursor.location = saved_cursor_loc
-		bpy.ops.object.mode_set(mode='EDIT')
+		bpy.ops.object.mode_set(mode="EDIT")
 
 		common_utils.print_execution_time("Set Origin to Selection", start_time)
-		return {'FINISHED'}
+		return {"FINISHED"}
 
 
 classes = (

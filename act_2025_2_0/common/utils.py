@@ -3,7 +3,7 @@ import re
 from datetime import datetime
 
 # Message Box
-def show_message_box(message="", title="Message Box", icon='INFO'):
+def show_message_box(message="", title="Message Box", icon="INFO"):
 	def draw(self, context):
 		self.layout.label(text=message)
 

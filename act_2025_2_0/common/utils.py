@@ -2,14 +2,9 @@ import bpy
 import re
 from datetime import datetime
 
-def get_short_package_name():
-    package_parts = __package__.split(".")
-    return package_parts[2] if package_parts[0] == "bl_ext" else package_parts[0]
-
-
-def get_full_package_name():
-    package_parts = __package__.split(".")
-    return ".".join(package_parts[:3]) if package_parts[0] == "bl_ext" else package_parts[0]
+def get_package_name():
+	package_parts = __package__.split(".")
+	return ".".join(package_parts[:3]) if package_parts[0] == "bl_ext" else package_parts[0]
 
 
 # Message Box

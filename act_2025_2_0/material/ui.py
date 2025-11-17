@@ -4,7 +4,7 @@ from . import operators
 from . import utils
 from ..common import utils as common_utils
 
-package_name = common_utils.get_short_package_name()
+package_name = common_utils.get_package_name()
 
 # Menu for select texture In UV Editor from active material
 class OBJECT_MT_select_texture_menu(bpy.types.Menu):

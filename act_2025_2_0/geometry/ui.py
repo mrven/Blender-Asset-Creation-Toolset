@@ -3,7 +3,7 @@ import bpy
 from . import operators
 from ..common import utils as common_utils
 
-package_name = common_utils.get_short_package_name()
+package_name = common_utils.get_package_name()
 
 class VIEW3D_PT_geometry_tools_panel(bpy.types.Panel):
 	bl_label = "Geometry Tools"

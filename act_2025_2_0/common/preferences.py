@@ -16,7 +16,7 @@ PANELS_TO_UPDATE = {
     "VIEW3D_PT_other_tools_panel": "other_panel_category",
 }
 
-package_name = utils.get_short_package_name()
+package_name = utils.get_package_name()
 
 def update_panel_categories(_, context):
 	prefs = context.preferences.addons[package_name].preferences

@@ -3,6 +3,7 @@ import random
 import colorsys
 import os
 import subprocess
+import sys
 from datetime import datetime
 
 from ..common import utils as common_utils
@@ -621,9 +622,14 @@ class OpenSaveDir(bpy.types.Operator):
 
 		if len(act.save_dir) > 0:
 			try:
-				os.startfile(act.save_dir)
-			except:
-				subprocess.Popen(["xdg-open", act.save_dir])
+				if sys.platform.startswith("win"):
+					os.startfile(act.save_dir)
+				elif sys.platform.startswith("linux"):
+					subprocess.Popen(["xdg-open", act.save_dir])
+				elif sys.platform.startswith("darwin"):  # macOS
+					subprocess.Popen(["open", act.save_dir])
+			except Exception as e:
+				print(f"Can't open folder: {e}")
 		else:
 			common_utils.show_message_box("Create Palette's before",
 								   "Info")

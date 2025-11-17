@@ -2,6 +2,7 @@ import bpy
 import os
 import subprocess
 import math
+import sys
 from datetime import datetime
 
 from ..common import utils as common_utils
@@ -383,9 +384,14 @@ class OpenExportDir(bpy.types.Operator):
 		# Try open export dir in OS
 		if len(act.export_dir) > 0:
 			try:
-				os.startfile(act.export_dir)
-			except Exception:
-				subprocess.Popen(["xdg-open", act.export_dir])
+				if sys.platform.startswith("win"):
+					os.startfile(act.export_dir)
+				elif sys.platform.startswith("linux"):
+					subprocess.Popen(["xdg-open", act.export_dir])
+				elif sys.platform.startswith("darwin"):  # macOS
+					subprocess.Popen(["open", act.export_dir])
+			except Exception as e:
+				print(f"Can't open folder: {e}")
 		else:
 			common_utils.show_message_box("Export FBX's before",
 								   "Info")

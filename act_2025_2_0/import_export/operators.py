@@ -7,8 +7,6 @@ from datetime import datetime
 from ..common import utils as common_utils
 from . import utils
 
-package_name = __package__.split(".")[0]
-
 # FBX/OBJ/GLTF export
 class ACTExport(bpy.types.Operator):
 	"""Export FBXs/OBJs/GLTFs to Unity/UE/Godot"""

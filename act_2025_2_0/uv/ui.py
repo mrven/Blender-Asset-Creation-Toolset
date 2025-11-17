@@ -1,8 +1,9 @@
 import bpy
 
 from . import operators
+from ..common import utils as common_utils
 
-package_name = __package__.split(".")[0]
+package_name = common_utils.get_short_package_name()
 
 # UV mover UI panel
 class UV_PT_uv_mover_panel(bpy.types.Panel):
@@ -13,8 +14,8 @@ class UV_PT_uv_mover_panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(cls, context):
-		preferences = context.preferences.addons[package_name].preferences
-		return context.mode == "EDIT_MESH" and context.area.ui_type == "UV" and preferences.uv_uv_enable
+		prefs = context.preferences.addons[package_name].preferences
+		return context.mode == "EDIT_MESH" and context.area.ui_type == "UV" and prefs.uv_uv_enable
 
 	def draw(self, context):
 		act = context.scene.act
@@ -61,9 +62,9 @@ class VIEW3D_PT_uv_tools_panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(cls, context):
-		preferences = context.preferences.addons[package_name].preferences
+		prefs = context.preferences.addons[package_name].preferences
 		return (context.object is not None and context.active_object is not None
-		        and context.mode == "OBJECT" and preferences.uv_view3d_enable)
+		        and context.mode == "OBJECT" and prefs.uv_view3d_enable)
 
 	def draw(self, context):
 		act = context.scene.act

@@ -7,8 +7,6 @@ from datetime import datetime
 
 from ..common import utils as common_utils
 
-package_name = __package__.split(".")[0]
-
 # Palette texture creator
 class CreatePalette(bpy.types.Operator):
 	"""Create Palette Texture"""

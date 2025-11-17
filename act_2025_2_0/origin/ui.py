@@ -1,8 +1,9 @@
 import bpy
 
 from . import operators
+from ..common import utils as common_utils
 
-package_name = __package__.split(".")[0]
+package_name = common_utils.get_short_package_name()
 
 class VIEW3D_PT_origin_tools_panel(bpy.types.Panel):
 	bl_label = "Origin Tools"
@@ -12,9 +13,9 @@ class VIEW3D_PT_origin_tools_panel(bpy.types.Panel):
 
 	@classmethod
 	def poll(cls, context):
-		preferences = context.preferences.addons[package_name].preferences
+		prefs = context.preferences.addons[package_name].preferences
 		return (context.object is not None and context.active_object is not None
-		        and context.mode in {"OBJECT", "EDIT_MESH"} and preferences.origin_enable)
+		        and context.mode in {"OBJECT", "EDIT_MESH"} and prefs.origin_enable)
 
 	def draw(self, context):
 		act = context.scene.act

@@ -5,8 +5,6 @@ from collections import defaultdict
 from ..common import utils as common_utils
 from . import utils
 
-package_name = __package__.split(".")[0]
-
 # Clear custom split normals
 class ClearNormals(bpy.types.Operator):
 	"""Clear Custom Split Normals"""

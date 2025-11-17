@@ -4,8 +4,6 @@ from datetime import datetime
 from ..common import utils as common_utils
 from . import utils
 
-package_name = __package__.split(".")[0]
-
 class Align(bpy.types.Operator):
 	"""Origin To Min/Max/Mid/Coordinate/Cursor"""
 	bl_idname = "object.act_align"

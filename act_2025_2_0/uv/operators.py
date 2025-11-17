@@ -5,8 +5,6 @@ import math
 from ..common import utils as common_utils
 from . import utils
 
-package_name = __package__.split(".")[0]
-
 # UV remover
 class ClearUV(bpy.types.Operator):
 	"""Clear UV layers"""

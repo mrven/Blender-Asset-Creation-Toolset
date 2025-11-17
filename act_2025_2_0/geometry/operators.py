@@ -3,8 +3,6 @@ from datetime import datetime
 
 from ..common import utils as common_utils
 
-package_name = __package__.split(".")[0]
-
 class DissolveCheckerLoops(bpy.types.Operator):
 	bl_idname = "object.act_dissolve_checker_loops"
 	bl_label = "Dissolve Checker Loops"

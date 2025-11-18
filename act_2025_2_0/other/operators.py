@@ -1,4 +1,5 @@
 import bpy
+import math
 from datetime import datetime
 from collections import defaultdict
 
@@ -16,6 +17,7 @@ class ClearNormals(bpy.types.Operator):
 		start_time = datetime.now()
 		selected_obj = context.selected_objects
 		active_obj = context.active_object
+		version = bpy.app.version
 
 		for x in selected_obj:
 			bpy.ops.object.select_all(action="DESELECT")
@@ -24,7 +26,11 @@ class ClearNormals(bpy.types.Operator):
 				context.view_layer.objects.active = x
 				bpy.ops.mesh.customdata_custom_splitnormals_clear()
 				# Enable Auto Smooth with angle 180 degrees
-				bpy.ops.object.shade_smooth_by_angle(angle=3.14159, keep_sharp_edges=True)
+				if version < (4, 2, 0):
+					context.object.data.auto_smooth_angle = math.pi
+					context.object.data.use_auto_smooth = True
+				else:
+					bpy.ops.object.shade_smooth_by_angle(angle=3.14159, keep_sharp_edges=True)
 
 		# Select again objects
 		for j in selected_obj:

@@ -164,22 +164,29 @@ def register():
 	for cls in classes:
 		bpy.utils.register_class(cls)
 
-	if utils.cycles_is_enabled():
-		bpy.types.CYCLES_PT_context_material.prepend(material_menu_panel)
-	bpy.types.EEVEE_MATERIAL_PT_context_material.prepend(material_menu_panel)
+	cycles_panel = getattr(bpy.types, "CYCLES_PT_context_material", None)
+	if cycles_panel is not None:
+		cycles_panel.prepend(material_menu_panel)
+
+	eevee_panel = getattr(bpy.types, "EEVEE_MATERIAL_PT_context_material", None)
+	if eevee_panel is not None:
+		eevee_panel.prepend(material_menu_panel)
 
 
 def unregister():
-	if utils.cycles_is_enabled():
+	cycles_panel = getattr(bpy.types, "CYCLES_PT_context_material", None)
+	if cycles_panel is not None:
 		try:
-			bpy.types.CYCLES_PT_context_material.remove(material_menu_panel)
-		except AttributeError as err:
-			print(err)
+			cycles_panel.remove(material_menu_panel)
+		except Exception as err:
+			print("Cycles remove:", err)
 
-	try:
-		bpy.types.EEVEE_MATERIAL_PT_context_material.remove(material_menu_panel)
-	except AttributeError as err:
-		print(err)
+	eevee_panel = getattr(bpy.types, "EEVEE_MATERIAL_PT_context_material", None)
+	if eevee_panel is not None:
+		try:
+			eevee_panel.remove(material_menu_panel)
+		except Exception as err:
+			print("Eevee remove:", err)
 
 	for cls in reversed(classes):
 		bpy.utils.unregister_class(cls)

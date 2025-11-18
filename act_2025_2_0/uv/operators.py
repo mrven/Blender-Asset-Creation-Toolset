@@ -83,9 +83,7 @@ class AddUV(bpy.types.Operator):
 			if act.uv_packing_mode == "SMART":
 				bpy.ops.object.mode_set(mode="EDIT")
 				angle = math.pi * act.uv_packing_smart_angle / 180
-				bpy.ops.uv.smart_project(angle_limit=angle, margin_method="SCALED", rotate_method="AXIS_ALIGNED_Y",
-										 island_margin=act.uv_packing_smart_margin, area_weight=0.0,
-										 correct_aspect=True, scale_to_bounds=False)
+				bpy.ops.uv.smart_project(angle_limit=angle, island_margin=act.uv_packing_smart_margin)
 				bpy.ops.object.mode_set(mode="OBJECT")
 			if act.uv_packing_mode == "LIGHTMAP":
 				bpy.ops.object.mode_set(mode="EDIT")

@@ -16,3 +16,15 @@ def obj_name_to_data_name():
 				object_mesh.data.name = object_mesh.name
 			else:
 				break
+
+# Get children of object recursively (for < 3, 3, 0)
+def get_children_recursive(obj):
+	result = []
+
+	def collect(o):
+		for child in o.children:
+			result.append(child)
+			collect(child)
+
+	collect(obj)
+	return result

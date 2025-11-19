@@ -176,25 +176,33 @@ class MergeBones(bpy.types.Operator):
 	def execute(self, context):
 		start_time = datetime.now()
 		act = context.scene.act
+		version = bpy.app.version
 
 		# Active Bone not updating if switch MODE from POSE to EDIT
 		bpy.ops.object.mode_set(mode="OBJECT")
 		bpy.ops.object.mode_set(mode="EDIT")
 
 		armature = context.active_object
-		active_bone_name = armature.data.bones.active.name
-		selected_bones_name = []
+		selected_bones = []
 		meshes = []
+
+		if version < (5, 0, 0):
+			active_bone = armature.data.bones.active
+			bpy.ops.object.mode_set(mode="OBJECT")
+			bones = armature.data.bones
+		else:
+			bones = armature.data.edit_bones
+			active_bone = bones.active
+
+		# Collect selected bones, but not active
+		for bone in bones:
+			if bone.select and bone != active_bone:
+				selected_bones.append(bone)
 
 		bpy.ops.object.mode_set(mode="OBJECT")
 
-		# Collect selected bones, but not active
-		for bone in armature.data.bones:
-			if bone.select and bone.name != active_bone_name:
-				selected_bones_name.append(bone.name)
-
 		# Cancel if select only one bone
-		if len(selected_bones_name) == 0:
+		if len(selected_bones) == 0:
 			common_utils.show_message_box("Select more than one bone",
 								   "Wrong Selection",
 									   "ERROR")
@@ -224,15 +232,15 @@ class MergeBones(bpy.types.Operator):
 			# Check mesh has needed vertex groups
 			has_active_bone_group = False
 			for group in mesh.vertex_groups:
-				if group.name == active_bone_name:
+				if group.name == active_bone.name:
 					has_active_bone_group = True
 
 			# Transfer weights from selected bones to active with modifier and clean up vertex groups
-			for bone_name in selected_bones_name:
+			for bone in selected_bones:
 				# Check mesh has needed vertex groups
 				has_dissolve_bone_group = False
 				for group in mesh.vertex_groups:
-					if group.name == bone_name:
+					if group.name == bone.name:
 						has_dissolve_bone_group = True
 
 				if not has_dissolve_bone_group:
@@ -242,13 +250,13 @@ class MergeBones(bpy.types.Operator):
 				# Add group for active bone
 				if not has_active_bone_group:
 					bpy.ops.object.vertex_group_add()
-					mesh.vertex_groups.active.name = active_bone_name
+					mesh.vertex_groups.active.name = active_bone.name
 
-				mesh.vertex_groups.active_index = mesh.vertex_groups[bone_name].index
+				mesh.vertex_groups.active_index = mesh.vertex_groups[bone.name].index
 
 				bpy.ops.object.modifier_add(type="VERTEX_WEIGHT_MIX")
-				mesh.modifiers["VertexWeightMix"].vertex_group_a = active_bone_name
-				mesh.modifiers["VertexWeightMix"].vertex_group_b = bone_name
+				mesh.modifiers["VertexWeightMix"].vertex_group_a = active_bone.name
+				mesh.modifiers["VertexWeightMix"].vertex_group_b = bone.name
 				mesh.modifiers["VertexWeightMix"].mix_mode = "ADD"
 				mesh.modifiers["VertexWeightMix"].mix_set = "ALL"
 				bpy.ops.object.modifier_apply(modifier="VertexWeightMix")
@@ -261,25 +269,40 @@ class MergeBones(bpy.types.Operator):
 		bpy.ops.armature.select_all(action="DESELECT")
 		bpy.ops.object.mode_set(mode="OBJECT")
 
+		if version >= (5, 0, 0):
+			bpy.ops.object.mode_set(mode="EDIT")
+
 		# Delete selected bones
-		for bone_name in selected_bones_name:
+		for bone in selected_bones:
 			try:
-				armature.data.bones[bone_name].select = True
+				if version < (5, 0, 0):
+					bpy.ops.object.mode_set(mode="OBJECT")
+					bone.select = True
+					bpy.ops.object.mode_set(mode="EDIT")
+				else:
+					bone.select = True
 			except:
 				continue
-
-			bpy.ops.object.mode_set(mode="EDIT")
 
 			if act.merge_bones_method == "DELETE":
 				bpy.ops.armature.delete()
 			elif act.merge_bones_method == "DISSOLVE":
+				if version >= (5, 0, 0):
+					armature.data.edit_bones.active = bone
+					bpy.ops.object.mode_set(mode="OBJECT")
+					bpy.ops.object.mode_set(mode="EDIT")
 				bpy.ops.armature.dissolve()
 
-			bpy.ops.object.mode_set(mode="OBJECT")
-
 		if act.merge_bones_method == "DELETE":
-			armature.data.bones[active_bone_name].select = True
-		bpy.ops.object.mode_set(mode="EDIT")
+			if version < (5, 0, 0):
+				bpy.ops.object.mode_set(mode="OBJECT")
+				active_bone.select = True
+				bpy.ops.object.mode_set(mode="EDIT")
+			else:
+				active_bone.select = True
+				armature.data.edit_bones.active = active_bone
+				bpy.ops.object.mode_set(mode="OBJECT")
+				bpy.ops.object.mode_set(mode="EDIT")
 
 		common_utils.print_execution_time("Merge Bones", start_time)
 		return {"FINISHED"}

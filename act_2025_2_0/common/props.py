@@ -157,14 +157,14 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 
 	uv_packing_mode: EnumProperty(name="", items=UV_PACKING_ITEMS)
 
-	uv_packing_smart_angle: FloatProperty(description="Project Angle Limit", default=66, min=0, max=89, step=0.1)
+	uv_packing_smart_angle: FloatProperty(description="Project Angle Limit", default=66, min=0, max=89, step=1)
 
-	uv_packing_smart_margin: FloatProperty(description="Project Islands Margin", min=0, max=1, step=0.01)
+	uv_packing_smart_margin: FloatProperty(description="Project Islands Margin", min=0, max=1, step=1)
 
 	uv_packing_lightmap_quality: IntProperty(description="Packing Quality", default=32, min=1, max=48, step=1)
 
 	uv_packing_lightmap_margin: FloatProperty(description="Project Islands Margin", default=0.3, min=0, max=1,
-	                                          step=0.01)
+	                                          step=1)
 #endregion
 
 #region Other tools props

@@ -130,7 +130,7 @@ class CreatePalette(bpy.types.Operator):
 		# Delete plane
 		if flag_exist_obj and plane_obj:
 			bpy.ops.object.select_all(action="DESELECT")
-			plane_obj.select = True
+			plane_obj.select_set(True)
 			bpy.ops.object.delete()
 
 		# Create new plane
@@ -455,6 +455,16 @@ class CreatePalette(bpy.types.Operator):
 
 				# Scale object UV (for polygons with current material) to same material on palette texture
 				context.area.type = "IMAGE_EDITOR"
+
+				if context.area.spaces.active.image and context.area.spaces.active.image.name == 'Render Result':
+					context.area.spaces.active.image = None
+
+				if context.space_data.mode != 'UV':
+					context.space_data.mode = 'UV'
+
+				if version >= (4, 5, 0):
+					bpy.context.area.ui_type = 'UV'
+
 				bpy.ops.uv.cursor_set(location=(r_mat_x, r_mat_y))
 				context.space_data.pivot_point = "CURSOR"
 				bpy.ops.transform.resize(
@@ -580,7 +590,9 @@ class CreatePalette(bpy.types.Operator):
 
 			# Alpha Clip
 			palette_mat.blend_method = "CLIP"
-			palette_mat.shadow_method = "CLIP"
+
+			if version < (4, 5, 0):
+				palette_mat.shadow_method = "CLIP"
 
 		# Delete temp materials and cleanup
 		if palette_back_material:

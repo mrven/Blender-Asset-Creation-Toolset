@@ -344,6 +344,7 @@ class CleanupEmpties(bpy.types.Operator):
 	def execute(self, context):
 		start_time = datetime.now()
 		act = context.scene.act
+		version = bpy.app.version
 		selected_objects = context.selected_objects
 		active_object = context.active_object
 		is_active_object_deleted = False
@@ -354,7 +355,12 @@ class CleanupEmpties(bpy.types.Operator):
 					or (act.delete_empty_meshes and obj.type == "MESH" and len(obj.data.vertices) == 0):
 				empty_branch = True
 
-				for child in obj.children_recursive:
+				if version < (3, 3, 0):
+					children = utils.get_children_recursive(obj)
+				else:
+					children = obj.children_recursive
+
+				for child in children:
 					if not (child.type == "EMPTY" or
 							(act.delete_empty_meshes and child.type == "MESH" and len(child.data.vertices) == 0)):
 						empty_branch = False

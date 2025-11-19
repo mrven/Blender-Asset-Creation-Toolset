@@ -1,7 +1,6 @@
 import bpy
 
 from . import operators
-from . import utils
 from ..common import utils as common_utils
 
 package_name = common_utils.get_package_name()

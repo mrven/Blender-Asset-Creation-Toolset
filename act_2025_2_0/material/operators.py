@@ -72,7 +72,7 @@ class CreatePalette(bpy.types.Operator):
 		for ie_area in ie_areas:
 			context.screen.areas[ie_area].ui_type = "IMAGE_EDITOR"
 
-		# Get selected MESH objects and get active object"s name
+		# Get selected MESH objects and get active object's name
 		start_active_obj = context.active_object
 		start_selected_obj = context.selected_objects
 		current_objects = []
@@ -251,7 +251,7 @@ class CreatePalette(bpy.types.Operator):
 			if not flag_exist_texture_emission:
 				bpy.ops.image.new(name=emission_texture_name, width=32, height=32)
 
-		# Set materials to plane"s polygons (one material to one quad polygon)
+		# Set materials to plane's polygons (one material to one quad polygon)
 		bpy.ops.object.mode_set(mode="OBJECT")
 		ob = context.object
 
@@ -276,7 +276,7 @@ class CreatePalette(bpy.types.Operator):
 		# Remove old material and create new
 		palette_bake_mat = bpy.data.materials.new("Palette_Bake")
 
-		# Setup material"s nodes for baking
+		# Setup material's nodes for baking
 		bake_plane.data.materials.append(palette_bake_mat)
 		palette_bake_mat.use_nodes = True
 		nodes = palette_bake_mat.node_tree.nodes
@@ -411,7 +411,7 @@ class CreatePalette(bpy.types.Operator):
 			x_loc = context.area.spaces[0].cursor_location[0]
 			y_loc = context.area.spaces[0].cursor_location[1]
 
-			# And save these coordinates as material"s UV coordinates
+			# And save these coordinates as material's UV coordinates
 			mat_coll_list = [mat_name, x_loc, y_loc]
 			mat_coll_array.append(mat_coll_list)
 
@@ -655,7 +655,7 @@ class AssignMultiEditMaterials(bpy.types.Operator):
 		bpy.ops.object.mode_set(mode="OBJECT")
 
 		# Added active material to all selected objects
-		# If these objects don"t have slot with this material
+		# If these objects don't have slot with this material
 		# But have selected polygons
 		for x in selected_obj:
 			bpy.ops.object.select_all(action="DESELECT")

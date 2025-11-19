@@ -18,6 +18,7 @@ class CreatePalette(bpy.types.Operator):
 	def execute(self, context):
 		start_time = datetime.now()
 		act = context.scene.act
+		version = bpy.app.version
 		act.export_dir = ""
 		path = ""
 		incorrect_names = []
@@ -558,9 +559,14 @@ class CreatePalette(bpy.types.Operator):
 			emission_tex_node.location = (-800, -350)
 			emission_tex_node.image = bpy.data.images[emission_texture_name]
 			bpy.data.images[emission_texture_name].colorspace_settings.name = "sRGB"
-			palette_node_tree.links.new(
-				emission_tex_node.outputs["Color"],
-				palette_node_tree.nodes["Principled BSDF"].inputs["Emission Color"])
+			if version < (4, 0, 0):
+				palette_node_tree.links.new(
+					emission_tex_node.outputs['Color'],
+					palette_node_tree.nodes['Principled BSDF'].inputs['Emission'])
+			else:
+				palette_node_tree.links.new(
+					emission_tex_node.outputs["Color"],
+					palette_node_tree.nodes["Principled BSDF"].inputs["Emission Color"])
 			palette_node_tree.nodes["Principled BSDF"].inputs["Emission Strength"].default_value = 1
 
 			# Opacity

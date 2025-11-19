@@ -293,6 +293,7 @@ class InvertWeightPaintBrush(bpy.types.Operator):
 	bl_options = {"REGISTER", "UNDO"}
 
 	def execute(self, context):
+		version = bpy.app.version
 		current_brush = context.scene.tool_settings.weight_paint.brush
 
 		if current_brush.blend == "ADD":
@@ -300,8 +301,12 @@ class InvertWeightPaintBrush(bpy.types.Operator):
 		elif current_brush.blend == "SUB":
 			current_brush.blend = "ADD"
 		else:
-			weight = context.scene.tool_settings.unified_paint_settings.weight
-			context.scene.tool_settings.unified_paint_settings.weight = 1 - weight
+			if version < (4, 5, 0):
+				weight = context.scene.tool_settings.unified_paint_settings.weight
+				context.scene.tool_settings.unified_paint_settings.weight = 1 - weight
+			else:
+				weight = current_brush.weight
+				current_brush.weight = 1 - weight
 
 		return {"FINISHED"}
 

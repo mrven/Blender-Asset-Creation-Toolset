@@ -725,6 +725,7 @@ class ClearVertexColors(bpy.types.Operator):
 
 	def execute(self, context):
 		start_time = datetime.now()
+		version = bpy.app.version
 		current_selected_obj = context.selected_objects
 		current_active_obj = context.active_object
 
@@ -733,8 +734,12 @@ class ClearVertexColors(bpy.types.Operator):
 			x.select_set(True)
 			context.view_layer.objects.active = x
 			if x.type == "MESH":
-				for color_attribute in reversed(x.data.color_attributes):
-					bpy.ops.geometry.color_attribute_remove()
+				if version < (3, 3, 0):
+					while len(x.data.vertex_colors) > 0:
+						bpy.ops.mesh.vertex_color_remove()
+				else:
+					for color_attribute in reversed(x.data.color_attributes):
+						bpy.ops.geometry.color_attribute_remove()
 
 		for x in current_selected_obj:
 			x.select_set(True)

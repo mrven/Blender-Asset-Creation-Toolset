@@ -4,6 +4,7 @@ from bpy.props import (
 	BoolProperty)
 
 from . import utils
+from . import config_json
 
 PANELS_TO_UPDATE = {
 	"VIEW3D_PT_act_support_panel": "support_panel_category",
@@ -158,7 +159,6 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 		update=update_panel_categories
 	)
 # endregion
-
 # region Common Settings
 	show_export_axis_tooltip: BoolProperty(
 		name="",
@@ -231,8 +231,50 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 		row.label(text="Show Export Axes for UE/Unity Tooltip")
 		row.prop(self, "show_export_axis_tooltip")
 
+		box = layout.box()
+		row = box.row()
+		row.label(text='Default Settings:')
+		row = box.row(align=True)
+		row.label(text='Test Property:')
+		# row.prop(self, 'default_units')
+
+		box.separator(factor=0.5)
+		row = box.row()
+		row.operator(ApplyDefaultsToProps.bl_idname, icon='PRESET')
+
+		layout.separator(factor=0.5)
+		row = layout.row()
+		row.operator(ResetPreferences.bl_idname, icon='FILE_REFRESH')
+
+
+class ResetPreferences(bpy.types.Operator):
+	"""Reset all preferences to default values"""
+	bl_idname = "object.act_reset_preferences"
+	bl_label = "Reset Preferences"
+
+	def execute(self, _):
+		success = config_json.apply_defaults_from_file()
+
+		if success:
+			self.report({'INFO'}, "Preferences was successfully reset")
+		else:
+			self.report({'ERROR'}, "Failed to reset preferences")
+		return {'FINISHED'}
+
+
+class ApplyDefaultsToProps(bpy.types.Operator):
+	"""Apply current defaults from preferences to props"""
+	bl_idname = "object.act_apply_defaults_to_props"
+	bl_label = "Copy Default Settings To Current Session"
+
+	def execute(self, _):
+		config_json.copy_prefs_to_props(force=True)
+		return {'FINISHED'}
+
 
 classes = (
+	ApplyDefaultsToProps,
+	ResetPreferences,
 	ACTAddonPreferences,
 )
 

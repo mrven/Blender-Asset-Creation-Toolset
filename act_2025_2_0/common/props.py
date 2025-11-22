@@ -46,6 +46,7 @@ def update_custom_up_axis(_, context):
 
 
 class ACTAddonProps(bpy.types.PropertyGroup):
+	initialized: BoolProperty(default=False)
 # region Palette props
 	save_dir: StringProperty(name="", description="Save Directory")
 

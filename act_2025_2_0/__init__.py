@@ -12,6 +12,11 @@ bl_info = {
 }
 
 import importlib
+import bpy
+from bpy.app.handlers import persistent
+from bpy.app import timers
+
+from .common import config_json
 
 modules_order = (
 	"common",
@@ -27,13 +32,36 @@ modules_order = (
 
 modules = [importlib.import_module(f".{name}", __package__) for name in modules_order]
 
+def deferred_initialize():
+	config_json.load_or_initialize_prefs()
+	config_json.saving_enabled = True
+	config_json.copy_prefs_to_props()
+
+	return None
+
+
+@persistent
+def on_load_post(_):
+	config_json.load_or_initialize_prefs()
+	config_json.copy_prefs_to_props()
+
+
 def register():
+	config_json.saving_enabled = False
 	for m in modules:
 		if hasattr(m, "register"):
 			m.register()
 
+	timers.register(deferred_initialize, first_interval=0.1)
+
+	if on_load_post not in bpy.app.handlers.load_post:
+		bpy.app.handlers.load_post.append(on_load_post)
+
 
 def unregister():
+	if on_load_post in bpy.app.handlers.load_post:
+		bpy.app.handlers.load_post.remove(on_load_post)
+
 	for m in reversed(modules):
 		if hasattr(m, "unregister"):
 			m.unregister()

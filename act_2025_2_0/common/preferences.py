@@ -40,6 +40,7 @@ def update_panel_categories(_, context):
 class ACTAddonPreferences(bpy.types.AddonPreferences):
 	bl_idname = package_name
 
+# region Panels
 	export_import_enable: BoolProperty(
 		name="Import/Export Tools",
 		description="Show/Hide Import/Export Tools UI Panel",
@@ -143,13 +144,20 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 		default="ACT",
 		update=update_panel_categories
 	)
+# endregion
+
+# region Common Settings
+	show_export_axis_tooltip: BoolProperty(
+		name="",
+		description="Show/Hide Export Axes Conversion Tooltip for UE/Unity",
+		default=True)
+# endregion
 
 	def draw(self, _):
 		layout = self.layout
-		row = layout.row()
-		row.label(text="Visibility and Category for Panels:")
-
 		box = layout.box()
+		row = box.row()
+		row.label(text="Visibility and Category for Panels:")
 		row = box.row(align=True)
 		row.prop(self, "origin_enable")
 		if self.origin_enable:
@@ -197,6 +205,13 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 		row.prop(self, "geometry_enable")
 		if self.geometry_enable:
 			row.prop(self, "geometry_panel_category", text="Panel")
+
+		box = layout.box()
+		row = box.row()
+		row.label(text="Common Settings:")
+		row = box.row(align=True)
+		row.label(text="Show Export Axes for UE/Unity Tooltip")
+		row.prop(self, "show_export_axis_tooltip")
 
 
 classes = (

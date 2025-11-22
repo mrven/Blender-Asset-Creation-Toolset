@@ -194,7 +194,7 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 
 		row = layout.row()
 		if act.export_format == "FBX":
-			if act.export_target_engine in {"UNITY_LEGACY", "UNITY"}:
+			if act.export_target_engine in {"UNITY_PRE_ROTATED", "UNITY"}:
 				row.operator(operators.ACTExport.bl_idname, text="Export FBX to Unity")
 			else:
 				row.operator(operators.ACTExport.bl_idname, text="Export FBX to Unreal")

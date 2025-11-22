@@ -17,7 +17,7 @@ def export_model(path, name):
 def export_fbx(path, name):
 	act = bpy.context.scene.act
 
-	# Defaults for UNITY_LEGACY
+	# Defaults for UNITY_PRE_ROTATED
 	export_fbx_params = dict(filepath=str(path + name + ".fbx"),
 							 use_selection=True,
 							 apply_scale_options="FBX_SCALE_ALL",

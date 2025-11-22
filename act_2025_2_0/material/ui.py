@@ -6,7 +6,7 @@ from ..common import utils as common_utils
 package_name = common_utils.get_package_name()
 
 # Menu for select texture In UV Editor from active material
-class OBJECT_MT_select_texture_menu(bpy.types.Menu):
+class OBJECT_MT_act_select_texture_menu(bpy.types.Menu):
 	bl_idname = "OBJECT_MT_select_texture_menu"
 	bl_label = "Select Texture"
 
@@ -60,13 +60,13 @@ class CallSelectTextureMenu(bpy.types.Operator):
 	bl_options = {"REGISTER", "UNDO"}
 
 	def execute(self, _):
-		bpy.ops.wm.call_menu(name=OBJECT_MT_select_texture_menu.bl_idname)
+		bpy.ops.wm.call_menu(name=OBJECT_MT_act_select_texture_menu.bl_idname)
 
 		return {"FINISHED"}
 
 
 # Material tools UI panel in 3D View
-class VIEW3D_PT_material_tools_panel(bpy.types.Panel):
+class VIEW3D_PT_act_material_tools_panel(bpy.types.Panel):
 	bl_label = "Material/Texture Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -122,7 +122,7 @@ class VIEW3D_PT_material_tools_panel(bpy.types.Panel):
 
 
 # Material tools UI panel in UV Editor
-class UV_PT_material_uv_tools_panel(bpy.types.Panel):
+class UV_PT_act_material_uv_tools_panel(bpy.types.Panel):
 	bl_label = "Material/Texture Tools"
 	bl_space_type = "IMAGE_EDITOR"
 	bl_region_type = "UI"
@@ -152,10 +152,10 @@ def material_menu_panel(self, context):
 
 
 classes = (
-	OBJECT_MT_select_texture_menu,
+	OBJECT_MT_act_select_texture_menu,
 	CallSelectTextureMenu,
-	VIEW3D_PT_material_tools_panel,
-	UV_PT_material_uv_tools_panel,
+	VIEW3D_PT_act_material_tools_panel,
+	UV_PT_act_material_uv_tools_panel,
 )
 
 

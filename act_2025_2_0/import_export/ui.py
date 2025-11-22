@@ -20,6 +20,8 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 
 	def draw(self, context):
 		act = context.scene.act
+		prefs = context.preferences.addons[package_name].preferences
+
 		layout = self.layout
 
 		# Export Mode
@@ -37,6 +39,20 @@ class VIEW3D_PT_import_export_tools_panel(bpy.types.Panel):
 			row = layout.row(align=True)
 			row.label(text="Target Engine:")
 			row.prop(act, "export_target_engine", expand=False)
+
+			if act.export_target_engine == "UNITY" and prefs.show_export_axis_tooltip:
+				box = layout.box()
+				row = box.row()
+				row.label(text='Set "Bake Axis Conversion"', icon="INFO")
+				row = box.row()
+				row.label(text="options in Unity to correct axes")
+
+			if act.export_target_engine == "UNREAL" and prefs.show_export_axis_tooltip:
+				box = layout.box()
+				row = box.row()
+				row.label(text='Set "Force Front X Axis"', icon="INFO")
+				row = box.row()
+				row.label(text="options in UE to correct axes")
 
 		if not (act.export_format == "OBJ" and act.export_mode in {"ALL", "COLLECTION"}):
 			# Apply Transforms

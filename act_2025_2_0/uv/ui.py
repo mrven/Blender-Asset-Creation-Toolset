@@ -6,7 +6,7 @@ from ..common import utils as common_utils
 package_name = common_utils.get_package_name()
 
 # UV mover UI panel
-class UV_PT_uv_mover_panel(bpy.types.Panel):
+class UV_PT_act_uv_mover_panel(bpy.types.Panel):
 	bl_label = "UV Mover"
 	bl_space_type = "IMAGE_EDITOR"
 	bl_region_type = "UI"
@@ -54,7 +54,7 @@ class UV_PT_uv_mover_panel(bpy.types.Panel):
 
 
 # UV tools UI panels
-class VIEW3D_PT_uv_tools_panel(bpy.types.Panel):
+class VIEW3D_PT_act_uv_tools_panel(bpy.types.Panel):
 	bl_label = "UV Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -109,8 +109,8 @@ class VIEW3D_PT_uv_tools_panel(bpy.types.Panel):
 
 
 classes = (
-	VIEW3D_PT_uv_tools_panel,
-	UV_PT_uv_mover_panel,
+	VIEW3D_PT_act_uv_tools_panel,
+	UV_PT_act_uv_mover_panel,
 )
 
 

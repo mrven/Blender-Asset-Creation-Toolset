@@ -5,7 +5,7 @@ from ..common import utils as common_utils
 
 package_name = common_utils.get_package_name()
 
-class VIEW3D_PT_origin_tools_panel(bpy.types.Panel):
+class VIEW3D_PT_act_origin_tools_panel(bpy.types.Panel):
 	bl_label = "Origin Tools"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
@@ -60,7 +60,7 @@ class VIEW3D_PT_origin_tools_panel(bpy.types.Panel):
 
 
 classes = (
-	VIEW3D_PT_origin_tools_panel,
+	VIEW3D_PT_act_origin_tools_panel,
 )
 
 

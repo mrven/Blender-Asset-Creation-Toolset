@@ -7,14 +7,14 @@ from . import utils
 
 PANELS_TO_UPDATE = {
 	"VIEW3D_PT_act_support_panel": "support_panel_category",
-	"VIEW3D_PT_origin_tools_panel": "origin_panel_category",
-	"VIEW3D_PT_rename_tools_panel": "rename_panel_category",
-    "VIEW3D_PT_uv_tools_panel": "view3d_uv_panel_category",
-    "UV_PT_material_uv_tools_panel": "uv_material_panel_category",
-	"UV_PT_uv_mover_panel": "uv_uv_category",
-    "VIEW3D_PT_import_export_tools_panel": "export_import_panel_category",
-    "VIEW3D_PT_material_tools_panel": "material_panel_category",
-    "VIEW3D_PT_other_tools_panel": "other_panel_category",
+	"VIEW3D_PT_act_origin_tools_panel": "origin_panel_category",
+	"VIEW3D_PT_act_rename_tools_panel": "rename_panel_category",
+    "VIEW3D_PT_act_uv_tools_panel": "view3d_uv_panel_category",
+    "UV_PT_act_material_uv_tools_panel": "uv_material_panel_category",
+	"UV_PT_act_uv_mover_panel": "uv_uv_category",
+    "VIEW3D_PT_act_import_export_tools_panel": "export_import_panel_category",
+    "VIEW3D_PT_act_material_tools_panel": "material_panel_category",
+    "VIEW3D_PT_act_other_tools_panel": "other_panel_category",
 }
 
 package_name = utils.get_package_name()

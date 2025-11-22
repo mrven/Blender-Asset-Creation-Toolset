@@ -1,6 +1,6 @@
 # URLs
-TD_DOC_URL = "https://github.com/mrven/Blender-Asset-Creation-Toolset/blob/master/README.md#documentation"
-TD_REPORT_URL = "https://github.com/mrven/Blender-Asset-Creation-Toolset/blob/master/docs/bug_report.md"
+ACT_DOC_URL = "https://github.com/mrven/Blender-Asset-Creation-Toolset/blob/master/README.md#documentation"
+ACT_REPORT_URL = "https://github.com/mrven/Blender-Asset-Creation-Toolset/blob/master/docs/bug_report.md"
 
 
 # Enums/Dictionaries/Lists

@@ -24,7 +24,7 @@ EXPORT_SMOOTHING_ITEMS = (("OFF", "Normals Only", ""),
 
 EXPORT_TARGET_ENGINE_ITEMS = (("UNITY", "Unity", ""),
 								("UNREAL", "Unreal", ""),
-								("UNITY_LEGACY", "Unity (Legacy)", ""))
+								("UNITY_PRE_ROTATED", "Unity (Pre-Rotated)", ""))
 
 EXPORT_VC_COLOR_SPACE_ITEMS = (("LINEAR", "Linear", ""),
 								("SRGB", "sRGB", ""))

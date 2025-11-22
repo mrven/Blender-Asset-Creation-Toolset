@@ -15,6 +15,7 @@ import importlib
 
 modules_order = (
 	"common",
+	"support",
 	"origin",
 	"rename",
 	"uv",

@@ -6,6 +6,7 @@ from bpy.props import (
 from . import utils
 
 PANELS_TO_UPDATE = {
+	"VIEW3D_PT_act_support_panel": "support_panel_category",
 	"VIEW3D_PT_origin_tools_panel": "origin_panel_category",
 	"VIEW3D_PT_rename_tools_panel": "rename_panel_category",
     "VIEW3D_PT_uv_tools_panel": "view3d_uv_panel_category",
@@ -41,6 +42,11 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 	bl_idname = package_name
 
 # region Panels
+	support_enable: BoolProperty(
+		name="ACT Support",
+		description="Show/Hide Support UI Panel",
+		default=True)
+
 	export_import_enable: BoolProperty(
 		name="Import/Export Tools",
 		description="Show/Hide Import/Export Tools UI Panel",
@@ -90,6 +96,13 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 		name="Material (Properties) Tools",
 		description="Show/Hide Export Material (Properties) UI Panel",
 		default=True)
+# endregion
+# region Panel Categories
+	support_panel_category: StringProperty(
+		description="Choose a name for the category of the Support panel",
+		default="ACT",
+		update=update_panel_categories
+	)
 
 	export_import_panel_category: StringProperty(
 		description="Choose a name for the category of the Export panel",
@@ -158,6 +171,11 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 		box = layout.box()
 		row = box.row()
 		row.label(text="Visibility and Category for Panels:")
+		row = box.row(align=True)
+		row.prop(self, "support_enable")
+		if self.support_enable:
+			row.prop(self, "support_panel_category", text="Panel")
+
 		row = box.row(align=True)
 		row.prop(self, "origin_enable")
 		if self.origin_enable:

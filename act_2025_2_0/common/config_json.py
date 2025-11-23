@@ -55,7 +55,7 @@ def copy_prefs_to_props(force = False):
     prefs = bpy.context.preferences.addons[package_name].preferences
 
     if not getattr(props, "initialized", False) or force:
-        # props.units = prefs.default_units
+        props.export_mode = prefs.export_mode
 
         props.initialized = True
 

@@ -48,13 +48,13 @@ def update_custom_up_axis(_, context):
 class ACTAddonProps(bpy.types.PropertyGroup):
 	initialized: BoolProperty(default=False)
 # region Palette props
-	save_dir: StringProperty(name="", description="Save Directory")
+	palette_save_dir: StringProperty(name="", description="Save Directory")
 
-	custom_save_path: BoolProperty(description="Custom Save Path")
+	palette_custom_save_path: BoolProperty(description="Custom Save Path")
 
-	pbr_workflow: BoolProperty(description="PBR Workflow")
+	palette_pbr_workflow: BoolProperty(description="PBR Workflow")
 
-	save_path: StringProperty(name="", description="Path for Save Palettes", subtype="DIR_PATH")
+	palette_save_path: StringProperty(name="", description="Path for Save Palettes", subtype="DIR_PATH")
 # endregion
 # region Export props
 	export_dir: StringProperty(name="", description="Export Directory")

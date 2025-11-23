@@ -104,16 +104,16 @@ class VIEW3D_PT_act_material_tools_panel(bpy.types.Panel):
 
 			box = layout.box()
 			row = box.row()
-			row.prop(act, "pbr_workflow", text="PBR Workflow")
+			row.prop(act, "palette_pbr_workflow", text="PBR Workflow")
 			row = box.row()
-			row.prop(act, "custom_save_path", text="Custom Save Path")
-			if act.custom_save_path:
+			row.prop(act, "palette_custom_save_path", text="Custom Save Path")
+			if act.palette_custom_save_path:
 				row = box.row(align=True)
 				row.label(text="Save Path:")
-				row.prop(act, "save_path")
+				row.prop(act, "palette_save_path")
 			row = box.row()
 			row.operator(operators.CreatePalette.bl_idname)
-			if len(act.save_dir) > 0:
+			if len(act.palette_save_dir) > 0:
 				row = box.row()
 				row.operator(operators.OpenSaveDir.bl_idname)
 

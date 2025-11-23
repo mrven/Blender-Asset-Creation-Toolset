@@ -4,9 +4,9 @@ ACT_REPORT_URL = "https://github.com/mrven/Blender-Asset-Creation-Toolset/blob/m
 
 
 # Enums/Dictionaries/Lists
-EXPORT_MODE_ITEMS = (("INDIVIDUAL", "One-to-One", ""),
+EXPORT_MODE_ITEMS = (("PARENT", "By Parent", ""),
 					("ALL", "All-to-One", ""),
-					("PARENT", "By Parent", ""),
+					("INDIVIDUAL", "One-to-One", ""),
 					("COLLECTION", "By Collection", ""))
 
 EXPORT_FORMAT_ITEMS = (("FBX", "FBX", ""),

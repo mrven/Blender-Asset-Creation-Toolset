@@ -96,8 +96,27 @@ def copy_prefs_to_props(force = False):
 		props.nums_format = prefs.nums_format
 		props.lod_level = prefs.lod_level
 		# UV
+		props.uv_move_factor = prefs.uv_move_factor
+		props.uv_index_rename = prefs.uv_index_rename
+		props.uv_name_rename = prefs.uv_name_rename
+		props.uv_name_add = prefs.uv_name_add
+		props.uv_packing_mode = prefs.uv_packing_mode
+		props.uv_packing_smart_angle = prefs.uv_packing_smart_angle
+		props.uv_packing_smart_margin = prefs.uv_packing_smart_margin
+		props.uv_packing_lightmap_quality = prefs.uv_packing_lightmap_quality
+		props.uv_packing_lightmap_margin = prefs.uv_packing_lightmap_margin
 		# Material
+		props.palette_custom_save_path = prefs.palette_custom_save_path
+		props.palette_pbr_workflow = prefs.palette_pbr_workflow
+		props.palette_save_path = prefs.palette_save_path
 		# Other
+		props.normals_inside = prefs.normals_inside
+		props.calc_normals_en = prefs.calc_normals_en
+		props.merge_bones_method = prefs.merge_bones_method
+		props.col_to_obj_name_method = prefs.col_to_obj_name_method
+		props.col_name_position = prefs.col_name_position
+		props.col_name_type_style = prefs.col_name_type_style
+		props.delete_empty_meshes = prefs.delete_empty_meshes
 
 		props.initialized = True
 

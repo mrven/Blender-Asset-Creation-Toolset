@@ -23,22 +23,22 @@ class CreatePalette(bpy.types.Operator):
 		path = ""
 		incorrect_names = []
 		# Bake PBR Palette Texture Set (Albedo, Roughness, Metallic, Opacity, Emission) or only Albedo
-		pbr_mode = act.pbr_workflow
+		pbr_mode = act.palette_pbr_workflow
 		# Store temporary data for cleanUp
 		temp_meshes = []
 
 		# Check blend file is saved and get export folder path
-		if len(bpy.data.filepath) == 0 and not act.custom_save_path:
+		if len(bpy.data.filepath) == 0 and not act.palette_custom_save_path:
 			common_utils.show_message_box("Blend file is not saved. Try use Custom Save Path",
 									"Saving Error",
 									"ERROR")
 			return {"CANCELLED"}
 
-		if len(bpy.data.filepath) > 0 or act.custom_save_path:
+		if len(bpy.data.filepath) > 0 or act.palette_custom_save_path:
 			if len(bpy.data.filepath) > 0:
 				path = bpy.path.abspath("//Textures/")
 
-			if act.custom_save_path:
+			if act.palette_custom_save_path:
 				if len(act.save_path) == 0:
 					common_utils.show_message_box("Save Path can't be empty",
 										   "Saving Error",
@@ -509,7 +509,7 @@ class CreatePalette(bpy.types.Operator):
 		context.area.spaces[0].image = current_image
 
 		# Save textures export dir
-		act.save_dir = path
+		act.palette_save_dir = path
 
 		# Switch active area to 3D View
 		context.area.type = "VIEW_3D"
@@ -545,7 +545,7 @@ class CreatePalette(bpy.types.Operator):
 			albedo_tex_node.outputs["Color"],
 			palette_node_tree.nodes["Principled BSDF"].inputs["Base Color"])
 
-		if act.pbr_workflow:
+		if act.palette_pbr_workflow:
 			# Metallic
 			metallic_tex_node = palette_nodes.new("ShaderNodeTexImage")
 			metallic_tex_node.location = (-800, 250)
@@ -631,21 +631,21 @@ class OpenSaveDir(bpy.types.Operator):
 
 		# Try open export directory in OS
 		if not os.path.exists(os.path.realpath(bpy.path.abspath(act.save_path))):
-			act.save_dir = ""
+			act.palette_save_dir = ""
 			common_utils.show_message_box("Directory not exist",
 								   "Wrong Path",
 								   "ERROR")
 
 			return {"CANCELLED"}
 
-		if len(act.save_dir) > 0:
+		if len(act.palette_save_dir) > 0:
 			try:
 				if sys.platform.startswith("win"):
-					os.startfile(act.save_dir)
+					os.startfile(act.palette_save_dir)
 				elif sys.platform.startswith("linux"):
-					subprocess.Popen(["xdg-open", act.save_dir])
+					subprocess.Popen(["xdg-open", act.palette_save_dir])
 				elif sys.platform.startswith("darwin"):  # macOS
-					subprocess.Popen(["open", act.save_dir])
+					subprocess.Popen(["open", act.palette_save_dir])
 			except Exception as e:
 				print(f"Can't open folder: {e}")
 		else:

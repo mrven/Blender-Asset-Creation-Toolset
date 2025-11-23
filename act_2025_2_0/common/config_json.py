@@ -87,6 +87,11 @@ def copy_prefs_to_props(force = False):
 		props.use_custom_export_axes = prefs.use_custom_export_axes
 		props.custom_export_forward_axis = prefs.custom_export_forward_axis
 		props.custom_export_up_axis = prefs.custom_export_up_axis
+		# Origin
+		# Rename
+		# UV
+		# Material
+		# Other
 
 		props.initialized = True
 

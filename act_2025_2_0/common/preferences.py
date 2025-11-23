@@ -215,7 +215,7 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 	use_custom_export_axes: BoolProperty(name="")
 	custom_export_forward_axis: EnumProperty(name="", default="-Z", items=EXPORT_AXIS_ITEMS)
 	custom_export_up_axis: EnumProperty(name="", default="Y", items=EXPORT_AXIS_ITEMS)
-	
+
 # endregion
 # region Show/Hide Preferences Groups
 	show_panels_prefs: BoolProperty(name="", default=False)
@@ -440,6 +440,45 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 					row.label(text="    Export Path")
 					row.prop(self, "export_path")
 
+		row = box.row(align=True)
+		row.prop(self, "show_default_origin", icon="TRIA_DOWN" if self.show_default_origin else "TRIA_RIGHT")
+		row.label(text="  Origin Tools")
+		if self.show_default_origin:
+			row = box.row(align=True)
+			row.label(text="Export Mode")
+			row.prop(self, "export_mode")
+
+		row = box.row(align=True)
+		row.prop(self, "show_default_rename", icon="TRIA_DOWN" if self.show_default_rename else "TRIA_RIGHT")
+		row.label(text="  Renaming Tools")
+		if self.show_default_rename:
+			row = box.row(align=True)
+			row.label(text="Export Mode")
+			row.prop(self, "export_mode")
+
+		row = box.row(align=True)
+		row.prop(self, "show_default_uv", icon="TRIA_DOWN" if self.show_default_uv else "TRIA_RIGHT")
+		row.label(text="  UV Tools")
+		if self.show_default_uv:
+			row = box.row(align=True)
+			row.label(text="Export Mode")
+			row.prop(self, "export_mode")
+
+		row = box.row(align=True)
+		row.prop(self, "show_default_material", icon="TRIA_DOWN" if self.show_default_material else "TRIA_RIGHT")
+		row.label(text="  Material/Texture Tools")
+		if self.show_default_material:
+			row = box.row(align=True)
+			row.label(text="Export Mode")
+			row.prop(self, "export_mode")
+
+		row = box.row(align=True)
+		row.prop(self, "show_default_other", icon="TRIA_DOWN" if self.show_default_other else "TRIA_RIGHT")
+		row.label(text="  Other Tools")
+		if self.show_default_other:
+			row = box.row(align=True)
+			row.label(text="Export Mode")
+			row.prop(self, "export_mode")
 
 		box.separator(factor=0.5)
 		row = box.row()

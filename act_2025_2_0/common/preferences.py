@@ -7,7 +7,8 @@ from . import utils
 from . import config_json
 
 PANELS_TO_UPDATE = {
-	"VIEW3D_PT_act_support_panel": "support_panel_category",
+	"VIEW3D_PT_act_support_panel": "view3d_support_panel_category",
+	"UV_PT_act_support_panel": "uv_support_panel_category",
 	"VIEW3D_PT_act_origin_tools_panel": "origin_panel_category",
 	"VIEW3D_PT_act_rename_tools_panel": "rename_panel_category",
     "VIEW3D_PT_act_uv_tools_panel": "view3d_uv_panel_category",
@@ -16,6 +17,7 @@ PANELS_TO_UPDATE = {
     "VIEW3D_PT_act_import_export_tools_panel": "export_import_panel_category",
     "VIEW3D_PT_act_material_tools_panel": "material_panel_category",
     "VIEW3D_PT_act_other_tools_panel": "other_panel_category",
+	"VIEW3D_PT_act_geometry_tools_panel": "geometry_panel_category",
 }
 
 package_name = utils.get_package_name()
@@ -43,9 +45,14 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 	bl_idname = package_name
 
 # region Panels
-	support_enable: BoolProperty(
-		name="ACT Support",
-		description="Show/Hide Support UI Panel",
+	view3d_support_enable: BoolProperty(
+		name="ACT Support (3D View)",
+		description="Show/Hide Support (3D View) UI Panel",
+		default=True)
+
+	uv_support_enable: BoolProperty(
+		name="ACT Support (UV Editor)",
+		description="Show/Hide Support (UV Editor) UI Panel",
 		default=True)
 
 	export_import_enable: BoolProperty(
@@ -99,8 +106,14 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 		default=True)
 # endregion
 # region Panel Categories
-	support_panel_category: StringProperty(
-		description="Choose a name for the category of the Support panel",
+	view3d_support_panel_category: StringProperty(
+		description="Choose a name for the category of the Support (3D View) panel",
+		default="ACT",
+		update=update_panel_categories
+	)
+
+	uv_support_panel_category: StringProperty(
+		description="Choose a name for the category of the Support (UV Editor) panel",
 		default="ACT",
 		update=update_panel_categories
 	)
@@ -172,9 +185,14 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 		row = box.row()
 		row.label(text="Visibility and Category for Panels:")
 		row = box.row(align=True)
-		row.prop(self, "support_enable")
-		if self.support_enable:
-			row.prop(self, "support_panel_category", text="Panel")
+		row.prop(self, "view3d_support_enable")
+		if self.view3d_support_enable:
+			row.prop(self, "view3d_support_panel_category", text="Panel")
+
+		row = box.row(align=True)
+		row.prop(self, "uv_support_enable")
+		if self.uv_support_enable:
+			row.prop(self, "uv_support_panel_category", text="Panel")
 
 		row = box.row(align=True)
 		row.prop(self, "origin_enable")

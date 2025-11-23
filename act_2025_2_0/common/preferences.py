@@ -2,7 +2,8 @@ import bpy
 from bpy.props import (
 	StringProperty,
 	BoolProperty,
-	EnumProperty)
+	EnumProperty,
+	FloatProperty)
 
 from . import utils
 from . import config_json
@@ -183,6 +184,38 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 # region Defaults
 	# Export
 	export_mode: EnumProperty(name="", items=EXPORT_MODE_ITEMS)
+	export_format: EnumProperty(name="", items=EXPORT_FORMAT_ITEMS)
+	obj_separate_by_materials: BoolProperty(name="", default=True)
+	obj_export_smooth_groups: BoolProperty(name="", default=True)
+	gltf_export_image_format: EnumProperty(name="", items=GLTF_IMAGE_FORMAT_ITEMS)
+	gltf_export_attributes: BoolProperty(name="")
+	apply_rot: BoolProperty(name="", default=True)
+	apply_rot_rotated: BoolProperty(name="", default=True)
+	apply_scale: BoolProperty(name="", default=True)
+	apply_loc: BoolProperty(name="", default=True)
+	set_custom_fbx_name: BoolProperty(name="")
+	custom_fbx_name: StringProperty(name="")
+	delete_mats_before_export: BoolProperty(name="")
+	triangulate_before_export: BoolProperty(name="")
+	custom_export_path: BoolProperty(name="")
+	export_path: StringProperty(name="", subtype="DIR_PATH")
+	export_target_engine: EnumProperty(name="", items=EXPORT_TARGET_ENGINE_ITEMS)
+	# Custom Export Options props
+	export_custom_options: BoolProperty(name="")
+	export_loose_edges: BoolProperty(name="")
+	export_tangent_space: BoolProperty(name="")
+	export_smoothing: EnumProperty(name="", items=EXPORT_SMOOTHING_ITEMS)
+	export_custom_props: BoolProperty(name="", default=True)
+	export_combine_meshes: BoolProperty(name="")
+	export_only_deform_bones: BoolProperty(name="")
+	export_add_leaf_bones: BoolProperty(name="")
+	export_vc_color_space: EnumProperty(name="", items=EXPORT_VC_COLOR_SPACE_ITEMS)
+	use_custom_export_scale: BoolProperty(name="")
+	custom_export_scale_value: FloatProperty(name="", default=1.00, min=0.00001, max=9999, step=1)
+	use_custom_export_axes: BoolProperty(name="")
+	custom_export_forward_axis: EnumProperty(name="", default="-Z", items=EXPORT_AXIS_ITEMS)
+	custom_export_up_axis: EnumProperty(name="", default="Y", items=EXPORT_AXIS_ITEMS)
+	
 # endregion
 # region Show/Hide Preferences Groups
 	show_panels_prefs: BoolProperty(name="", default=False)
@@ -276,6 +309,137 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 			row = box.row(align=True)
 			row.label(text="Export Mode")
 			row.prop(self, "export_mode")
+			row = box.row(align=True)
+			row.label(text="File Format")
+			row.prop(self, "export_format")
+			if self.export_format == "FBX":
+				row = box.row(align=True)
+				row.label(text="Target Engine")
+				row.prop(self, "export_target_engine")
+			if not (self.export_format == "OBJ" and self.export_mode in {"ALL", "COLLECTION"}):
+				row = box.row(align=True)
+				row.label(text="Apply")
+				if self.export_format in {"FBX", "GLTF"}:
+					if self.apply_rot:
+						row.prop(self, "apply_rot", text="Rotation", icon="CHECKBOX_HLT")
+					else:
+						row.prop(self, "apply_rot", text="Rotation", icon="CHECKBOX_DEHLT")
+					if self.apply_scale:
+						row.prop(self, "apply_scale", text="Scale", icon="CHECKBOX_HLT")
+					else:
+						row.prop(self, "apply_scale", text="Scale", icon="CHECKBOX_DEHLT")
+				if self.export_mode in {"INDIVIDUAL", "PARENT"}:
+					if self.apply_loc:
+						row.prop(self, "apply_loc", text="Location", icon="CHECKBOX_HLT")
+					else:
+						row.prop(self, "apply_loc", text="Location", icon="CHECKBOX_DEHLT")
+				if self.export_format == "FBX":
+					if self.apply_rot and self.export_mode == "PARENT" and self.export_target_engine != "UNITY":
+						row = box.row(align=True)
+						row.label(text="Apply for Rotated Objects")
+						row.prop(self, "apply_rot_rotated")
+				row = box.row(align=True)
+				row.label(text="Delete All Materials")
+				row.prop(self, "delete_mats_before_export")
+				if self.export_mode != "INDIVIDUAL":
+					row = box.row(align=True)
+					row.label(text="Combine All Meshes")
+					row.prop(self, "export_combine_meshes")
+				row = box.row(align=True)
+				row.label(text="Triangulate Meshes")
+				row.prop(self, "triangulate_before_export")
+				if self.export_mode == "ALL":
+					local_box = box.box()
+					row = local_box.row(align=True)
+					row.label(text="Custom Name for File")
+					row.prop(self, "set_custom_fbx_name")
+					if self.set_custom_fbx_name:
+						row = local_box.row(align=True)
+						row.label(text="    File Name")
+						row.prop(self, "custom_fbx_name")
+				# Custom Export Options
+				local_box = box.box()
+				row = local_box.row(align=True)
+				row.label(text="Custom Export Options")
+				row.prop(self, "export_custom_options")
+				if self.export_custom_options:
+					if self.export_format == "FBX":
+						row = local_box.row(align=True)
+						row.label(text="    Smoothing")
+						row.prop(self, "export_smoothing")
+						row = local_box.row(align=True)
+						row.label(text="    Loose Edges")
+						row.prop(self, "export_loose_edges")
+						row = local_box.row(align=True)
+						row.label(text="    Tangent Space")
+						row.prop(self, "export_tangent_space")
+						row = local_box.row(align=True)
+						row.label(text="    Only Deform Bones")
+						row.prop(self, "export_only_deform_bones")
+						row = local_box.row(align=True)
+						row.label(text="    Add Leaf Bones")
+						row.prop(self, "export_add_leaf_bones")
+						row = local_box.row(align=True)
+						row.label(text="    VC color space")
+						row.prop(self, "export_vc_color_space", expand=False)
+						row = local_box.row(align=True)
+						row.label(text="    Custom Properties")
+						row.prop(self, "export_custom_props")
+					if self.export_format == "OBJ":
+						row = local_box.row(align=True)
+						row.label(text="    Separate By Mats")
+						row.prop(self, "obj_separate_by_materials")
+						row = local_box.row(align=True)
+						row.label(text="    Smooth Groups")
+						row.prop(self, "obj_export_smooth_groups")
+					if self.export_format in {"FBX", "OBJ"}:
+						row = local_box.row(align=True)
+						row.label(text="    Use Custom Scale")
+						row.prop(self, "use_custom_export_scale")
+						if self.use_custom_export_scale:
+							row = local_box.row(align=True)
+							row.label(text="      Scale")
+							row.prop(self, "custom_export_scale_value")
+						row = local_box.row(align=True)
+						row.label(text="    Use Custom Axes")
+						row.prop(self, "use_custom_export_axes")
+						if self.use_custom_export_axes:
+							row = local_box.row(align=True)
+							row.label(text="      Forward")
+							row.prop(self, "custom_export_forward_axis", expand=False)
+							row = local_box.row(align=True)
+							row.label(text="      Up")
+							row.prop(self, "custom_export_up_axis", expand=False)
+					if self.export_format == "GLTF":
+						row = local_box.row(align=True)
+						row.label(text="    Pack Images")
+						row.prop(self, "gltf_export_image_format")
+
+						row = local_box.row(align=True)
+						row.label(text="    Deform Bones Only")
+						row.prop(self, "export_only_deform_bones")
+
+						row = local_box.row(align=True)
+						row.label(text="    Custom Properties")
+						row.prop(self, "export_custom_props")
+
+						row = local_box.row(align=True)
+						row.label(text="    Tangents")
+						row.prop(self, "export_tangent_space")
+
+						row = local_box.row(align=True)
+						row.label(text="    Attributes")
+						row.prop(self, "gltf_export_attributes")
+				# Custom Export Path
+				local_box = box.box()
+				row = local_box.row(align=True)
+				row.label(text="Custom Export Path")
+				row.prop(self, "custom_export_path")
+				if self.custom_export_path:
+					row = local_box.row(align=True)
+					row.label(text="    Export Path")
+					row.prop(self, "export_path")
+
 
 		box.separator(factor=0.5)
 		row = box.row()

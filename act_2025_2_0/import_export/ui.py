@@ -144,7 +144,7 @@ class VIEW3D_PT_act_import_export_tools_panel(bpy.types.Panel):
 				row.label(text=" Smooth Groups")
 				row.prop(act, "obj_export_smooth_groups")
 
-			if act.export_format == "FBX" or act.export_format == "OBJ":
+			if act.export_format in {"FBX", "OBJ"}:
 				row = box.row(align=True)
 				row.label(text="Use Custom Scale")
 				row.prop(act, "use_custom_export_scale")

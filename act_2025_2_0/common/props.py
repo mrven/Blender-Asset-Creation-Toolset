@@ -139,7 +139,7 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 	lod_level: IntProperty(description="LOD Level", min=0, max=9)
 # endregion
 # region Origin tools props
-	align_co: FloatProperty( description="Coordinate", min=-9999, max=9999, step=50)
+	align_co: FloatProperty(description="Coordinate", min=-9999, max=9999, step=50)
 
 	align_geom_to_orig: BoolProperty(description="Align Geometry To Origin")
 # endregion

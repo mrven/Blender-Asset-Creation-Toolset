@@ -55,9 +55,8 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 	pbr_workflow: BoolProperty(description="PBR Workflow")
 
 	save_path: StringProperty(name="", description="Path for Save Palettes", subtype="DIR_PATH")
-#endregion
-
-#region Export props
+# endregion
+# region Export props
 	export_dir: StringProperty(name="", description="Export Directory")
 
 	export_mode: EnumProperty(name="", items=EXPORT_MODE_ITEMS)
@@ -129,9 +128,8 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 
 	# Custom Up Axis
 	custom_export_up_axis: EnumProperty(name="", default="Y", items=EXPORT_AXIS_ITEMS, update=update_custom_up_axis)
-#endregion
-
-#region Rename props
+# endregion
+# region Rename props
 	delete_prev_nums: BoolProperty(description="Delete Previous Numbers from Object Names", default=True)
 
 	nums_method: EnumProperty(name="", items=NUMBERING_METHOD_ITEMS)
@@ -139,15 +137,13 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 	nums_format: EnumProperty(name="", items=NUMBERING_FORMAT_ITEMS)
 
 	lod_level: IntProperty(description="LOD Level", min=0, max=9)
-#endregion
-
-#region Origin tools props
+# endregion
+# region Origin tools props
 	align_co: FloatProperty( description="Coordinate", min=-9999, max=9999, step=50)
 
 	align_geom_to_orig: BoolProperty(description="Align Geometry To Origin")
-#endregion
-
-#region UV tools props
+# endregion
+# region UV tools props
 	uv_move_factor: EnumProperty(name="", items=UV_MOVE_FACTOR_ITEMS, default="3")
 
 	uv_index_rename: IntProperty(description="UV Index", min=0, max=10)
@@ -166,9 +162,8 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 
 	uv_packing_lightmap_margin: FloatProperty(description="Project Islands Margin", default=0.3, min=0, max=1,
 	                                          step=1)
-#endregion
-
-#region Other tools props
+# endregion
+# region Other tools props
 	normals_inside: BoolProperty(description="Recalculate Normals Inside")
 
 	calc_normals_en: BoolProperty(description="Recalculate Normals")
@@ -188,11 +183,10 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 
 	# Cleanup Empties: Also delete empty meshes
 	delete_empty_meshes: BoolProperty(description="Also delete empty meshes", default=True)
-#endregion
-
-#region Debug props
+# endregion
+# region Debug props
 	debug: BoolProperty(description="Enable Debug Mode")
-#endregion
+# endregion
 
 classes = (
 	ACTAddonProps,

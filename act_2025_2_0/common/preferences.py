@@ -1,10 +1,12 @@
 import bpy
 from bpy.props import (
 	StringProperty,
-	BoolProperty)
+	BoolProperty,
+	EnumProperty)
 
 from . import utils
 from . import config_json
+from .constants import *
 
 PANELS_TO_UPDATE = {
 	"VIEW3D_PT_act_support_panel": "view3d_support_panel_category",
@@ -178,69 +180,84 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 		description="Show/Hide Export Axes Conversion Tooltip for UE/Unity",
 		default=True)
 # endregion
+# region Defaults
+	# Export
+	export_mode: EnumProperty(name="", items=EXPORT_MODE_ITEMS)
+# endregion
+# region Show/Hide Preferences Groups
+	show_panels_prefs: BoolProperty(name="", default=False)
+	show_default_export: BoolProperty(name="", default=False)
+	show_default_origin: BoolProperty(name="", default=False)
+	show_default_rename: BoolProperty(name="", default=False)
+	show_default_uv: BoolProperty(name="", default=False)
+	show_default_material: BoolProperty(name="", default=False)
+	show_default_other: BoolProperty(name="", default=False)
+# endregion
 
 	def draw(self, _):
 		layout = self.layout
 		box = layout.box()
-		row = box.row()
-		row.label(text="Visibility and Category for Panels:")
 		row = box.row(align=True)
-		row.prop(self, "view3d_support_enable")
-		if self.view3d_support_enable:
-			row.prop(self, "view3d_support_panel_category", text="Panel")
+		row.prop(self, "show_panels_prefs", icon = "TRIA_DOWN" if self.show_panels_prefs else "TRIA_RIGHT")
+		row.label(text="  Visibility and Category for Panels")
+		if self.show_panels_prefs:
+			row = box.row(align=True)
+			row.prop(self, "view3d_support_enable")
+			if self.view3d_support_enable:
+				row.prop(self, "view3d_support_panel_category", text="Panel")
 
-		row = box.row(align=True)
-		row.prop(self, "uv_support_enable")
-		if self.uv_support_enable:
-			row.prop(self, "uv_support_panel_category", text="Panel")
+			row = box.row(align=True)
+			row.prop(self, "uv_support_enable")
+			if self.uv_support_enable:
+				row.prop(self, "uv_support_panel_category", text="Panel")
 
-		row = box.row(align=True)
-		row.prop(self, "origin_enable")
-		if self.origin_enable:
-			row.prop(self, "origin_panel_category", text="Panel")
+			row = box.row(align=True)
+			row.prop(self, "origin_enable")
+			if self.origin_enable:
+				row.prop(self, "origin_panel_category", text="Panel")
 
-		row = box.row(align=True)
-		row.prop(self, "renaming_enable")
-		if self.renaming_enable:
-			row.prop(self, "rename_panel_category", text="Panel")
+			row = box.row(align=True)
+			row.prop(self, "renaming_enable")
+			if self.renaming_enable:
+				row.prop(self, "rename_panel_category", text="Panel")
 
-		row = box.row(align=True)
-		row.prop(self, "uv_view3d_enable")
-		if self.uv_view3d_enable:
-			row.prop(self, "view3d_uv_panel_category", text="Panel")
+			row = box.row(align=True)
+			row.prop(self, "uv_view3d_enable")
+			if self.uv_view3d_enable:
+				row.prop(self, "view3d_uv_panel_category", text="Panel")
 
-		row = box.row(align=True)
-		row.prop(self, "uv_uv_enable")
-		if self.uv_uv_enable:
-			row.prop(self, "uv_uv_category", text="Panel")
+			row = box.row(align=True)
+			row.prop(self, "uv_uv_enable")
+			if self.uv_uv_enable:
+				row.prop(self, "uv_uv_category", text="Panel")
 
-		row = box.row(align=True)
-		row.prop(self, "export_import_enable")
-		if self.export_import_enable:
-			row.prop(self, "export_import_panel_category", text="Panel")
+			row = box.row(align=True)
+			row.prop(self, "export_import_enable")
+			if self.export_import_enable:
+				row.prop(self, "export_import_panel_category", text="Panel")
 
-		row = box.row(align=True)
-		row.prop(self, "material_enable")
-		if self.material_enable:
-			row.prop(self, "material_panel_category", text="Panel")
+			row = box.row(align=True)
+			row.prop(self, "material_enable")
+			if self.material_enable:
+				row.prop(self, "material_panel_category", text="Panel")
 
-		row = box.row(align=True)
-		row.prop(self, "uv_material_enable")
-		if self.uv_material_enable:
-			row.prop(self, "uv_material_panel_category", text="Panel")
+			row = box.row(align=True)
+			row.prop(self, "uv_material_enable")
+			if self.uv_material_enable:
+				row.prop(self, "uv_material_panel_category", text="Panel")
 
-		row = box.row()
-		row.prop(self, "material_properties_enable")
+			row = box.row()
+			row.prop(self, "material_properties_enable")
 
-		row = box.row(align=True)
-		row.prop(self, "other_enable")
-		if self.other_enable:
-			row.prop(self, "other_panel_category", text="Panel")
+			row = box.row(align=True)
+			row.prop(self, "other_enable")
+			if self.other_enable:
+				row.prop(self, "other_panel_category", text="Panel")
 
-		row = box.row(align=True)
-		row.prop(self, "geometry_enable")
-		if self.geometry_enable:
-			row.prop(self, "geometry_panel_category", text="Panel")
+			row = box.row(align=True)
+			row.prop(self, "geometry_enable")
+			if self.geometry_enable:
+				row.prop(self, "geometry_panel_category", text="Panel")
 
 		box = layout.box()
 		row = box.row()
@@ -253,8 +270,12 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 		row = box.row()
 		row.label(text='Default Settings:')
 		row = box.row(align=True)
-		row.label(text='Test Property:')
-		# row.prop(self, 'default_units')
+		row.prop(self, "show_default_export", icon="TRIA_DOWN" if self.show_default_export else "TRIA_RIGHT")
+		row.label(text="  Export Tools")
+		if self.show_default_export:
+			row = box.row(align=True)
+			row.label(text="Export Mode")
+			row.prop(self, "export_mode")
 
 		box.separator(factor=0.5)
 		row = box.row()

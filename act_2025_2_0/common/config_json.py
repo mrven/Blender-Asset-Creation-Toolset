@@ -88,7 +88,13 @@ def copy_prefs_to_props(force = False):
 		props.custom_export_forward_axis = prefs.custom_export_forward_axis
 		props.custom_export_up_axis = prefs.custom_export_up_axis
 		# Origin
+		props.align_geom_to_orig = prefs.align_geom_to_orig
+		props.align_co = prefs.align_co
 		# Rename
+		props.delete_prev_nums = prefs.delete_prev_nums
+		props.nums_method = prefs.nums_method
+		props.nums_format = prefs.nums_format
+		props.lod_level = prefs.lod_level
 		# UV
 		# Material
 		# Other

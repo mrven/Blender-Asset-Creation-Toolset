@@ -3,7 +3,8 @@ from bpy.props import (
 	StringProperty,
 	BoolProperty,
 	EnumProperty,
-	FloatProperty)
+	FloatProperty,
+	IntProperty)
 
 from . import utils
 from . import config_json
@@ -215,7 +216,17 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 	use_custom_export_axes: BoolProperty(name="")
 	custom_export_forward_axis: EnumProperty(name="", default="-Z", items=EXPORT_AXIS_ITEMS)
 	custom_export_up_axis: EnumProperty(name="", default="Y", items=EXPORT_AXIS_ITEMS)
-
+	# Origin
+	align_geom_to_orig: BoolProperty(name="")
+	align_co: FloatProperty(name="", min=-9999, max=9999, step=50)
+	# Rename
+	delete_prev_nums: BoolProperty(name="", default=True)
+	nums_method: EnumProperty(name="", items=NUMBERING_METHOD_ITEMS)
+	nums_format: EnumProperty(name="", items=NUMBERING_FORMAT_ITEMS)
+	lod_level: IntProperty(name="", min=0, max=9)
+	# UV
+	# Material
+	# Other
 # endregion
 # region Show/Hide Preferences Groups
 	show_panels_prefs: BoolProperty(name="", default=False)
@@ -445,16 +456,30 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 		row.label(text="  Origin Tools")
 		if self.show_default_origin:
 			row = box.row(align=True)
-			row.label(text="Export Mode")
-			row.prop(self, "export_mode")
+			row.label(text="Geometry To Origin")
+			row.prop(self, "align_geom_to_orig")
+			row = box.row(align=True)
+			row.label(text="Coordinate")
+			row.prop(self, "align_co")
 
 		row = box.row(align=True)
 		row.prop(self, "show_default_rename", icon="TRIA_DOWN" if self.show_default_rename else "TRIA_RIGHT")
 		row.label(text="  Renaming Tools")
 		if self.show_default_rename:
-			row = box.row(align=True)
-			row.label(text="Export Mode")
-			row.prop(self, "export_mode")
+			local_box = box.box()
+			row = local_box.row(align=True)
+			row.label(text="Method")
+			row.prop(self, "nums_method", expand=False)
+			row = local_box.row(align=True)
+			row.label(text="Format")
+			row.prop(self, "nums_format", expand=False)
+			row = local_box.row(align=True)
+			row.label(text="Delete Previous Nums")
+			row.prop(self, "delete_prev_nums")
+			local_box = box.box()
+			row = local_box.row(align=True)
+			row.label(text="LOD Level")
+			row.prop(self, "lod_level")
 
 		row = box.row(align=True)
 		row.prop(self, "show_default_uv", icon="TRIA_DOWN" if self.show_default_uv else "TRIA_RIGHT")

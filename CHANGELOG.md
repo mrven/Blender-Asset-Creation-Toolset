@@ -20,7 +20,7 @@
 
 ### Fix
 
-* [Export Tools][Material/Texture Tools] Error for Palette baking
+* [Material/Texture Tools] Error for Palette baking
 * [Export Tools][Material/Texture Tools] "Open Folder" button on MacOS 
 * Cycles panel error
 * [Other Tools][Weight Paint] Brush invert for Mix blend

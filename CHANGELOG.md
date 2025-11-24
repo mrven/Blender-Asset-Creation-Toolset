@@ -4,15 +4,27 @@
 
 ### New
 
-* 
+* Blender 5.0 Support
+* Unified Zip for Blender 3.0 - 5.0 and higher
+* Default Settings in Preferences for addon properties
+* Added Export Axes Tooltips for Unity/Unreal Target Engine
+* Added Support panel
 
 ### Changed
 
-* 
+* [Export Tools][FBX][Unity] Scale for models in Unity is 1 
+* [Export Tools][FBX] Rename Unity (Legacy) Target to Unity (Pre-Rotated)
+* [Export Tools] Export modes is reordered
+* Refactoring
+* UI Improvements
 
 ### Fix
 
-*
+* [Export Tools][Material/Texture Tools] Error for Palette baking
+* [Export Tools][Material/Texture Tools] "Open Folder" button on MacOS 
+* Cycles panel error
+* [Other Tools][Weight Paint] Brush invert for Mix blend
+* [Preferences] Geometry panel category change is not working
 
 ## ACT 2025.1.0
 

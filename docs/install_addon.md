@@ -13,11 +13,11 @@ You can install ACT by two ways:
 
 ![Install Prefs](./images/ui/install_prefs.png)
 
-2. In **Get Extensions** tab, search for **ACT** and click **Install**.
+2. In **Get Extensions** tab, search for **ACT:** and click **Install**.
 
 ![Install Get Extensions](./images/ui/install_4_2_get_extensions.png)
 
-3. After installation, you can find **ACT** in **N-Panel** of **3D View** and **UV Editor**.
+3. After installation, you can find **ACT: Game Asset Creation Toolset** in **N-Panel** of **3D View** and **UV Editor**.
 
 ![Addon in Panel](./images/ui/install_panel.png)
 

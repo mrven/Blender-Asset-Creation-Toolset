@@ -4,17 +4,48 @@
 
 ### New
 
-* Blender 5.0 Support
-* Unified Zip for Blender 3.0 - 5.0 and higher
-* Default Settings in Preferences for addon properties
-* Added Export Axes Tooltips for Unity/Unreal Target Engine
-* Added Support panel
+* #### Blender 5.0 Support
+* #### Unified Zip for Blender 3.0 - 5.0 and higher
+
+Do not understand which version of addon you need? You can download unified ZIP package for Blender 3.0+ and use it with any version of Blender. It's also compatible with Blender 5.0+.
+
+* #### Default Settings in Preferences for addon properties
+
+In Preferences window you can set default settings for the addon. These settings will be applied to new scene.
+
+<img src="./docs/images/ui/prefs_defaults.png" width="500">
+
+* #### Added Export Axes Tooltips for Unity/Unreal Target Engine
+
+On Export Tools UI panel, tooltip is displayed about import parameters for Unity and UE to correct axes. 
+
+<img src="./docs/images/ui/export_tooltip_1.png" width="300">
+<img src="./docs/images/ui/export_tooltip_2.png" width="300">
+
+Tooltip can be disabled in addon preferences.
+
+<img src="./docs/images/ui/export_tooltip_3.png" width="500">
+
+* #### Added Support panel
+
+Added panel with buttons for quick access to preferences, documentation and bug report. Support panel can be disabled in addon preferences.
+
+<img src="./docs/images/ui/support_panel.png" width="300">
 
 ### Changed
 
-* [Export Tools][FBX][Unity] Scale for models in Unity is 1 
-* [Export Tools][FBX] Rename Unity (Legacy) Target to Unity (Pre-Rotated)
-* [Export Tools] Export modes is reordered
+* #### [Export Tools][FBX][Unity] Scale for models in Unity is 1 
+
+Models exported for Unity now use default scale of 1. Previously, the scale was 100, requiring manual adjustment in Unity’s import settings.
+
+* #### [Export Tools][FBX] Rename Unity (Legacy) Target to Unity (Pre-Rotated)
+
+The Unity (Legacy) target has been renamed to Unity (Pre-Rotated) for clearer and more concise description of the import method, which applies 90° pre-rotation on the X axis.
+
+* #### [Export Tools] Export modes is reordered
+
+Export modes reordered, the most commonly used options (By Parent and All-to-One) at the top of list now.
+
 * Refactoring
 * UI Improvements
 

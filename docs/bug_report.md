@@ -4,7 +4,7 @@
 
 If you have found a bug in ACT or have a suggestion, please [open an issue](https://github.com/mrven/Blender-Asset-Creation-Toolset/issues) on GitHub.
 
-![Report Bug](./images/ui/bug_new_issue.png)
+<img src="./images/ui/bug_new_issue.png" width="750">
 
 ## If you have found a bug in ACT
 

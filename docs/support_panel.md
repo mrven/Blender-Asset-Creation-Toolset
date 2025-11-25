@@ -6,7 +6,7 @@ Buttons for addon quick access to preferences, documentation and bug report.
 
 # UI Elements and Functionality
 
-![Support](./images/ui/support_panel.png)
+<img src="./images/ui/support_panel.png" width="300">
 
 ### Prefs
 

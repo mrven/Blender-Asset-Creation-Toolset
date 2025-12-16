@@ -44,6 +44,14 @@ def update_panel_categories(_, context):
 		panel_cls.bl_category = category
 		bpy.utils.register_class(panel_cls)
 
+		if config_json.saving_enabled:
+			config_json.save_addon_prefs()
+
+
+def update_save_config(_, __):
+	if config_json.saving_enabled:
+		config_json.save_addon_prefs()
+
 
 class ACTAddonPreferences(bpy.types.AddonPreferences):
 	bl_idname = package_name
@@ -52,62 +60,74 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 	view3d_support_enable: BoolProperty(
 		name="ACT Support (3D View)",
 		description="Show/Hide Support (3D View) UI Panel",
-		default=True)
+		default=True,
+		update=update_save_config)
 
 	uv_support_enable: BoolProperty(
 		name="ACT Support (UV Editor)",
 		description="Show/Hide Support (UV Editor) UI Panel",
-		default=True)
+		default=True,
+		update=update_save_config)
 
 	export_import_enable: BoolProperty(
 		name="Import/Export Tools",
 		description="Show/Hide Import/Export Tools UI Panel",
-		default=True)
+		default=True,
+		update=update_save_config)
 
 	material_enable: BoolProperty(
 		name="Material/Texture Tools (3D View)",
 		description="Show/Hide Material/Texture Tools (3D View) UI Panel",
-		default=True)
+		default=True,
+		update=update_save_config)
 
 	origin_enable: BoolProperty(
 		name="Origin Tools",
 		description="Show/Hide Origin Tools UI Panel",
-		default=True)
+		default=True,
+		update=update_save_config)
 
 	other_enable: BoolProperty(
 		name="Other Tools",
 		description="Show/Hide Other Tools UI Panel",
-		default=True)
+		default=True,
+		update=update_save_config)
 
 	geometry_enable: BoolProperty(
 		name="Geometry Tools",
 		description="Show/Hide Geometry Tools UI Panel",
-		default=True)
+		default=True,
+		update=update_save_config)
 
 	uv_view3d_enable: BoolProperty(
 		name="UV Tools (3D View)",
 		description="Show/Hide UV Tools (3D View) UI Panel",
-		default=True)
+		default=True,
+		update=update_save_config)
 
 	uv_uv_enable: BoolProperty(
 		name="UV Tools (UV Editor) Tools",
 		description="Show/Hide UV Tools (UV Editor) UI Panel",
-		default=True)
+		default=True,
+		update=update_save_config)
 
 	renaming_enable: BoolProperty(
 		name="Renaming Tools",
 		description="Show/Hide Renaming Tools UI Panel",
-		default=True)
+		default=True,
+		update=update_save_config)
 
 	uv_material_enable: BoolProperty(
 		name="Material/Texture Tools (Image Editor)",
 		description="Show/Hide Material/Texture Tools (Image Editor) UI Panel",
-		default=True)
+		default=True,
+		update=update_save_config)
 
 	material_properties_enable: BoolProperty(
 		name="Material (Properties) Tools",
 		description="Show/Hide Export Material (Properties) UI Panel",
-		default=True)
+		default=True,
+		update=update_save_config)
 # endregion
 # region Panel Categories
 	view3d_support_panel_category: StringProperty(
@@ -180,81 +200,82 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 	show_export_axis_tooltip: BoolProperty(
 		name="",
 		description="Show/Hide Export Axes Conversion Tooltip for UE/Unity",
-		default=True)
+		default=True,
+		update=update_save_config)
 # endregion
 # region Defaults
 	# Export
-	export_mode: EnumProperty(name="", items=EXPORT_MODE_ITEMS)
-	export_format: EnumProperty(name="", items=EXPORT_FORMAT_ITEMS)
-	obj_separate_by_materials: BoolProperty(name="", default=True)
-	obj_export_smooth_groups: BoolProperty(name="", default=True)
-	gltf_export_image_format: EnumProperty(name="", items=GLTF_IMAGE_FORMAT_ITEMS)
-	gltf_export_attributes: BoolProperty(name="")
-	apply_rot: BoolProperty(name="", default=True)
-	apply_rot_rotated: BoolProperty(name="", default=True)
-	apply_scale: BoolProperty(name="", default=True)
-	apply_loc: BoolProperty(name="", default=True)
-	set_custom_fbx_name: BoolProperty(name="")
-	custom_fbx_name: StringProperty(name="")
-	delete_mats_before_export: BoolProperty(name="")
-	triangulate_before_export: BoolProperty(name="")
-	custom_export_path: BoolProperty(name="")
-	export_path: StringProperty(name="", subtype="DIR_PATH")
-	export_target_engine: EnumProperty(name="", items=EXPORT_TARGET_ENGINE_ITEMS)
+	export_mode: EnumProperty(name="", items=EXPORT_MODE_ITEMS, update=update_save_config)
+	export_format: EnumProperty(name="", items=EXPORT_FORMAT_ITEMS, update=update_save_config)
+	obj_separate_by_materials: BoolProperty(name="", default=True, update=update_save_config)
+	obj_export_smooth_groups: BoolProperty(name="", default=True, update=update_save_config)
+	gltf_export_image_format: EnumProperty(name="", items=GLTF_IMAGE_FORMAT_ITEMS, update=update_save_config)
+	gltf_export_attributes: BoolProperty(name="", update=update_save_config)
+	apply_rot: BoolProperty(name="", default=True, update=update_save_config)
+	apply_rot_rotated: BoolProperty(name="", default=True, update=update_save_config)
+	apply_scale: BoolProperty(name="", default=True, update=update_save_config)
+	apply_loc: BoolProperty(name="", default=True, update=update_save_config)
+	set_custom_fbx_name: BoolProperty(name="", update=update_save_config)
+	custom_fbx_name: StringProperty(name="", update=update_save_config)
+	delete_mats_before_export: BoolProperty(name="", update=update_save_config)
+	triangulate_before_export: BoolProperty(name="", update=update_save_config)
+	custom_export_path: BoolProperty(name="", update=update_save_config)
+	export_path: StringProperty(name="", subtype="DIR_PATH", update=update_save_config)
+	export_target_engine: EnumProperty(name="", items=EXPORT_TARGET_ENGINE_ITEMS, update=update_save_config)
 	# Custom Export Options props
-	export_custom_options: BoolProperty(name="")
-	export_loose_edges: BoolProperty(name="")
-	export_tangent_space: BoolProperty(name="")
-	export_smoothing: EnumProperty(name="", items=EXPORT_SMOOTHING_ITEMS)
-	export_custom_props: BoolProperty(name="", default=True)
-	export_combine_meshes: BoolProperty(name="")
-	export_only_deform_bones: BoolProperty(name="")
-	export_add_leaf_bones: BoolProperty(name="")
-	export_vc_color_space: EnumProperty(name="", items=EXPORT_VC_COLOR_SPACE_ITEMS)
-	use_custom_export_scale: BoolProperty(name="")
-	custom_export_scale_value: FloatProperty(name="", default=1.00, min=0.00001, max=9999, step=1)
-	use_custom_export_axes: BoolProperty(name="")
-	custom_export_forward_axis: EnumProperty(name="", default="-Z", items=EXPORT_AXIS_ITEMS)
-	custom_export_up_axis: EnumProperty(name="", default="Y", items=EXPORT_AXIS_ITEMS)
+	export_custom_options: BoolProperty(name="", update=update_save_config)
+	export_loose_edges: BoolProperty(name="", update=update_save_config)
+	export_tangent_space: BoolProperty(name="", update=update_save_config)
+	export_smoothing: EnumProperty(name="", items=EXPORT_SMOOTHING_ITEMS, update=update_save_config)
+	export_custom_props: BoolProperty(name="", default=True, update=update_save_config)
+	export_combine_meshes: BoolProperty(name="", update=update_save_config)
+	export_only_deform_bones: BoolProperty(name="", update=update_save_config)
+	export_add_leaf_bones: BoolProperty(name="", update=update_save_config)
+	export_vc_color_space: EnumProperty(name="", items=EXPORT_VC_COLOR_SPACE_ITEMS, update=update_save_config)
+	use_custom_export_scale: BoolProperty(name="", update=update_save_config)
+	custom_export_scale_value: FloatProperty(name="", default=1.00, min=0.00001, max=9999, step=1, update=update_save_config)
+	use_custom_export_axes: BoolProperty(name="", update=update_save_config)
+	custom_export_forward_axis: EnumProperty(name="", default="-Z", items=EXPORT_AXIS_ITEMS, update=update_save_config)
+	custom_export_up_axis: EnumProperty(name="", default="Y", items=EXPORT_AXIS_ITEMS, update=update_save_config)
 	# Origin
-	align_geom_to_orig: BoolProperty(name="")
-	align_co: FloatProperty(name="", min=-9999, max=9999, step=50)
+	align_geom_to_orig: BoolProperty(name="", update=update_save_config)
+	align_co: FloatProperty(name="", min=-9999, max=9999, step=50, update=update_save_config)
 	# Rename
-	delete_prev_nums: BoolProperty(name="", default=True)
-	nums_method: EnumProperty(name="", items=NUMBERING_METHOD_ITEMS)
-	nums_format: EnumProperty(name="", items=NUMBERING_FORMAT_ITEMS)
-	lod_level: IntProperty(name="", min=0, max=9)
+	delete_prev_nums: BoolProperty(name="", default=True, update=update_save_config)
+	nums_method: EnumProperty(name="", items=NUMBERING_METHOD_ITEMS, update=update_save_config)
+	nums_format: EnumProperty(name="", items=NUMBERING_FORMAT_ITEMS, update=update_save_config)
+	lod_level: IntProperty(name="", min=0, max=9, update=update_save_config)
 	# UV
-	uv_move_factor: EnumProperty(name="", items=UV_MOVE_FACTOR_ITEMS, default="3")
-	uv_index_rename: IntProperty(name="", min=0, max=10)
-	uv_name_rename: StringProperty(name="")
-	uv_name_add: StringProperty(name="")
-	uv_packing_mode: EnumProperty(name="", items=UV_PACKING_ITEMS)
-	uv_packing_smart_angle: FloatProperty(name="", default=66, min=0, max=89, step=1)
-	uv_packing_smart_margin: FloatProperty(name="", min=0, max=1, step=1)
-	uv_packing_lightmap_quality: IntProperty(name="", default=32, min=1, max=48, step=1)
-	uv_packing_lightmap_margin: FloatProperty(name="", default=0.3, min=0, max=1, step=1)
+	uv_move_factor: EnumProperty(name="", items=UV_MOVE_FACTOR_ITEMS, default="3", update=update_save_config)
+	uv_index_rename: IntProperty(name="", min=0, max=10, update=update_save_config)
+	uv_name_rename: StringProperty(name="", update=update_save_config)
+	uv_name_add: StringProperty(name="", update=update_save_config)
+	uv_packing_mode: EnumProperty(name="", items=UV_PACKING_ITEMS, update=update_save_config)
+	uv_packing_smart_angle: FloatProperty(name="", default=66, min=0, max=89, step=1, update=update_save_config)
+	uv_packing_smart_margin: FloatProperty(name="", min=0, max=1, step=1, update=update_save_config)
+	uv_packing_lightmap_quality: IntProperty(name="", default=32, min=1, max=48, step=1, update=update_save_config)
+	uv_packing_lightmap_margin: FloatProperty(name="", default=0.3, min=0, max=1, step=1, update=update_save_config)
 	# Material
-	palette_custom_save_path: BoolProperty(name="")
-	palette_pbr_workflow: BoolProperty(name="")
-	palette_save_path: StringProperty(name="", subtype="DIR_PATH")
+	palette_custom_save_path: BoolProperty(name="", update=update_save_config)
+	palette_pbr_workflow: BoolProperty(name="", update=update_save_config)
+	palette_save_path: StringProperty(name="", subtype="DIR_PATH", update=update_save_config)
 	# Other
-	normals_inside: BoolProperty(name="")
-	calc_normals_en: BoolProperty(name="")
-	merge_bones_method: EnumProperty(name="", items=MERGE_BONES_METHOD_ITEMS)
-	col_to_obj_name_method: EnumProperty(name="", items=COL_TO_OBJ_NAME_METHOD_ITEMS)
-	col_name_position: EnumProperty(name="", items=COL_NAME_POSITION_ITEMS)
-	col_name_type_style: EnumProperty(name="", items=COL_NAME_STYLE_ITEMS)
-	delete_empty_meshes: BoolProperty(name="", default=True)
+	normals_inside: BoolProperty(name="", update=update_save_config)
+	calc_normals_en: BoolProperty(name="", update=update_save_config)
+	merge_bones_method: EnumProperty(name="", items=MERGE_BONES_METHOD_ITEMS, update=update_save_config)
+	col_to_obj_name_method: EnumProperty(name="", items=COL_TO_OBJ_NAME_METHOD_ITEMS, update=update_save_config)
+	col_name_position: EnumProperty(name="", items=COL_NAME_POSITION_ITEMS, update=update_save_config)
+	col_name_type_style: EnumProperty(name="", items=COL_NAME_STYLE_ITEMS, update=update_save_config)
+	delete_empty_meshes: BoolProperty(name="", default=True, update=update_save_config)
 # endregion
 # region Show/Hide Preferences Groups
-	show_panels_prefs: BoolProperty(name="", default=False)
-	show_default_export: BoolProperty(name="", default=False)
-	show_default_origin: BoolProperty(name="", default=False)
-	show_default_rename: BoolProperty(name="", default=False)
-	show_default_uv: BoolProperty(name="", default=False)
-	show_default_material: BoolProperty(name="", default=False)
-	show_default_other: BoolProperty(name="", default=False)
+	show_panels_prefs: BoolProperty(name="", default=False, update=update_save_config)
+	show_default_export: BoolProperty(name="", default=False, update=update_save_config)
+	show_default_origin: BoolProperty(name="", default=False, update=update_save_config)
+	show_default_rename: BoolProperty(name="", default=False, update=update_save_config)
+	show_default_uv: BoolProperty(name="", default=False, update=update_save_config)
+	show_default_material: BoolProperty(name="", default=False, update=update_save_config)
+	show_default_other: BoolProperty(name="", default=False, update=update_save_config)
 # endregion
 
 	def draw(self, _):

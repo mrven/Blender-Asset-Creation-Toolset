@@ -5,7 +5,7 @@ bl_info = {
 	"wiki_url": "https://github.com/mrven/Blender-Asset-Creation-Toolset#readme",
 	"tracker_url": "https://github.com/mrven/Blender-Asset-Creation-Toolset/issues",
 	"doc_url": "https://github.com/mrven/Blender-Asset-Creation-Toolset#readme",
-	"version": (2025, 2, 0),
+	"version": (2025, 2, 1),
 	"blender": (3, 0, 0),
 	"location": "3D View > Toolbox > ACT",
 	"category": "Object",

@@ -1,5 +1,11 @@
 # ACT: Game Asset Creation Toolset Changelog
 
+## ACT 2025.2.1
+
+### Fix
+
+* Preferences are not saved in JSON
+
 ## ACT 2025.2.0
 
 ### New

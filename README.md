@@ -6,7 +6,7 @@
 
 ## ***Download latest version:***
 * ***[(2025.2) Blender 4.2+ (from Blender Extensions)](https://extensions.blender.org/add-ons/act-game-asset-creation-toolset/)***
-* ***[(2025.2) Blender 3.0++ (even 5.0+)](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/release/act_2025_2_0.zip)***
+* ***[(2025.2) Blender 3.0++ (even 5.0+)](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/release/act_2025_2_1.zip)***
 * ***[(3.1.5) Blender 2.9+](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/release/Asset_Creation_Toolset_3_1_5_290.zip)***
 * ***[(3.1.2) Blender 2.83+](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/release/Asset_Creation_Toolset_3_1_2_283.zip)***
 * ***[(2.4.1) Blender 2.79](https://github.com/mrven/Blender-Asset-Creation-Toolset/raw/master/release/Asset_Creation_Toolset_2_4_1_279.zip)***

@@ -8,7 +8,7 @@
 
 Transfer Material Base Color to Viewport Color for Solid View Mode. Or Generate Random Colors for Materials for Viewport.
 
-## lear Vertex Color
+## Clear Vertex Color
 
 Just remove all Vertex Colors from selected objects.
 

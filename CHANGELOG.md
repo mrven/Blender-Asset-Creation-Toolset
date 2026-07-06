@@ -1,5 +1,12 @@
 # ACT: Game Asset Creation Toolset Changelog
 
+## ACT 2026.1.0
+
+### Fix
+
+* Fixed add-on module reloading to follow Blender's recommended script reload workflow.
+* Restored saved add-on preferences correctly after reloading scripts.
+
 ## ACT 2025.2.1
 
 ### Fix

@@ -11,31 +11,93 @@ bl_info = {
 	"category": "Object",
 }
 
-import importlib
+_needs_reload = "bpy" in locals()
+
 import bpy
 from bpy.app.handlers import persistent
 from bpy.app import timers
 
-from .common import config_json
+from .common import (
+	constants,
+	config_json,
+	utils as common_utils,
+	props,
+	preferences,
+)
+from .support import operators as support_operators, ui as support_ui
+from .origin import utils as origin_utils, operators as origin_operators, ui as origin_ui
+from .rename import utils as rename_utils, operators as rename_operators, ui as rename_ui
+from .uv import utils as uv_utils, operators as uv_operators, ui as uv_ui
+from .geometry import operators as geometry_operators, ui as geometry_ui
+from .import_export import (
+	utils as import_export_utils,
+	operators as import_export_operators,
+	ui as import_export_ui,
+)
+from .material import operators as material_operators, ui as material_ui
+from .other import utils as other_utils, operators as other_operators, ui as other_ui
 
-modules_order = (
-	"common",
-	"support",
-	"origin",
-	"rename",
-	"uv",
-	"geometry",
-	"import_export",
-	"material",
-	"other",
+_reload_modules = (
+	constants,
+	common_utils,
+	config_json,
+	props,
+	preferences,
+	support_operators,
+	support_ui,
+	origin_utils,
+	origin_operators,
+	origin_ui,
+	rename_utils,
+	rename_operators,
+	rename_ui,
+	uv_utils,
+	uv_operators,
+	uv_ui,
+	geometry_operators,
+	geometry_ui,
+	import_export_utils,
+	import_export_operators,
+	import_export_ui,
+	material_operators,
+	material_ui,
+	other_utils,
+	other_operators,
+	other_ui,
 )
 
-modules = [importlib.import_module(f".{name}", __package__) for name in modules_order]
+if _needs_reload:
+	import importlib
+
+	for module in _reload_modules:
+		importlib.reload(module)
+
+
+_modules = (
+	props,
+	preferences,
+	support_operators,
+	support_ui,
+	origin_operators,
+	origin_ui,
+	rename_operators,
+	rename_ui,
+	uv_operators,
+	uv_ui,
+	geometry_operators,
+	geometry_ui,
+	import_export_operators,
+	import_export_ui,
+	material_operators,
+	material_ui,
+	other_operators,
+	other_ui,
+)
 
 def deferred_initialize():
 	config_json.load_or_initialize_prefs()
 	config_json.saving_enabled = True
-	config_json.copy_prefs_to_props()
+	config_json.copy_prefs_to_props(force=_needs_reload)
 
 	return None
 
@@ -48,9 +110,9 @@ def on_load_post(_):
 
 def register():
 	config_json.saving_enabled = False
-	for m in modules:
-		if hasattr(m, "register"):
-			m.register()
+	for module in _modules:
+		if hasattr(module, "register"):
+			module.register()
 
 	timers.register(deferred_initialize, first_interval=0.1)
 
@@ -62,6 +124,6 @@ def unregister():
 	if on_load_post in bpy.app.handlers.load_post:
 		bpy.app.handlers.load_post.remove(on_load_post)
 
-	for m in reversed(modules):
-		if hasattr(m, "unregister"):
-			m.unregister()
+	for module in reversed(_modules):
+		if hasattr(module, "unregister"):
+			module.unregister()

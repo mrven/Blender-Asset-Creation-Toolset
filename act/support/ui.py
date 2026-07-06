@@ -7,7 +7,7 @@ from ..common import constants
 package_name = common_utils.get_package_name()
 
 class VIEW3D_PT_act_support_panel(bpy.types.Panel):
-	bl_label = "ACT 2025.2 Support"
+	bl_label = "ACT 2026.1 Support"
 	bl_space_type = "VIEW_3D"
 	bl_region_type = "UI"
 	bl_category = "ACT"
@@ -29,7 +29,7 @@ class VIEW3D_PT_act_support_panel(bpy.types.Panel):
 
 
 class UV_PT_act_support_panel(bpy.types.Panel):
-	bl_label = "ACT 2025.2 Support"
+	bl_label = "ACT 2026.1 Support"
 	bl_space_type = "IMAGE_EDITOR"
 	bl_region_type = "UI"
 	bl_category = "ACT"

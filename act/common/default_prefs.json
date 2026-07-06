@@ -1,5 +1,4 @@
 {
-    "bl_idname": "\u0006",
     "view3d_support_enable": true,
     "uv_support_enable": true,
     "export_import_enable": true,

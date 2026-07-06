@@ -39,19 +39,19 @@ class CreatePalette(bpy.types.Operator):
 				path = bpy.path.abspath("//Textures/")
 
 			if act.palette_custom_save_path:
-				if len(act.save_path) == 0:
+				if len(act.palette_save_path) == 0:
 					common_utils.show_message_box("Save Path can't be empty",
 										   "Saving Error",
 										   "ERROR")
 					return {"CANCELLED"}
 
-				if not os.path.exists(os.path.realpath(bpy.path.abspath(act.save_path))):
+				if not os.path.exists(os.path.realpath(bpy.path.abspath(act.palette_save_path))):
 					common_utils.show_message_box("Directory for saving not exist",
 										   "Saving Error",
 										   "ERROR")
 					return {"CANCELLED"}
 				else:
-					path = os.path.realpath(bpy.path.abspath(act.save_path)) + "/"
+					path = os.path.realpath(bpy.path.abspath(act.palette_save_path)) + "/"
 
 			# Create export folder
 			if not os.path.exists(path):
@@ -630,7 +630,7 @@ class OpenSaveDir(bpy.types.Operator):
 		act = context.scene.act
 
 		# Try open export directory in OS
-		if not os.path.exists(os.path.realpath(bpy.path.abspath(act.save_path))):
+		if not os.path.exists(os.path.realpath(bpy.path.abspath(act.palette_save_dir))):
 			act.palette_save_dir = ""
 			common_utils.show_message_box("Directory not exist",
 								   "Wrong Path",

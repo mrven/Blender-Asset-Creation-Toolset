@@ -17,15 +17,15 @@ def update_custom_forward_axis(_, context):
 	if act.custom_export_forward_axis == act.custom_export_up_axis:
 		# Get Current item index
 		index = 0
-		for i in range(len(act.custom_export_axis_items)):
-			if act.custom_export_up_axis == act.custom_export_axis_items[i][0]:
+		for i in range(len(EXPORT_AXIS_ITEMS)):
+			if act.custom_export_up_axis == EXPORT_AXIS_ITEMS[i][0]:
 				index = i
 
-		if index < len(act.custom_export_axis_items) - 1:
+		if index < len(EXPORT_AXIS_ITEMS) - 1:
 			index += 1
 		else:
 			index = 0
-		act.custom_export_up_axis = act.custom_export_axis_items[index][0]
+		act.custom_export_up_axis = EXPORT_AXIS_ITEMS[index][0]
 
 
 def update_custom_up_axis(_, context):
@@ -33,15 +33,15 @@ def update_custom_up_axis(_, context):
 	if act.custom_export_forward_axis == act.custom_export_up_axis:
 		# Get Current item index
 		index = 0
-		for i in range(len(act.custom_export_axis_items)):
-			if act.custom_export_forward_axis == act.custom_export_axis_items[i][0]:
+		for i in range(len(EXPORT_AXIS_ITEMS)):
+			if act.custom_export_forward_axis == EXPORT_AXIS_ITEMS[i][0]:
 				index = i
 
-		if index < len(act.custom_export_axis_items) - 1:
+		if index < len(EXPORT_AXIS_ITEMS) - 1:
 			index += 1
 		else:
 			index = 0
-		act.custom_export_forward_axis = act.custom_export_axis_items[index][0]
+		act.custom_export_forward_axis = EXPORT_AXIS_ITEMS[index][0]
 # endregion
 
 

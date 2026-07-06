@@ -7,6 +7,7 @@
 * Fixed add-on module reloading to follow Blender's recommended script reload workflow.
 * Restored saved add-on preferences correctly after reloading scripts.
 * Fixed custom palette save path and opening the last palette output directory.
+* Fixed custom Forward/Up export axis selection after refactoring.
 
 ## ACT 2025.2.1
 

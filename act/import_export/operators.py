@@ -3,10 +3,23 @@ import os
 import subprocess
 import math
 import sys
+from dataclasses import dataclass, field
 from datetime import datetime
 
 from ..common import utils as common_utils
 from . import utils
+
+
+@dataclass
+class ExportState:
+	context: object
+	act: object
+	path: str
+	start_active_obj: object
+	selected_objects: object
+	name: str
+	incorrect_names: list = field(default_factory=list)
+
 
 # FBX/OBJ/GLTF export
 class ACTExport(bpy.types.Operator):
@@ -50,15 +63,17 @@ class ACTExport(bpy.types.Operator):
 
 		return path
 
-	def _filter_exportable_objects(self, context, selected_objects):
+	def _filter_exportable_objects(self, state):
 		# Filtering selected objects. Exclude all not meshes, empties, armatures, curves and text
-		for x in selected_objects:
+		for x in state.selected_objects:
 			if x.type not in self.exportable_object_types:
 				x.select_set(False)
-		return context.selected_objects
+		state.selected_objects = state.context.selected_objects
 
-	def _prepare_objects_for_export(self, context, act, selected_objects):
+	def _prepare_objects_for_export(self, state):
 		# Undoable operations
+		act = state.act
+		context = state.context
 		allow_multi_users = (act.export_format == "FBX" and act.export_target_engine == "UNITY"
 		                     and not act.export_combine_meshes and not act.export_mode == "INDIVIDUAL")
 
@@ -68,7 +83,7 @@ class ACTExport(bpy.types.Operator):
 		bpy.ops.object.select_all(action="DESELECT")
 
 		# Preparing transforms
-		for obj in selected_objects:
+		for obj in state.selected_objects:
 			obj.select_set(True)
 			context.view_layer.objects.active = obj
 
@@ -152,52 +167,56 @@ class ACTExport(bpy.types.Operator):
 			if obj.type == "EMPTY" and len(obj.children) == 0:
 				bpy.data.objects.remove(obj, do_unlink=True)
 
-	def _export_model_with_name(self, path, prefilter_name, incorrect_names):
+	def _export_model_with_name(self, state, prefilter_name):
 		name = common_utils.prefilter_export_name(prefilter_name)
 
 		if name != prefilter_name:
-			incorrect_names.append(prefilter_name)
+			state.incorrect_names.append(prefilter_name)
 
-		utils.export_model(path, name)
+		utils.export_model(state.path, name)
 
-	def _export_all(self, context, act, path, name, start_active_obj, selected_objects, incorrect_names):
+	def _export_all(self, state):
+		context = state.context
+		act = state.act
+
 		# Combine All Meshes (Optional)
 		if act.export_combine_meshes:
 			# If parent object is mesh
 			# combine all children to parent object
-			if start_active_obj.type == "MESH":
-				context.view_layer.objects.active = start_active_obj
+			if state.start_active_obj.type == "MESH":
+				context.view_layer.objects.active = state.start_active_obj
 				bpy.ops.object.join()
 			# If  parent is empty
 			else:
 				current_active = context.view_layer.objects.active
 				# Combine all child meshes to first in list
-				for obj in selected_objects:
+				for obj in state.selected_objects:
 					if obj.type == "MESH":
 						context.view_layer.objects.active = obj
 				bpy.ops.object.join()
 				context.view_layer.objects.active = current_active
 
-			selected_objects = context.selected_objects
+			state.selected_objects = context.selected_objects
 
 		# Set custom fbx/obj name (Optional)
-		prefilter_name = act.custom_fbx_name if act.set_custom_fbx_name else name
-		self._export_model_with_name(path, prefilter_name, incorrect_names)
-		return selected_objects
+		prefilter_name = act.custom_fbx_name if act.set_custom_fbx_name else state.name
+		self._export_model_with_name(state, prefilter_name)
 
-	def _select_parent_export_roots(self, context, act, selected_objects):
-		if act.export_mode == "INDIVIDUAL":
+	def _select_parent_export_roots(self, state):
+		if state.act.export_mode == "INDIVIDUAL":
 			bpy.ops.object.parent_clear(type="CLEAR_KEEP_TRANSFORM")
 
 		bpy.ops.object.select_all(action="DESELECT")
 
-		for obj in selected_objects:
+		for obj in state.selected_objects:
 			if not obj.parent:
 				obj.select_set(True)
 
-		return context.selected_objects
+		state.selected_objects = state.context.selected_objects
 
-	def _prepare_parent_export_root(self, context, act, obj):
+	def _prepare_parent_export_root(self, state, obj):
+		context = state.context
+		act = state.act
 		bpy.ops.object.select_all(action="DESELECT")
 		context.view_layer.objects.active = obj
 		obj.select_set(True)
@@ -251,7 +270,10 @@ class ACTExport(bpy.types.Operator):
 
 		return context.view_layer.objects.active
 
-	def _export_parent_root(self, context, act, path, obj, current_parent, incorrect_names):
+	def _export_parent_root(self, state, obj, current_parent):
+		context = state.context
+		act = state.act
+
 		# Select only current object
 		bpy.ops.object.select_all(action="DESELECT")
 
@@ -270,26 +292,24 @@ class ACTExport(bpy.types.Operator):
 		# Select Parent and his children
 		bpy.ops.object.select_grouped(extend=True, type="CHILDREN_RECURSIVE")
 
-		self._export_model_with_name(path, prefilter_name, incorrect_names)
+		self._export_model_with_name(state, prefilter_name)
 
 		if act.apply_loc:
 			obj.location = object_loc
 
-	def _export_by_parent_or_individual(self, context, act, path, selected_objects, incorrect_names):
-		selected_objects = self._select_parent_export_roots(context, act, selected_objects)
+	def _export_by_parent_or_individual(self, state):
+		self._select_parent_export_roots(state)
 
-		for obj in selected_objects:
-			current_parent = self._prepare_parent_export_root(context, act, obj)
-			self._export_parent_root(context, act, path, obj, current_parent, incorrect_names)
+		for obj in state.selected_objects:
+			current_parent = self._prepare_parent_export_root(state, obj)
+			self._export_parent_root(state, obj, current_parent)
 
-		return selected_objects
-
-	def _collect_export_collections(self, selected_objects):
+	def _collect_export_collections(self, state):
 		used_collections = []
 		obj_col_dict = {}
 
 		# Collect used collections for selected objects
-		for obj in selected_objects:
+		for obj in state.selected_objects:
 			collection_in_list = False
 
 			for c in used_collections:
@@ -303,7 +323,10 @@ class ACTExport(bpy.types.Operator):
 
 		return used_collections, obj_col_dict
 
-	def _export_collection(self, context, act, path, collection_name, obj_col_dict, incorrect_names):
+	def _export_collection(self, state, collection_name, obj_col_dict):
+		context = state.context
+		act = state.act
+
 		bpy.ops.object.select_all(action="DESELECT")
 
 		# Select Objects in Collection
@@ -329,15 +352,15 @@ class ACTExport(bpy.types.Operator):
 			self._cleanup_empty_objects_without_children(selected_objects_for_cleanup)
 
 		# Replace invalid chars
-		self._export_model_with_name(path, collection_name, incorrect_names)
+		self._export_model_with_name(state, collection_name)
 
-	def _export_by_collection(self, context, act, path, selected_objects, incorrect_names):
-		context.scene.tool_settings.transform_pivot_point = "MEDIAN_POINT"
-		used_collections, obj_col_dict = self._collect_export_collections(selected_objects)
+	def _export_by_collection(self, state):
+		state.context.scene.tool_settings.transform_pivot_point = "MEDIAN_POINT"
+		used_collections, obj_col_dict = self._collect_export_collections(state)
 
 		# Select objects by collection and export
 		for c in used_collections:
-			self._export_collection(context, act, path, c, obj_col_dict, incorrect_names)
+			self._export_collection(state, c, obj_col_dict)
 
 		bpy.ops.object.select_all(action="DESELECT")
 
@@ -345,7 +368,6 @@ class ACTExport(bpy.types.Operator):
 		start_time = datetime.now()
 		act = context.scene.act
 		act.export_dir = ""
-		incorrect_names = []
 
 		# Prepare for export
 		# Save selected objects and active object
@@ -360,33 +382,40 @@ class ACTExport(bpy.types.Operator):
 		if path is None:
 			return {"CANCELLED"}
 
-		os.makedirs(path, exist_ok=True)
+		state = ExportState(
+			context=context,
+			act=act,
+			path=path,
+			start_active_obj=start_active_obj,
+			selected_objects=current_selected_obj,
+			name=name,
+		)
 
-		current_selected_obj = self._filter_exportable_objects(context, current_selected_obj)
+		os.makedirs(state.path, exist_ok=True)
+
+		self._filter_exportable_objects(state)
 
 		bpy.ops.ed.undo_push(message="FBX Bridge Export Prepare")
 
-		self._prepare_objects_for_export(context, act, current_selected_obj)
+		self._prepare_objects_for_export(state)
 
 		# Export Stage
-		for obj in current_selected_obj:
+		for obj in state.selected_objects:
 			obj.select_set(True)
 
 		if act.export_mode == "ALL":
-			current_selected_obj = self._export_all(context, act, path, name, start_active_obj,
-			                                        current_selected_obj, incorrect_names)
+			self._export_all(state)
 
 		# Export by parents
 		if act.export_mode in {"PARENT", "INDIVIDUAL"}:
-			current_selected_obj = self._export_by_parent_or_individual(context, act, path,
-			                                                            current_selected_obj, incorrect_names)
+			self._export_by_parent_or_individual(state)
 
 		# Export by collection
 		if act.export_mode == "COLLECTION":
-			self._export_by_collection(context, act, path, current_selected_obj, incorrect_names)
+			self._export_by_collection(state)
 
 		# Show message about incorrect names
-		if len(incorrect_names) > 0:
+		if len(state.incorrect_names) > 0:
 			common_utils.show_message_box(
 				"Object(s) has invalid characters in name. Some chars in export name have been replaced",
 				"Incorrect Export Names")
@@ -395,7 +424,7 @@ class ACTExport(bpy.types.Operator):
 		bpy.ops.ed.undo()
 		bpy.ops.ed.undo_push(message="ACT Export")
 
-		context.scene.act.export_dir = path
+		context.scene.act.export_dir = state.path
 
 		common_utils.print_execution_time("FBX/OBJ/GLTF Export", start_time)
 		return {"FINISHED"}

@@ -972,9 +972,16 @@ class TextureFromActiveMaterial(bpy.types.Operator):
 
 	def execute(self, context):
 		start_time = datetime.now()
+		image = bpy.data.images.get(self.texture_name)
+		if image is None:
+			common_utils.show_message_box("Texture image not found",
+			                              "Texture Error",
+			                              "ERROR")
+			return {"CANCELLED"}
+
 		for area in context.screen.areas:
 			if area.type == "IMAGE_EDITOR":
-				area.spaces[0].image = bpy.data.images[self.texture_name]
+				area.spaces[0].image = image
 
 		common_utils.print_execution_time("Select Texture in UV Editor", start_time)
 		

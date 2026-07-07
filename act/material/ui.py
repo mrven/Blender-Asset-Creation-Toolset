@@ -15,38 +15,43 @@ class OBJECT_MT_act_select_texture_menu(bpy.types.Menu):
 		texture_list = []
 
 		# If now window has Image Editor area
-		has_opened_image_editor = False
-		for area in context.screen.areas:
-			if area.type == "IMAGE_EDITOR":
-				has_opened_image_editor = True
-
-		if has_opened_image_editor:
-			# If active object is mesh and has material slots
-			if context.active_object.type == "MESH":
-				if len(context.active_object.data.materials) > 0:
-					has_textures = False
-
-					# Collect all textures from active material to list
-					for node in context.active_object.active_material.node_tree.nodes:
-						if node.type == "TEX_IMAGE":
-							texture_name = node.image.name_full
-							texture_in_list = False
-							for texture in texture_list:
-								if texture_name == texture:
-									texture_in_list = True
-
-							if not texture_in_list:
-								texture_list.append(texture_name)
-							has_textures = True
-
-					if not has_textures:
-						layout.label(text="Material has not textures")
-				else:
-					layout.label(text="Mesh has not materials")
-			else:
-				layout.label(text="Object is not mesh")
-		else:
+		if not any(area.type == "IMAGE_EDITOR" for area in context.screen.areas):
 			layout.label(text="Opened UV Editor not found")
+			return
+
+		obj = context.active_object
+		if obj is None:
+			layout.label(text="Active object not found")
+			return
+
+		# If active object is mesh and has material slots
+		if obj.type != "MESH":
+			layout.label(text="Object is not mesh")
+			return
+
+		if len(obj.data.materials) == 0:
+			layout.label(text="Mesh has not materials")
+			return
+
+		material = obj.active_material
+		if material is None:
+			layout.label(text="Active material not found")
+			return
+
+		if material.node_tree is None:
+			layout.label(text="Material has no node tree")
+			return
+
+		# Collect all textures from active material to list
+		for node in material.node_tree.nodes:
+			if node.type == "TEX_IMAGE" and node.image is not None:
+				texture_name = node.image.name_full
+				if texture_name not in texture_list:
+					texture_list.append(texture_name)
+
+		if not texture_list:
+			layout.label(text="Material has not textures")
+			return
 
 		for texture in texture_list:
 			layout.operator(operators.TextureFromActiveMaterial.bl_idname, text=texture).texture_name = texture

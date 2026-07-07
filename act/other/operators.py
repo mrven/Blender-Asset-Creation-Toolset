@@ -214,7 +214,7 @@ class MergeBones(bpy.types.Operator):
 			if m.type == "MESH":
 				if len(m.modifiers) > 0:
 					for n in m.modifiers:
-						if n.type == "ARMATURE" and n.object.name_full == armature.name_full:
+						if n.type == "ARMATURE" and n.object is not None and n.object.name_full == armature.name_full:
 							meshes.append(m)
 
 		if len(meshes) == 0:
@@ -405,7 +405,7 @@ class CleanupEmpties(bpy.types.Operator):
 			obj.select_set(True)
 
 		if is_active_object_deleted:
-			context.view_layer.objects.active = selected_objects[0]
+			context.view_layer.objects.active = selected_objects[0] if selected_objects else None
 		else:
 			context.view_layer.objects.active = active_object
 

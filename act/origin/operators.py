@@ -31,6 +31,9 @@ class Align(bpy.types.Operator):
 			if obj.type != "MESH":
 				continue
 
+			if len(obj.data.vertices) == 0:
+				continue
+
 			obj.select_set(True)
 			context.view_layer.objects.active = obj
 			# Save current origin and relocate 3D Cursor

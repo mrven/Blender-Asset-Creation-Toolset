@@ -8,6 +8,10 @@
 * Restored saved add-on preferences correctly after reloading scripts.
 * Fixed custom palette save path and opening the last palette output directory.
 * Fixed custom Forward/Up export axis selection after refactoring.
+* Fixed Origin Align for empty mesh objects.
+* Fixed Cleanup Empties when all selected objects are deleted.
+* Fixed texture selection menu for missing active material, node tree, or image.
+* Fixed Merge Bones when an Armature modifier has no target object.
 
 ## ACT 2025.2.1
 

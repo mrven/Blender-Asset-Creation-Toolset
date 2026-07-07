@@ -185,7 +185,7 @@ class ACTExport(bpy.types.Operator):
 		self._export_model_with_name(path, prefilter_name, incorrect_names)
 		return selected_objects
 
-	def _export_by_parent_or_individual(self, context, act, path, selected_objects, incorrect_names):
+	def _select_parent_export_roots(self, context, act, selected_objects):
 		if act.export_mode == "INDIVIDUAL":
 			bpy.ops.object.parent_clear(type="CLEAR_KEEP_TRANSFORM")
 
@@ -195,84 +195,92 @@ class ACTExport(bpy.types.Operator):
 			if not obj.parent:
 				obj.select_set(True)
 
-		selected_objects = context.selected_objects
+		return context.selected_objects
+
+	def _prepare_parent_export_root(self, context, act, obj):
+		bpy.ops.object.select_all(action="DESELECT")
+		context.view_layer.objects.active = obj
+		obj.select_set(True)
+
+		# Combine All Meshes (Optional)
+		if act.export_combine_meshes:
+			# If parent object is mesh
+			# combine all children to parent object
+			if obj.type == "MESH":
+				bpy.ops.object.select_grouped(extend=True, type="CHILDREN_RECURSIVE")
+				bpy.ops.object.join()
+
+				# CleanUp Empties without Children
+				selected_objects_for_cleanup = context.selected_objects
+				self._cleanup_empty_objects_without_children(selected_objects_for_cleanup)
+
+			# If  parent is not Mesh
+			else:
+				current_active = context.view_layer.objects.active
+				parent_loc = current_active.location.copy()
+				parent_name = current_active.name
+
+				# Select all children
+				bpy.ops.object.select_grouped(extend=False, type="CHILDREN_RECURSIVE")
+				group_selected_objects = context.selected_objects
+
+				# Combine all child meshes to first in list
+				for x in group_selected_objects:
+					if x.type == "MESH":
+						context.view_layer.objects.active = x
+				bpy.ops.object.join()
+
+				context.view_layer.objects.active.name = parent_name + "_Mesh"
+
+				# Parent Combined mesh back
+				current_active.select_set(True)
+				context.view_layer.objects.active = current_active
+				bpy.ops.object.parent_set(type="OBJECT", keep_transform=True)
+
+				selected_objects_for_cleanup = context.selected_objects
+
+				# Move Origin to Parent
+				context.scene.tool_settings.transform_pivot_point = "MEDIAN_POINT"
+				context.scene.cursor.location = parent_loc
+				bpy.ops.object.origin_set(type="ORIGIN_CURSOR", center="MEDIAN")
+
+				# CleanUp Empties without Children
+				self._cleanup_empty_objects_without_children(selected_objects_for_cleanup)
+
+				context.view_layer.objects.active = current_active
+
+		return context.view_layer.objects.active
+
+	def _export_parent_root(self, context, act, path, obj, current_parent, incorrect_names):
+		# Select only current object
+		bpy.ops.object.select_all(action="DESELECT")
+
+		current_parent.select_set(True)
+		context.view_layer.objects.active = current_parent
+
+		object_loc = obj.location.copy()
+
+		if act.apply_loc:
+			# Move object to center
+			obj.location = (0, 0, 0)
+
+		# Name is name of parent
+		prefilter_name = current_parent.name
+
+		# Select Parent and his children
+		bpy.ops.object.select_grouped(extend=True, type="CHILDREN_RECURSIVE")
+
+		self._export_model_with_name(path, prefilter_name, incorrect_names)
+
+		if act.apply_loc:
+			obj.location = object_loc
+
+	def _export_by_parent_or_individual(self, context, act, path, selected_objects, incorrect_names):
+		selected_objects = self._select_parent_export_roots(context, act, selected_objects)
 
 		for obj in selected_objects:
-			bpy.ops.object.select_all(action="DESELECT")
-			context.view_layer.objects.active = obj
-			obj.select_set(True)
-
-			# Combine All Meshes (Optional)
-			if act.export_combine_meshes:
-				# If parent object is mesh
-				# combine all children to parent object
-				if obj.type == "MESH":
-					bpy.ops.object.select_grouped(extend=True, type="CHILDREN_RECURSIVE")
-					bpy.ops.object.join()
-
-					# CleanUp Empties without Children
-					selected_objects_for_cleanup = context.selected_objects
-					self._cleanup_empty_objects_without_children(selected_objects_for_cleanup)
-
-				# If  parent is not Mesh
-				else:
-					current_active = context.view_layer.objects.active
-					parent_loc = current_active.location.copy()
-					parent_name = current_active.name
-
-					# Select all children
-					bpy.ops.object.select_grouped(extend=False, type="CHILDREN_RECURSIVE")
-					group_selected_objects = context.selected_objects
-
-					# Combine all child meshes to first in list
-					for x in group_selected_objects:
-						if x.type == "MESH":
-							context.view_layer.objects.active = x
-					bpy.ops.object.join()
-
-					context.view_layer.objects.active.name = parent_name + "_Mesh"
-
-					# Parent Combined mesh back
-					current_active.select_set(True)
-					context.view_layer.objects.active = current_active
-					bpy.ops.object.parent_set(type="OBJECT", keep_transform=True)
-
-					selected_objects_for_cleanup = context.selected_objects
-
-					# Move Origin to Parent
-					context.scene.tool_settings.transform_pivot_point = "MEDIAN_POINT"
-					context.scene.cursor.location = parent_loc
-					bpy.ops.object.origin_set(type="ORIGIN_CURSOR", center="MEDIAN")
-
-					# CleanUp Empties without Children
-					self._cleanup_empty_objects_without_children(selected_objects_for_cleanup)
-
-					context.view_layer.objects.active = current_active
-
-			current_parent = context.view_layer.objects.active
-
-			# Select only current object
-			bpy.ops.object.select_all(action="DESELECT")
-
-			current_parent.select_set(True)
-			context.view_layer.objects.active = current_parent
-
-			object_loc = obj.location.copy()
-
-			if act.apply_loc:
-				# Move object to center
-				obj.location = (0, 0, 0)
-
-			# Name is name of parent
-			prefilter_name = current_parent.name
-
-			# Select Parent and his children
-			bpy.ops.object.select_grouped(extend=True, type="CHILDREN_RECURSIVE")
-
-			self._export_model_with_name(path, prefilter_name, incorrect_names)
-
-			if act.apply_loc:
-				obj.location = object_loc
+			current_parent = self._prepare_parent_export_root(context, act, obj)
+			self._export_parent_root(context, act, path, obj, current_parent, incorrect_names)
 
 		return selected_objects
 

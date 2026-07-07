@@ -284,11 +284,10 @@ class ACTExport(bpy.types.Operator):
 
 		return selected_objects
 
-	def _export_by_collection(self, context, act, path, selected_objects, incorrect_names):
+	def _collect_export_collections(self, selected_objects):
 		used_collections = []
-		origin_loc = (0.0, 0.0, 0.0)
-		context.scene.tool_settings.transform_pivot_point = "MEDIAN_POINT"
 		obj_col_dict = {}
+
 		# Collect used collections for selected objects
 		for obj in selected_objects:
 			collection_in_list = False
@@ -302,34 +301,43 @@ class ACTExport(bpy.types.Operator):
 
 			obj_col_dict[obj] = obj.users_collection[0].name
 
+		return used_collections, obj_col_dict
+
+	def _export_collection(self, context, act, path, collection_name, obj_col_dict, incorrect_names):
+		bpy.ops.object.select_all(action="DESELECT")
+
+		# Select Objects in Collection
+		set_active_mesh = False
+		for obj, col_name in obj_col_dict.items():
+			if col_name == collection_name:
+				obj.select_set(True)
+				if obj.type == "MESH" and not set_active_mesh:
+					context.view_layer.objects.active = obj
+					if act.export_combine_meshes:
+						obj.name = collection_name
+					set_active_mesh = True
+
+		if act.export_combine_meshes and set_active_mesh:
+			bpy.ops.object.join()
+
+			# Move Origin to Parent
+			context.scene.cursor.location = (0.0, 0.0, 0.0)
+			bpy.ops.object.origin_set(type="ORIGIN_CURSOR", center="MEDIAN")
+
+			# CleanUp Empties without Children
+			selected_objects_for_cleanup = context.selected_objects
+			self._cleanup_empty_objects_without_children(selected_objects_for_cleanup)
+
+		# Replace invalid chars
+		self._export_model_with_name(path, collection_name, incorrect_names)
+
+	def _export_by_collection(self, context, act, path, selected_objects, incorrect_names):
+		context.scene.tool_settings.transform_pivot_point = "MEDIAN_POINT"
+		used_collections, obj_col_dict = self._collect_export_collections(selected_objects)
+
 		# Select objects by collection and export
 		for c in used_collections:
-			bpy.ops.object.select_all(action="DESELECT")
-
-			# Select Objects in Collection
-			set_active_mesh = False
-			for obj, col_name in obj_col_dict.items():
-				if col_name == c:
-					obj.select_set(True)
-					if obj.type == "MESH" and not set_active_mesh:
-						context.view_layer.objects.active = obj
-						if act.export_combine_meshes:
-							obj.name = c
-						set_active_mesh = True
-
-			if act.export_combine_meshes and set_active_mesh:
-				bpy.ops.object.join()
-
-				# Move Origin to Parent
-				context.scene.cursor.location = origin_loc
-				bpy.ops.object.origin_set(type="ORIGIN_CURSOR", center="MEDIAN")
-
-				# CleanUp Empties without Children
-				selected_objects_for_cleanup = context.selected_objects
-				self._cleanup_empty_objects_without_children(selected_objects_for_cleanup)
-
-			# Replace invalid chars
-			self._export_model_with_name(path, c, incorrect_names)
+			self._export_collection(context, act, path, c, obj_col_dict, incorrect_names)
 
 		bpy.ops.object.select_all(action="DESELECT")
 

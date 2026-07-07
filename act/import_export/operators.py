@@ -147,9 +147,18 @@ class ACTExport(bpy.types.Operator):
 
 			obj.select_set(False)
 
-	def _select_prepared_objects(self, selected_objects):
-		for obj in selected_objects:
-			obj.select_set(True)
+	def _cleanup_empty_objects_without_children(self, objects):
+		for obj in objects:
+			if obj.type == "EMPTY" and len(obj.children) == 0:
+				bpy.data.objects.remove(obj, do_unlink=True)
+
+	def _export_model_with_name(self, path, prefilter_name, incorrect_names):
+		name = common_utils.prefilter_export_name(prefilter_name)
+
+		if name != prefilter_name:
+			incorrect_names.append(prefilter_name)
+
+		utils.export_model(path, name)
 
 	def _export_all(self, context, act, path, name, start_active_obj, selected_objects, incorrect_names):
 		# Combine All Meshes (Optional)
@@ -173,15 +182,7 @@ class ACTExport(bpy.types.Operator):
 
 		# Set custom fbx/obj name (Optional)
 		prefilter_name = act.custom_fbx_name if act.set_custom_fbx_name else name
-
-		# Replace invalid chars
-		name = common_utils.prefilter_export_name(prefilter_name)
-
-		if name != prefilter_name:
-			incorrect_names.append(prefilter_name)
-
-		# Export FBX/OBJ/GLTF
-		utils.export_model(path, name)
+		self._export_model_with_name(path, prefilter_name, incorrect_names)
 		return selected_objects
 
 	def _export_by_parent_or_individual(self, context, act, path, selected_objects, incorrect_names):
@@ -211,9 +212,7 @@ class ACTExport(bpy.types.Operator):
 
 					# CleanUp Empties without Children
 					selected_objects_for_cleanup = context.selected_objects
-					for x in selected_objects_for_cleanup:
-						if x.type == "EMPTY" and len(x.children) == 0:
-							bpy.data.objects.remove(x, do_unlink=True)
+					self._cleanup_empty_objects_without_children(selected_objects_for_cleanup)
 
 				# If  parent is not Mesh
 				else:
@@ -246,9 +245,7 @@ class ACTExport(bpy.types.Operator):
 					bpy.ops.object.origin_set(type="ORIGIN_CURSOR", center="MEDIAN")
 
 					# CleanUp Empties without Children
-					for x in selected_objects_for_cleanup:
-						if x.type == "EMPTY" and len(x.children) == 0:
-							bpy.data.objects.remove(x, do_unlink=True)
+					self._cleanup_empty_objects_without_children(selected_objects_for_cleanup)
 
 					context.view_layer.objects.active = current_active
 
@@ -268,16 +265,11 @@ class ACTExport(bpy.types.Operator):
 
 			# Name is name of parent
 			prefilter_name = current_parent.name
-			name = common_utils.prefilter_export_name(prefilter_name)
 
 			# Select Parent and his children
 			bpy.ops.object.select_grouped(extend=True, type="CHILDREN_RECURSIVE")
 
-			if name != prefilter_name:
-				incorrect_names.append(prefilter_name)
-
-			# Export FBX/OBJ/GLTF
-			utils.export_model(path, name)
+			self._export_model_with_name(path, prefilter_name, incorrect_names)
 
 			if act.apply_loc:
 				obj.location = object_loc
@@ -326,18 +318,10 @@ class ACTExport(bpy.types.Operator):
 
 				# CleanUp Empties without Children
 				selected_objects_for_cleanup = context.selected_objects
-				for obj in selected_objects_for_cleanup:
-					if obj.type == "EMPTY" and len(obj.children) == 0:
-						bpy.data.objects.remove(obj, do_unlink=True)
+				self._cleanup_empty_objects_without_children(selected_objects_for_cleanup)
 
 			# Replace invalid chars
-			name = common_utils.prefilter_export_name(c)
-
-			if name != c:
-				incorrect_names.append(c)
-
-			# Export FBX/OBJ/GLTF
-			utils.export_model(path, name)
+			self._export_model_with_name(path, c, incorrect_names)
 
 		bpy.ops.object.select_all(action="DESELECT")
 
@@ -369,7 +353,8 @@ class ACTExport(bpy.types.Operator):
 		self._prepare_objects_for_export(context, act, current_selected_obj)
 
 		# Export Stage
-		self._select_prepared_objects(current_selected_obj)
+		for obj in current_selected_obj:
+			obj.select_set(True)
 
 		if act.export_mode == "ALL":
 			current_selected_obj = self._export_all(context, act, path, name, start_active_obj,

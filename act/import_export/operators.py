@@ -15,55 +15,49 @@ class ACTExport(bpy.types.Operator):
 	bl_label = "Export FBXs/OBJs/GLTFs"
 	bl_options = {"REGISTER", "UNDO"}
 
-	def execute(self, context):
-		start_time = datetime.now()
-		act = context.scene.act
-		act.export_dir = ""
-		incorrect_names = []
+	exportable_object_types = {"MESH", "EMPTY", "ARMATURE", "CURVE", "FONT"}
 
-		# Prepare for export
-		# Save selected objects and active object
-		start_active_obj = context.active_object
-		current_selected_obj = context.selected_objects
-		name = context.active_object.name
-
+	def _validate_export_options(self, act):
 		# Check custom name
 		if act.export_mode == "ALL" and act.set_custom_fbx_name and not act.custom_fbx_name:
 			common_utils.show_message_box("Custom Name can't be empty", "Saving Error", "ERROR")
-			return {"CANCELLED"}
+			return False
 
+		return True
+
+	def _resolve_export_path(self, act):
 		if not bpy.data.filepath and not act.custom_export_path:
 			common_utils.show_message_box("Blend file is not saved. Try use Custom Export Path",
 								   "Saving Error", "ERROR")
-			return {"CANCELLED"}
+			return None
 
 		if act.custom_export_path:
 			if not act.export_path:
 				common_utils.show_message_box("Export Path can't be empty",
 				                              "Saving Error", "ERROR")
-				return {"CANCELLED"}
+				return None
 
 			export_path = os.path.realpath(bpy.path.abspath(act.export_path))
 
 			if not os.path.exists(export_path):
 				common_utils.show_message_box("Directory for export not exist",
 				                              "Saving Error", "ERROR")
-				return {"CANCELLED"}
+				return None
 
 			path = export_path + os.sep
 		else:
 			path = bpy.path.abspath(f"//{act.export_format}s/")
 
-		os.makedirs(path, exist_ok=True)
+		return path
 
+	def _filter_exportable_objects(self, context, selected_objects):
 		# Filtering selected objects. Exclude all not meshes, empties, armatures, curves and text
-		for x in current_selected_obj:
-			if x.type not in {"MESH", "EMPTY", "ARMATURE", "CURVE", "FONT"}:
+		for x in selected_objects:
+			if x.type not in self.exportable_object_types:
 				x.select_set(False)
-		current_selected_obj = context.selected_objects
+		return context.selected_objects
 
-		bpy.ops.ed.undo_push(message="FBX Bridge Export Prepare")
-
+	def _prepare_objects_for_export(self, context, act, selected_objects):
 		# Undoable operations
 		allow_multi_users = (act.export_format == "FBX" and act.export_target_engine == "UNITY"
 		                     and not act.export_combine_meshes and not act.export_mode == "INDIVIDUAL")
@@ -74,7 +68,7 @@ class ACTExport(bpy.types.Operator):
 		bpy.ops.object.select_all(action="DESELECT")
 
 		# Preparing transforms
-		for obj in current_selected_obj:
+		for obj in selected_objects:
 			obj.select_set(True)
 			context.view_layer.objects.active = obj
 
@@ -153,35 +147,131 @@ class ACTExport(bpy.types.Operator):
 
 			obj.select_set(False)
 
-		# Export Stage
-		for obj in current_selected_obj:
+	def _select_prepared_objects(self, selected_objects):
+		for obj in selected_objects:
 			obj.select_set(True)
 
-		if act.export_mode == "ALL":
+	def _export_all(self, context, act, path, name, start_active_obj, selected_objects, incorrect_names):
+		# Combine All Meshes (Optional)
+		if act.export_combine_meshes:
+			# If parent object is mesh
+			# combine all children to parent object
+			if start_active_obj.type == "MESH":
+				context.view_layer.objects.active = start_active_obj
+				bpy.ops.object.join()
+			# If  parent is empty
+			else:
+				current_active = context.view_layer.objects.active
+				# Combine all child meshes to first in list
+				for obj in selected_objects:
+					if obj.type == "MESH":
+						context.view_layer.objects.active = obj
+				bpy.ops.object.join()
+				context.view_layer.objects.active = current_active
+
+			selected_objects = context.selected_objects
+
+		# Set custom fbx/obj name (Optional)
+		prefilter_name = act.custom_fbx_name if act.set_custom_fbx_name else name
+
+		# Replace invalid chars
+		name = common_utils.prefilter_export_name(prefilter_name)
+
+		if name != prefilter_name:
+			incorrect_names.append(prefilter_name)
+
+		# Export FBX/OBJ/GLTF
+		utils.export_model(path, name)
+		return selected_objects
+
+	def _export_by_parent_or_individual(self, context, act, path, selected_objects, incorrect_names):
+		if act.export_mode == "INDIVIDUAL":
+			bpy.ops.object.parent_clear(type="CLEAR_KEEP_TRANSFORM")
+
+		bpy.ops.object.select_all(action="DESELECT")
+
+		for obj in selected_objects:
+			if not obj.parent:
+				obj.select_set(True)
+
+		selected_objects = context.selected_objects
+
+		for obj in selected_objects:
+			bpy.ops.object.select_all(action="DESELECT")
+			context.view_layer.objects.active = obj
+			obj.select_set(True)
+
 			# Combine All Meshes (Optional)
 			if act.export_combine_meshes:
 				# If parent object is mesh
 				# combine all children to parent object
-				if start_active_obj.type == "MESH":
-					context.view_layer.objects.active = start_active_obj
+				if obj.type == "MESH":
+					bpy.ops.object.select_grouped(extend=True, type="CHILDREN_RECURSIVE")
 					bpy.ops.object.join()
-				# If  parent is empty
+
+					# CleanUp Empties without Children
+					selected_objects_for_cleanup = context.selected_objects
+					for x in selected_objects_for_cleanup:
+						if x.type == "EMPTY" and len(x.children) == 0:
+							bpy.data.objects.remove(x, do_unlink=True)
+
+				# If  parent is not Mesh
 				else:
 					current_active = context.view_layer.objects.active
+					parent_loc = current_active.location.copy()
+					parent_name = current_active.name
+
+					# Select all children
+					bpy.ops.object.select_grouped(extend=False, type="CHILDREN_RECURSIVE")
+					group_selected_objects = context.selected_objects
+
 					# Combine all child meshes to first in list
-					for obj in current_selected_obj:
-						if obj.type == "MESH":
-							context.view_layer.objects.active = obj
+					for x in group_selected_objects:
+						if x.type == "MESH":
+							context.view_layer.objects.active = x
 					bpy.ops.object.join()
+
+					context.view_layer.objects.active.name = parent_name + "_Mesh"
+
+					# Parent Combined mesh back
+					current_active.select_set(True)
+					context.view_layer.objects.active = current_active
+					bpy.ops.object.parent_set(type="OBJECT", keep_transform=True)
+
+					selected_objects_for_cleanup = context.selected_objects
+
+					# Move Origin to Parent
+					context.scene.tool_settings.transform_pivot_point = "MEDIAN_POINT"
+					context.scene.cursor.location = parent_loc
+					bpy.ops.object.origin_set(type="ORIGIN_CURSOR", center="MEDIAN")
+
+					# CleanUp Empties without Children
+					for x in selected_objects_for_cleanup:
+						if x.type == "EMPTY" and len(x.children) == 0:
+							bpy.data.objects.remove(x, do_unlink=True)
+
 					context.view_layer.objects.active = current_active
 
-				current_selected_obj = context.selected_objects
+			current_parent = context.view_layer.objects.active
 
-			# Set custom fbx/obj name (Optional)
-			prefilter_name = act.custom_fbx_name if act.set_custom_fbx_name else name
+			# Select only current object
+			bpy.ops.object.select_all(action="DESELECT")
 
-			# Replace invalid chars
+			current_parent.select_set(True)
+			context.view_layer.objects.active = current_parent
+
+			object_loc = obj.location.copy()
+
+			if act.apply_loc:
+				# Move object to center
+				obj.location = (0, 0, 0)
+
+			# Name is name of parent
+			prefilter_name = current_parent.name
 			name = common_utils.prefilter_export_name(prefilter_name)
+
+			# Select Parent and his children
+			bpy.ops.object.select_grouped(extend=True, type="CHILDREN_RECURSIVE")
 
 			if name != prefilter_name:
 				incorrect_names.append(prefilter_name)
@@ -189,162 +279,110 @@ class ACTExport(bpy.types.Operator):
 			# Export FBX/OBJ/GLTF
 			utils.export_model(path, name)
 
-		# Export by parents
-		if act.export_mode in {"PARENT", "INDIVIDUAL"}:
-			if act.export_mode == "INDIVIDUAL":
-				bpy.ops.object.parent_clear(type="CLEAR_KEEP_TRANSFORM")
+			if act.apply_loc:
+				obj.location = object_loc
 
+		return selected_objects
+
+	def _export_by_collection(self, context, act, path, selected_objects, incorrect_names):
+		used_collections = []
+		origin_loc = (0.0, 0.0, 0.0)
+		context.scene.tool_settings.transform_pivot_point = "MEDIAN_POINT"
+		obj_col_dict = {}
+		# Collect used collections for selected objects
+		for obj in selected_objects:
+			collection_in_list = False
+
+			for c in used_collections:
+				if obj.users_collection[0].name == c:
+					collection_in_list = True
+
+			if not collection_in_list:
+				used_collections.append(obj.users_collection[0].name)
+
+			obj_col_dict[obj] = obj.users_collection[0].name
+
+		# Select objects by collection and export
+		for c in used_collections:
 			bpy.ops.object.select_all(action="DESELECT")
 
-			for obj in current_selected_obj:
-				if not obj.parent:
+			# Select Objects in Collection
+			set_active_mesh = False
+			for obj, col_name in obj_col_dict.items():
+				if col_name == c:
 					obj.select_set(True)
+					if obj.type == "MESH" and not set_active_mesh:
+						context.view_layer.objects.active = obj
+						if act.export_combine_meshes:
+							obj.name = c
+						set_active_mesh = True
 
-			current_selected_obj = context.selected_objects
+			if act.export_combine_meshes and set_active_mesh:
+				bpy.ops.object.join()
 
-			for obj in current_selected_obj:
-				bpy.ops.object.select_all(action="DESELECT")
-				context.view_layer.objects.active = obj
-				obj.select_set(True)
+				# Move Origin to Parent
+				context.scene.cursor.location = origin_loc
+				bpy.ops.object.origin_set(type="ORIGIN_CURSOR", center="MEDIAN")
 
-				# Combine All Meshes (Optional)
-				if act.export_combine_meshes:
-					# If parent object is mesh
-					# combine all children to parent object
-					if obj.type == "MESH":
-						bpy.ops.object.select_grouped(extend=True, type="CHILDREN_RECURSIVE")
-						bpy.ops.object.join()
+				# CleanUp Empties without Children
+				selected_objects_for_cleanup = context.selected_objects
+				for obj in selected_objects_for_cleanup:
+					if obj.type == "EMPTY" and len(obj.children) == 0:
+						bpy.data.objects.remove(obj, do_unlink=True)
 
-						# CleanUp Empties without Children
-						selected_objects_for_cleanup = context.selected_objects
-						for x in selected_objects_for_cleanup:
-							if x.type == "EMPTY" and len(x.children) == 0:
-								bpy.data.objects.remove(x, do_unlink=True)
+			# Replace invalid chars
+			name = common_utils.prefilter_export_name(c)
 
-					# If  parent is not Mesh
-					else:
-						current_active = context.view_layer.objects.active
-						parent_loc = current_active.location.copy()
-						parent_name = current_active.name
+			if name != c:
+				incorrect_names.append(c)
 
-						# Select all children
-						bpy.ops.object.select_grouped(extend=False, type="CHILDREN_RECURSIVE")
-						group_selected_objects = context.selected_objects
+			# Export FBX/OBJ/GLTF
+			utils.export_model(path, name)
 
-						# Combine all child meshes to first in list
-						for x in group_selected_objects:
-							if x.type == "MESH":
-								context.view_layer.objects.active = x
-						bpy.ops.object.join()
+		bpy.ops.object.select_all(action="DESELECT")
 
-						context.view_layer.objects.active.name = parent_name + "_Mesh"
+	def execute(self, context):
+		start_time = datetime.now()
+		act = context.scene.act
+		act.export_dir = ""
+		incorrect_names = []
 
-						# Parent Combined mesh back
-						current_active.select_set(True)
-						context.view_layer.objects.active = current_active
-						bpy.ops.object.parent_set(type="OBJECT", keep_transform=True)
+		# Prepare for export
+		# Save selected objects and active object
+		start_active_obj = context.active_object
+		current_selected_obj = context.selected_objects
+		name = context.active_object.name
 
-						selected_objects_for_cleanup = context.selected_objects
+		if not self._validate_export_options(act):
+			return {"CANCELLED"}
 
-						# Move Origin to Parent
-						context.scene.tool_settings.transform_pivot_point = "MEDIAN_POINT"
-						context.scene.cursor.location = parent_loc
-						bpy.ops.object.origin_set(type="ORIGIN_CURSOR", center="MEDIAN")
+		path = self._resolve_export_path(act)
+		if path is None:
+			return {"CANCELLED"}
 
-						# CleanUp Empties without Children
-						for x in selected_objects_for_cleanup:
-							if x.type == "EMPTY" and len(x.children) == 0:
-								bpy.data.objects.remove(x, do_unlink=True)
+		os.makedirs(path, exist_ok=True)
 
-						context.view_layer.objects.active = current_active
+		current_selected_obj = self._filter_exportable_objects(context, current_selected_obj)
 
-				current_parent = context.view_layer.objects.active
+		bpy.ops.ed.undo_push(message="FBX Bridge Export Prepare")
 
-				# Select only current object
-				bpy.ops.object.select_all(action="DESELECT")
+		self._prepare_objects_for_export(context, act, current_selected_obj)
 
-				current_parent.select_set(True)
-				context.view_layer.objects.active = current_parent
+		# Export Stage
+		self._select_prepared_objects(current_selected_obj)
 
-				object_loc = obj.location.copy()
+		if act.export_mode == "ALL":
+			current_selected_obj = self._export_all(context, act, path, name, start_active_obj,
+			                                        current_selected_obj, incorrect_names)
 
-				if act.apply_loc:
-					# Move object to center
-					obj.location = (0, 0, 0)
-
-				# Name is name of parent
-				prefilter_name = current_parent.name
-				name = common_utils.prefilter_export_name(prefilter_name)
-
-				# Select Parent and his children
-				bpy.ops.object.select_grouped(extend=True, type="CHILDREN_RECURSIVE")
-
-				if name != prefilter_name:
-					incorrect_names.append(prefilter_name)
-
-				# Export FBX/OBJ/GLTF
-				utils.export_model(path, name)
-
-				if act.apply_loc:
-					obj.location = object_loc
+		# Export by parents
+		if act.export_mode in {"PARENT", "INDIVIDUAL"}:
+			current_selected_obj = self._export_by_parent_or_individual(context, act, path,
+			                                                            current_selected_obj, incorrect_names)
 
 		# Export by collection
 		if act.export_mode == "COLLECTION":
-			used_collections = []
-			origin_loc = (0.0, 0.0, 0.0)
-			context.scene.tool_settings.transform_pivot_point = "MEDIAN_POINT"
-			obj_col_dict = {}
-			# Collect used collections for selected objects
-			for obj in current_selected_obj:
-				collection_in_list = False
-
-				for c in used_collections:
-					if obj.users_collection[0].name == c:
-						collection_in_list = True
-
-				if not collection_in_list:
-					used_collections.append(obj.users_collection[0].name)
-
-				obj_col_dict[obj] = obj.users_collection[0].name
-
-			# Select objects by collection and export
-			for c in used_collections:
-				bpy.ops.object.select_all(action="DESELECT")
-
-				# Select Objects in Collection
-				set_active_mesh = False
-				for obj, col_name in obj_col_dict.items():
-					if col_name == c:
-						obj.select_set(True)
-						if obj.type == "MESH" and not set_active_mesh:
-							context.view_layer.objects.active = obj
-							if act.export_combine_meshes:
-								obj.name = c
-							set_active_mesh = True
-
-				if act.export_combine_meshes and set_active_mesh:
-					bpy.ops.object.join()
-
-					# Move Origin to Parent
-					context.scene.cursor.location = origin_loc
-					bpy.ops.object.origin_set(type="ORIGIN_CURSOR", center="MEDIAN")
-
-					# CleanUp Empties without Children
-					selected_objects_for_cleanup = context.selected_objects
-					for obj in selected_objects_for_cleanup:
-						if obj.type == "EMPTY" and len(obj.children) == 0:
-							bpy.data.objects.remove(obj, do_unlink=True)
-
-				# Replace invalid chars
-				name = common_utils.prefilter_export_name(c)
-
-				if name != c:
-					incorrect_names.append(c)
-
-				# Export FBX/OBJ/GLTF
-				utils.export_model(path, name)
-
-			bpy.ops.object.select_all(action="DESELECT")
+			self._export_by_collection(context, act, path, current_selected_obj, incorrect_names)
 
 		# Show message about incorrect names
 		if len(incorrect_names) > 0:

@@ -318,25 +318,18 @@ class ACTExport(bpy.types.Operator):
 
 		# Export by collection
 		if act.export_mode == "COLLECTION":
-			used_collections = []
+			used_collections = {}
 			context.scene.tool_settings.transform_pivot_point = "MEDIAN_POINT"
 			obj_col_dict = {}
 			# Collect used collections for selected objects
 			for obj in current_selected_obj:
-				collection_in_list = False
-
-				for c in used_collections:
-					if obj.users_collection[0].name == c:
-						collection_in_list = True
-
-				if not collection_in_list:
-					used_collections.append(obj.users_collection[0].name)
-
-				obj_col_dict[obj] = obj.users_collection[0].name
+				collection = obj.users_collection[0]
+				used_collections.setdefault(collection.name, collection)
+				obj_col_dict[obj] = collection.name
 
 			# Select objects by collection and export
-			for c in used_collections:
-				origin_loc = bpy.data.collections[c].instance_offset.copy() if act.use_collection_instance_offset else (0.0, 0.0, 0.0)
+			for c, collection in used_collections.items():
+				origin_loc = collection.instance_offset.copy() if act.use_collection_instance_offset else (0.0, 0.0, 0.0)
 				bpy.ops.object.select_all(action="DESELECT")
 
 				# Select Objects in Collection

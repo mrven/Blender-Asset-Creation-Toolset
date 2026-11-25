@@ -64,6 +64,34 @@ class ACTExport(bpy.types.Operator):
 
 		bpy.ops.ed.undo_push(message="FBX Bridge Export Prepare")
 
+		use_offset = act.export_mode == "COLLECTION" and act.use_collection_instance_offset
+		try:
+			self.prepare_and_export(context, act, current_selected_obj, start_active_obj, path, name, incorrect_names)
+		except Exception as err:
+			if not use_offset:
+				raise
+			# Restore the original scene using ACT's existing undo mechanism.
+			bpy.ops.ed.undo_push(message="")
+			bpy.ops.ed.undo()
+			self.report({"ERROR"}, f"Collection export failed: {err}")
+			return {"CANCELLED"}
+
+		# Show message about incorrect names
+		if len(incorrect_names) > 0:
+			common_utils.show_message_box(
+				"Object(s) has invalid characters in name. Some chars in export name have been replaced",
+				"Incorrect Export Names")
+
+		bpy.ops.ed.undo_push(message="")
+		bpy.ops.ed.undo()
+		bpy.ops.ed.undo_push(message="ACT Export")
+
+		context.scene.act.export_dir = path
+
+		common_utils.print_execution_time("FBX/OBJ/GLTF Export", start_time)
+		return {"FINISHED"}
+
+	def prepare_and_export(self, context, act, current_selected_obj, start_active_obj, path, name, incorrect_names):
 		# Undoable operations
 		allow_multi_users = (act.export_format == "FBX" and act.export_target_engine == "UNITY"
 		                     and not act.export_combine_meshes and not act.export_mode == "INDIVIDUAL")
@@ -290,25 +318,18 @@ class ACTExport(bpy.types.Operator):
 
 		# Export by collection
 		if act.export_mode == "COLLECTION":
-			used_collections = []
-			origin_loc = (0.0, 0.0, 0.0)
+			used_collections = {}
 			context.scene.tool_settings.transform_pivot_point = "MEDIAN_POINT"
 			obj_col_dict = {}
 			# Collect used collections for selected objects
 			for obj in current_selected_obj:
-				collection_in_list = False
-
-				for c in used_collections:
-					if obj.users_collection[0].name == c:
-						collection_in_list = True
-
-				if not collection_in_list:
-					used_collections.append(obj.users_collection[0].name)
-
-				obj_col_dict[obj] = obj.users_collection[0].name
+				collection = obj.users_collection[0]
+				used_collections.setdefault(collection.name, collection)
+				obj_col_dict[obj] = collection.name
 
 			# Select objects by collection and export
-			for c in used_collections:
+			for c, collection in used_collections.items():
+				origin_loc = collection.instance_offset.copy() if act.use_collection_instance_offset else (0.0, 0.0, 0.0)
 				bpy.ops.object.select_all(action="DESELECT")
 
 				# Select Objects in Collection
@@ -325,9 +346,24 @@ class ACTExport(bpy.types.Operator):
 				if act.export_combine_meshes and set_active_mesh:
 					bpy.ops.object.join()
 
-					# Move Origin to Parent
+					# Move the joined mesh origin to the collection reference point.
 					context.scene.cursor.location = origin_loc
-					bpy.ops.object.origin_set(type="ORIGIN_CURSOR", center="MEDIAN")
+					if act.use_collection_instance_offset and origin_loc.length_squared:
+						# Do not change the origins of selected empties or armatures.
+						joined_mesh = context.view_layer.objects.active
+						other_objects = [obj for obj in context.selected_objects if obj != joined_mesh]
+						for obj in other_objects:
+							obj.select_set(False)
+						try:
+							result = bpy.ops.object.origin_set(type="ORIGIN_CURSOR", center="MEDIAN")
+							context.view_layer.update()
+							if "FINISHED" not in result or (joined_mesh.matrix_world.translation - origin_loc).length > 1e-4:
+								raise RuntimeError(f"Cannot set combined mesh origin for {c}")
+						finally:
+							for obj in other_objects:
+								obj.select_set(True)
+					else:
+						bpy.ops.object.origin_set(type="ORIGIN_CURSOR", center="MEDIAN")
 
 					# CleanUp Empties without Children
 					selected_objects_for_cleanup = context.selected_objects
@@ -342,24 +378,15 @@ class ACTExport(bpy.types.Operator):
 					incorrect_names.append(c)
 
 				# Export FBX/OBJ/GLTF
-				utils.export_model(path, name)
+				if act.use_collection_instance_offset and origin_loc.length_squared:
+					utils.export_model_with_offset(context, path, name, origin_loc)
+				else:
+					result = utils.export_model(path, name)
+					if act.use_collection_instance_offset and "FINISHED" not in result:
+						raise RuntimeError(f"Exporter cancelled for {name}")
 
 			bpy.ops.object.select_all(action="DESELECT")
 
-		# Show message about incorrect names
-		if len(incorrect_names) > 0:
-			common_utils.show_message_box(
-				"Object(s) has invalid characters in name. Some chars in export name have been replaced",
-				"Incorrect Export Names")
-
-		bpy.ops.ed.undo_push(message="")
-		bpy.ops.ed.undo()
-		bpy.ops.ed.undo_push(message="ACT Export")
-
-		context.scene.act.export_dir = path
-
-		common_utils.print_execution_time("FBX/OBJ/GLTF Export", start_time)
-		return {"FINISHED"}
 
 
 # Open Export Directory

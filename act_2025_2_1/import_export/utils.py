@@ -1,17 +1,65 @@
 import bpy
 
+
+def export_model_with_offset(context, path, name, offset):
+	"""Translate selected objects in world space only for this export."""
+	objects = list(context.selected_objects)
+	selected = set(objects)
+
+	def has_selected_ancestor(obj):
+		parent = obj.parent
+		while parent is not None:
+			if parent in selected:
+				return True
+			parent = parent.parent
+		return False
+
+	# Moving a selected ancestor also moves its descendants, even through
+	# unselected intermediate parents. Translate only the selected roots.
+	context.view_layer.update()
+	world_matrices = {obj: obj.matrix_world.copy() for obj in objects}
+	roots = [obj for obj in objects if not has_selected_ancestor(obj)]
+	locations = {obj: obj.location.copy() for obj in roots}
+	try:
+		for obj in roots:
+			delta = -offset
+			if obj.parent is not None:
+				if obj.parent_type == "OBJECT":
+					parent_matrix = obj.parent.matrix_world @ obj.matrix_parent_inverse
+				else:
+					# Effective parent space for bone and vertex parenting.
+					parent_matrix = world_matrices[obj] @ obj.matrix_basis.inverted()
+				delta = parent_matrix.to_3x3().inverted() @ delta
+			obj.location = locations[obj] + delta
+		context.view_layer.update()
+
+		# Constraints or drivers can prevent the requested translation.
+		# Do not silently export an incorrectly positioned asset.
+		for obj, original in world_matrices.items():
+			expected = original.copy()
+			expected.translation = original.translation - offset
+			if any(abs(obj.matrix_world[i][j] - expected[i][j]) > 1e-4
+			       for i in range(4) for j in range(4)):
+				raise RuntimeError(f"Cannot apply Collection Instance Offset to {obj.name}")
+		if "FINISHED" not in export_model(path, name):
+			raise RuntimeError(f"Exporter cancelled for {name}")
+	finally:
+		for obj, location in locations.items():
+			obj.location = location
+		context.view_layer.update()
+
 # Export Model
 def export_model(path, name):
 	act = bpy.context.scene.act
 
 	if act.export_format == "FBX":
-		export_fbx(path, name)
+		return export_fbx(path, name)
 
 	if act.export_format == "OBJ":
-		export_obj(path, name)
+		return export_obj(path, name)
 
 	if act.export_format == "GLTF":
-		export_gltf(path, name)
+		return export_gltf(path, name)
 
 
 def export_fbx(path, name):
@@ -65,7 +113,7 @@ def export_fbx(path, name):
 
 	allowed_args = bpy.ops.export_scene.fbx.get_rna_type().properties.keys()
 	export_params = {k: v for k, v in export_fbx_params.items() if k in allowed_args}
-	bpy.ops.export_scene.fbx(**export_params)
+	return bpy.ops.export_scene.fbx(**export_params)
 
 
 def export_obj(path, name):
@@ -133,11 +181,11 @@ def export_obj(path, name):
 	if version >= (4, 0, 0):
 		allowed_args = bpy.ops.wm.obj_export.get_rna_type().properties.keys()
 		export_params = {k: v for k, v in export_obj_params.items() if k in allowed_args}
-		bpy.ops.wm.obj_export(**export_params)
+		return bpy.ops.wm.obj_export(**export_params)
 	else:
 		allowed_args = bpy.ops.export_scene.obj.get_rna_type().properties.keys()
 		export_params = {k: v for k, v in export_obj_params.items() if k in allowed_args}
-		bpy.ops.export_scene.obj(**export_params)
+		return bpy.ops.export_scene.obj(**export_params)
 
 
 def export_gltf(path, name):
@@ -162,4 +210,4 @@ def export_gltf(path, name):
 
 	allowed_args = bpy.ops.export_scene.gltf.get_rna_type().properties.keys()
 	export_params = {k: v for k, v in export_gltf_params.items() if k in allowed_args}
-	bpy.ops.export_scene.gltf(**export_params)
+	return bpy.ops.export_scene.gltf(**export_params)

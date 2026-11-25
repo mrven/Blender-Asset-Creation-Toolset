@@ -34,6 +34,7 @@
     "apply_rot_rotated": true,
     "apply_scale": true,
     "apply_loc": true,
+    "use_collection_instance_offset": false,
     "set_custom_fbx_name": false,
     "custom_fbx_name": "",
     "delete_mats_before_export": false,

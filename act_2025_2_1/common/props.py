@@ -65,6 +65,7 @@ class ACTAddonProps(bpy.types.PropertyGroup):
 	apply_rot_rotated: BoolProperty(description="Apply Rotation for Objects with not 0,0,0 rotation", default=True)
 	apply_scale: BoolProperty(description="Apply Scale for Exported Models", default=True)
 	apply_loc: BoolProperty(description="Apply Location for Exported Models", default=True)
+	use_collection_instance_offset: BoolProperty(name="Use Collection Instance Offset", description="Export each collection relative to its Instance Offset instead of the world origin", default=False)
 	set_custom_fbx_name: BoolProperty(description="Set Custom Name for FBX")
 	custom_fbx_name: StringProperty(name="", description="Custom Name for FBX")
 	custom_export_path: BoolProperty(description="Custom Export Path")

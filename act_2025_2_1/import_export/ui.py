@@ -82,6 +82,10 @@ class VIEW3D_PT_act_import_export_tools_panel(bpy.types.Panel):
 					row = box.row()
 					row.prop(act, "apply_rot_rotated", text="Apply for Rotated Objects")
 
+		if act.export_mode == "COLLECTION":
+			row = layout.row()
+			row.prop(act, "use_collection_instance_offset")
+
 		row = layout.row()
 		row.prop(act, "delete_mats_before_export", text="Delete All Materials")
 

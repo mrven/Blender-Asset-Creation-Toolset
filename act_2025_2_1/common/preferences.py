@@ -215,6 +215,7 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 	apply_rot_rotated: BoolProperty(name="", default=True, update=update_save_config)
 	apply_scale: BoolProperty(name="", default=True, update=update_save_config)
 	apply_loc: BoolProperty(name="", default=True, update=update_save_config)
+	use_collection_instance_offset: BoolProperty(name="Use Collection Instance Offset", description="Export each collection relative to its Instance Offset instead of the world origin", default=False, update=update_save_config)
 	set_custom_fbx_name: BoolProperty(name="", update=update_save_config)
 	custom_fbx_name: StringProperty(name="", update=update_save_config)
 	delete_mats_before_export: BoolProperty(name="", update=update_save_config)
@@ -367,6 +368,9 @@ class ACTAddonPreferences(bpy.types.AddonPreferences):
 				row = box.row(align=True)
 				row.label(text="Target Engine")
 				row.prop(self, "export_target_engine")
+			if self.export_mode == "COLLECTION":
+				row = box.row(align=True)
+				row.prop(self, "use_collection_instance_offset")
 			if not (self.export_format == "OBJ" and self.export_mode in {"ALL", "COLLECTION"}):
 				row = box.row(align=True)
 				row.label(text="Apply")

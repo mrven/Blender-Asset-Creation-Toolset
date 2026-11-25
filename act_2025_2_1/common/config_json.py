@@ -66,6 +66,7 @@ def copy_prefs_to_props(force = False):
 		props.apply_rot_rotated = prefs.apply_rot_rotated
 		props.apply_scale = prefs.apply_scale
 		props.apply_loc = prefs.apply_loc
+		props.use_collection_instance_offset = prefs.use_collection_instance_offset
 		props.set_custom_fbx_name = prefs.set_custom_fbx_name
 		props.custom_fbx_name = prefs.custom_fbx_name
 		props.delete_mats_before_export = prefs.delete_mats_before_export

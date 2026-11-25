@@ -15,6 +15,8 @@ Batch Export Selected Objects to OBJ/FBX/GLTF for Unity, UE or Godot.
 * **One-to-One** - Export Each Object into Individual file
 * By Collection - Batch Objects by Collection
 
+**Use Collection Instance Offset** (By Collection only, disabled by default): exports each batch relative to the source collection's Instance Offset from Collection Properties > Instancing. The offset is subtracted in Blender world space before export axis and scale conversion. With Combine All Meshes enabled, the joined mesh origin is placed at the collection offset and exported at zero; otherwise individual object origins and relative transforms are retained. Selection and collection grouping follow ACT's existing rules (first collection membership). Constraints or drivers that prevent the requested translation cause an error rather than an incorrectly positioned export.
+
 ## Target Engine (for FBX)
 
 You can export FBX for Unity or Unreal Engine.

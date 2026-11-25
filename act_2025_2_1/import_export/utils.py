@@ -1,5 +1,52 @@
 import bpy
 
+
+def export_model_with_offset(context, path, name, offset):
+	"""Translate selected objects in world space only for this export."""
+	objects = list(context.selected_objects)
+	selected = set(objects)
+
+	def has_selected_ancestor(obj):
+		parent = obj.parent
+		while parent is not None:
+			if parent in selected:
+				return True
+			parent = parent.parent
+		return False
+
+	# Moving a selected ancestor also moves its descendants, even through
+	# unselected intermediate parents. Translate only the selected roots.
+	context.view_layer.update()
+	world_matrices = {obj: obj.matrix_world.copy() for obj in objects}
+	roots = [obj for obj in objects if not has_selected_ancestor(obj)]
+	locations = {obj: obj.location.copy() for obj in roots}
+	try:
+		for obj in roots:
+			delta = -offset
+			if obj.parent is not None:
+				if obj.parent_type == "OBJECT":
+					parent_matrix = obj.parent.matrix_world @ obj.matrix_parent_inverse
+				else:
+					# Effective parent space for bone and vertex parenting.
+					parent_matrix = world_matrices[obj] @ obj.matrix_basis.inverted()
+				delta = parent_matrix.to_3x3().inverted() @ delta
+			obj.location = locations[obj] + delta
+		context.view_layer.update()
+
+		# Constraints or drivers can prevent the requested translation.
+		# Do not silently export an incorrectly positioned asset.
+		for obj, original in world_matrices.items():
+			expected = original.copy()
+			expected.translation = original.translation - offset
+			if any(abs(obj.matrix_world[i][j] - expected[i][j]) > 1e-4
+			       for i in range(4) for j in range(4)):
+				raise RuntimeError(f"Cannot apply Collection Instance Offset to {obj.name}")
+		export_model(path, name)
+	finally:
+		for obj, location in locations.items():
+			obj.location = location
+		context.view_layer.update()
+
 # Export Model
 def export_model(path, name):
 	act = bpy.context.scene.act

@@ -54,6 +54,7 @@ for offset in (Vector((10, -8, 4)), Vector((-5, 2, -1)), Vector((0, 0, 0))):
             expected.translation -= offset
             assert_matrix(obj.matrix_world, expected)
         assert_matrix(outside.matrix_world, original[outside])
+        return {"FINISHED"}
     utils.export_model = fake_export
     utils.export_model_with_offset(bpy.context, "", "Test", offset)
     assert calls == ["Test"]
@@ -69,6 +70,16 @@ except RuntimeError as exc:
     assert str(exc) == "test export failure"
 else:
     raise AssertionError("Expected export error")
+for obj, matrix in original.items():
+    assert_matrix(obj.matrix_world, matrix)
+
+utils.export_model = lambda *args: {"CANCELLED"}
+try:
+    utils.export_model_with_offset(bpy.context, "", "Test", Vector((2, 3, 4)))
+except RuntimeError as exc:
+    assert "Exporter cancelled" in str(exc)
+else:
+    raise AssertionError("Expected cancelled export error")
 for obj, matrix in original.items():
     assert_matrix(obj.matrix_world, matrix)
 

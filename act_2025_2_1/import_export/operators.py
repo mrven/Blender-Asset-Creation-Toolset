@@ -362,7 +362,10 @@ class ACTExport(bpy.types.Operator):
 						for obj in other_objects:
 							obj.select_set(False)
 						try:
-							bpy.ops.object.origin_set(type="ORIGIN_CURSOR", center="MEDIAN")
+							result = bpy.ops.object.origin_set(type="ORIGIN_CURSOR", center="MEDIAN")
+							context.view_layer.update()
+							if "FINISHED" not in result or (joined_mesh.matrix_world.translation - origin_loc).length > 1e-4:
+								raise RuntimeError(f"Cannot set combined mesh origin for {c}")
 						finally:
 							for obj in other_objects:
 								obj.select_set(True)
@@ -385,7 +388,9 @@ class ACTExport(bpy.types.Operator):
 				if act.use_collection_instance_offset and origin_loc.length_squared:
 					utils.export_model_with_offset(context, path, name, origin_loc)
 				else:
-					utils.export_model(path, name)
+					result = utils.export_model(path, name)
+					if act.use_collection_instance_offset and "FINISHED" not in result:
+						raise RuntimeError(f"Exporter cancelled for {name}")
 
 			bpy.ops.object.select_all(action="DESELECT")
 

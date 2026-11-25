@@ -1,5 +1,11 @@
 # ACT: Game Asset Creation Toolset Changelog
 
+## Unreleased
+
+### New
+
+* [Export Tools] Add optional Use Collection Instance Offset in By Collection mode for exports relative to the collection reference point. Supports combined and separate meshes; disabled by default.
+
 ## ACT 2025.2.1
 
 ### Fix
